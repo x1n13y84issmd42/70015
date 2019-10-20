@@ -1,0 +1,23 @@
+<div class="tool unfocused col3" id="unixtime" data-tag="unixtime">
+	<div class="preview"><h1>Unixtime</h1></div>
+	<div class="controls smaller">
+		<label for="unixtime-inTimestamp">Unixtime:</label>
+		<input type="text" class="inTimestamp" id="unixtime-inTimestamp"  autofocus>
+		<p class="outDate"></p>
+	</div>
+
+	<script>
+		let unixtime = new Tool("unixtime", {
+			inTS: (e) => e.querySelectorAll('.inTimestamp')[0],
+			outDate: (e) => e.querySelectorAll('.outDate')[0],
+		});
+		
+		unixtime.convert = function() {
+			let d = new Date();
+			d.setTime(unixtime.inTS.value + "000")
+			unixtime.outDate.innerHTML = d.toString();
+		};
+		
+		unixtime.inTS.oninput = unixtime.inTS.onchange = unixtime.convert;
+		</script>
+</div>

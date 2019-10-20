@@ -1,0 +1,54 @@
+<html>
+	<head>
+		<link href="https://fonts.googleapis.com/css?family=Abril+Fatface|Bungee+Shade|Cinzel:400,700|Cute+Font|Faster+One|Monoton|Permanent+Marker|Quicksand:400,600,700|Special+Elite|Vibes&display=swap" rel="stylesheet">
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+		<link href="./style.css" rel="stylesheet">
+		<link href="./tools-list.css" rel="stylesheet">
+		<script src="./tools-list.js"></script>
+		<script>
+			let tools = new Tools(400, 300, document.body)
+
+			function focus(id) {
+				let el = document.getElementById(id);
+				if (el) {
+					el.classList.replace('unfocused', 'focused');
+					el.focus();
+					let af = el.querySelector("[autofocus]")
+					if (af) {
+						af.focus();
+					}
+				}
+
+				document.body.onkeydown = (e) => {
+					if (e.key == 'Escape') {
+						unfocus(id);
+					}
+				}
+			}
+
+			function unfocus(id) {
+				tools.unfocus(id);
+				filter.focus();
+			}
+
+			function Tool(id, props) {
+				let E = this.E = document.getElementById(id);
+
+				for (let p in props) {
+					this[p] = props[p](this.E);
+				}
+
+				E.onclick = () => focus(id);
+
+				let ctrls = E.querySelector(".controls");
+				let eClose = document.createElement("a");
+				eClose.innerHTML = "<span>CLOSE</span><i>&#x1f7a8</i>";
+				eClose.classList.add("close");
+				eClose.onclick = (e) => {unfocus(id); e.preventDefault();e.cancelBubble=true;}
+				ctrls.append(eClose);
+			}
+		</script>
+	</head>
+	<body>
+		<input type="text" name="" id="filter" autofocus>
+		<div id="tools">

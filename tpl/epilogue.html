@@ -1,0 +1,31 @@
+		</div>
+
+		<script>
+			document.body.onload = () => {
+				tools.add('urldecode')
+				tools.add('unixtime')
+				tools.add('base64')
+				tools.add('json')
+				
+				let filter = document.getElementById("filter");
+				filter.onchange = filter.oninput = () => {
+					tools.filter(filter.value);
+				}
+				
+				filter.onkeydown = (e) => {
+					if (e.key == 'Enter') {
+						let matched = document.querySelectorAll(".matched");
+						if (matched.length == 1) {
+							focus(matched[0].id);
+							e.preventDefault();
+							e.cancelBubble = true;
+						}
+					} else if (e.key == 'Escape') {
+						filter.value = "";
+						tools.filter("");
+					}
+				}
+			}
+		</script>
+	</body>
+</html>

@@ -1,0 +1,59 @@
+
+
+.tool {
+	/* border: 2px black solid; */
+	display: inline-block;
+	position: absolute;
+}
+
+.unfocused {
+	width: 400px !important;
+	height: 300px !important;
+
+	z-index: 0;
+}
+
+.col1 {
+	/* background: #BAD387; */
+}
+
+.col2 {
+	/* background: #CED8ED; */
+}
+
+.col3 {
+	/* background: #EFDEAA; */
+}
+
+.col4 {
+	/* background: #B3DBD2; */
+}
+
+.col5 {
+	/* background: #C287E8; */
+}
+
+.tool > .preview > h1 {
+	font-size: 80pt;
+	/* color: white; */
+}
+
+#urldecode > .preview > h1 {
+	font-family: 'Quicksand', sans-serif;
+	font-size: 36pt;
+}
+
+#base64 > .preview > h1 {
+	font-family: 'Special Elite', cursive;
+	font-size: 87pt;
+}
+
+#unixtime > .preview > h1 {
+	font-family: 'Cinzel', serif;
+	font-size: 59pt;
+}
+
+#json > .preview > h1 {
+	font-family: 'Cute Font', cursive;
+	font-size: 77pt;
+}

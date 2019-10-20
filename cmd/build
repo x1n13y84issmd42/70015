@@ -1,0 +1,22 @@
+#!/bin/bash
+
+OUTFILE="index.html"
+
+function log {
+	echo -e "\e[33mbuild\e[0m" $@ >&2
+}
+
+log "Building $OUTFILE"
+
+log "Adding a prologue"
+cat "tpl/prologue.html" > $OUTFILE
+
+for tool in ./tools/*; do
+	log "Adding " $tool
+	cat $tool >> $OUTFILE
+done
+
+log "Adding an epilogue"
+cat "tpl/epilogue.html" >> $OUTFILE
+
+log "Done."

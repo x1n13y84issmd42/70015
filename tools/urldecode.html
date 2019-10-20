@@ -1,0 +1,27 @@
+<div class="tool unfocused col1" id="urldecode" data-tag="url encode decode">
+	<div class="preview"><h1>URL De-/Encode</h1></div>
+	<div class="controls smaller">
+		<label for="urldecode-encinput">URL-encoded string:</label>
+		<input type="text" class="encinput" id="urldecode-encinput" autofocus tabindex="11">
+		<label for="urldecode-encinput">ASCII string:</label>
+		<input type="text" class="decinput" id="urldecode-decinput" tabindex="12" onFocus="this.tabIndex=10;" onBlur="this.tabIndex=12;">
+	</div>
+
+	<script>
+		let urldecoder = new Tool("urldecode", {
+			encoded: (e) => e.querySelectorAll('.encinput')[0],
+			decoded: (e) => e.querySelectorAll('.decinput')[0],
+		});
+
+		urldecoder.decode = function() {
+			urldecoder.decoded.value = decodeURIComponent(urldecoder.encoded.value);
+		};
+		
+		urldecoder.encode = function() {
+			urldecoder.encoded.value = encodeURIComponent(urldecoder.decoded.value);
+		};
+
+		urldecoder.encoded.oninput = urldecoder.encoded.onchange = urldecoder.decode;
+		urldecoder.decoded.oninput = urldecoder.decoded.onchange = urldecoder.encode;
+	</script>
+</div>

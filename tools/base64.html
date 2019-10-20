@@ -1,0 +1,27 @@
+<div class="tool unfocused col2" id="base64" data-tag="base64">
+	<div class="preview"><h1>Base64</h1></div>
+	<div class="controls">
+		<label for="base64Input">Base64-encoded string:</label>
+		<textarea class="base64Input" id="base64Input" autofocus tabindex="21"></textarea>
+		<label for="asciiInput">ASCII string:</label>
+		<textarea class="asciiInput" tabindex="22" onFocus="this.tabIndex=20;" onBlur="this.tabIndex=22;"></textarea>
+	</div>
+
+	<script>
+		let base64 = new Tool("base64", {
+			inBase64: (e) => e.querySelectorAll('.base64Input')[0],
+			inAscii: (e) => e.querySelectorAll('.asciiInput')[0],
+		});
+
+		base64.decode = function() {
+			base64.inAscii.value = atob(base64.inBase64.value);
+		};
+		
+		base64.encode = function() {
+			base64.inBase64.value = btoa(base64.inAscii.value);
+		};
+
+		base64.inBase64.oninput = base64.inBase64.onchange = base64.decode;
+		base64.inAscii.oninput = base64.inAscii.onchange = base64.encode;
+	</script>
+</div>

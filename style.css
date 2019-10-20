@@ -1,0 +1,146 @@
+* {
+	margin: 0;
+	padding: 0;
+	font-family: sans-serif;
+}
+
+.focused {
+	/* width: 100% !important; */
+	/* height: 100% !important; */
+	background: white;
+	left: 0 !important;
+	top: 0 !important;
+
+	-webkit-transition: all 100ms ease-in-out;
+	-moz-transition: all 100ms ease-in-out;
+	-o-transition: all 100ms ease-in-out;
+	transition: all 100ms ease-in-out;
+
+	z-index: 9999;
+}
+
+.tool.unfocused > .preview {
+	opacity: 1;
+}
+
+.tool.unfocused > .controls {
+	opacity: 0;
+}
+
+.tool.focused > .preview {
+	opacity: 0;
+}
+
+.tool.focused > .controls.smaller {
+	padding: 10% 20%;
+	width: 60%;
+}
+
+.tool.focused > .controls {
+    padding: 5% 10%;
+	width: 80%;
+    opacity: 1;
+	background: white;
+	height: 100%;
+}
+
+.tool.focused > .controls > .error {
+	background-color: red;
+	color: white;
+	font-size: 16pt;
+	font-family: Quicksand;
+}
+
+.tool.focused > .controls > label {
+	font-size: 24pt;
+	font-family: Quicksand;
+}
+
+.tool > .controls > textarea,
+.tool > .controls > input[type=text] {
+	width: 100%;
+    display: block;
+    font-size: 16pt;
+    padding: 12px;
+	letter-spacing: 1pt;
+	margin-bottom: 2em;
+}
+
+.tool .subcontrols {
+	float: right;
+	width: 1200px;
+	padding-top: 10px;
+}
+
+.tool .subcontrols a.copy {
+	margin-left: 20px;
+    color: #333;
+    text-decoration: none;
+    float: right;
+	font-size: 16pt;
+	cursor: pointer;
+}
+
+.tool .subcontrols a.copy > span {
+    margin-right: 10px;
+    opacity: 0;
+    transition: all 100ms ease-in-out;
+    -webkit-transition: all 100ms ease-in-out;
+    -moz-transition: all 100ms ease-in-out;
+    -o-transition: all 100ms ease-in-out;
+    font-size: 9pt;
+    /* line-height: 28pt; */
+    vertical-align: middle;
+}
+
+.tool .subcontrols a.copy:hover > span {
+	opacity: 1;
+	transition: all 100ms ease-in-out;
+	-webkit-transition: all 100ms ease-in-out;
+	-moz-transition: all 100ms ease-in-out;
+	-o-transition: all 100ms ease-in-out;
+}
+
+.tool.focused > .controls > .subcontrols > label {
+	font-size: 12pt;
+	font-family: Quicksand;
+	margin-right: 20px;
+}
+
+.tool > .controls > a.close {
+	font-family: Quicksand;
+	font-size: 24pt;
+	position: absolute;
+	right: 2%;
+	top: 2%;
+	color: #bbb;
+	cursor: pointer;
+}
+
+.tool > .controls > a.close > * {
+	line-height: 24pt;
+	vertical-align: middle;
+}
+
+.tool > .controls > a.close > i {
+	font-style: normal;
+	font-size: 36pt;
+}
+
+.tool > .controls > a.close > span {
+	font-size: 12pt;
+	opacity: 0;
+	transition: all 100ms ease-in-out;
+	-webkit-transition: all 100ms ease-in-out;
+	-moz-transition: all 100ms ease-in-out;
+	-o-transition: all 100ms ease-in-out;
+}
+
+.tool > .controls > a.close:hover > span {
+	font-size: 12pt;
+	opacity: 1;
+	transition: all 100ms ease-in-out;
+	-webkit-transition: all 100ms ease-in-out;
+	-moz-transition: all 100ms ease-in-out;
+	-o-transition: all 100ms ease-in-out;
+}

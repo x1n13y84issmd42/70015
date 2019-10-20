@@ -1,0 +1,82 @@
+<div class="tool unfocused col3" id="json" data-tag="json format">
+	<div class="preview"><h1>JSON Format</h1></div>
+	<div class="controls">
+		<label for="json-jsonInput">JSON input</label>
+		<textarea class="jsonInput" id="json-jsonInput" autofocus spellcheck="false"></textarea>
+		<p class="jsonErr error"></p>
+		
+		<label for="json-1liner">One-liner JSON</label>
+		<div class="subcontrols" data-for="json-1liner">
+			<label for="json-1liner-escape">
+				<input type="checkbox" name="json-1liner-escape" id="json-1liner-escape">
+				Escape the quotes
+			</label>
+			<a class="copy"><span>COPY</span><i class="far fa-copy"></i></a>
+		</div>
+		<input type="text" name="json-1liner" id="json-1liner" spellcheck="false">
+		
+		<label for="json-pretty">Pretty JSON</label>
+		<div class="subcontrols" data-for="json-pretty">
+			<label for="">Indent with</label>
+			<label for="json-pretty-indent-tabs"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-tabs" value="	" checked>tabs</label>
+			<label for="json-pretty-indent-2spaces"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-2spaces" value="  ">2 spaces</label>
+			<label for="json-pretty-indent-4spaces"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-4spaces" value="    ">4 spaces</label>
+			<a class="copy"><span>COPY</span><i class="far fa-copy"></i></a>
+		</div>
+		<textarea id="json-pretty" rows="8" spellcheck="false"></textarea>
+	</div>
+	
+	<script>
+		let json = new Tool("json", {
+			inJSON: (e) => e.querySelectorAll('.jsonInput')[0],
+			outPretty: (e) => e.querySelectorAll('#json-pretty')[0],
+			out1liner: (e) => e.querySelectorAll('#json-1liner')[0],
+			indentRadios: (e) => e.querySelectorAll('input[name=json-pretty-indent]'),
+			err: (e) => e.querySelectorAll('.jsonErr')[0],
+		});
+
+		json.prettyPrint = function() {
+			let v;
+			try {
+				v = JSON.parse(json.inJSON.value);
+			} catch (e) {
+				json.err.innerHTML = e.message
+			}
+
+			if (v) {
+				let indent = "\t";
+				for (let r of json.indentRadios) {
+					if (r.checked) {
+						indent = r.value;
+					}
+				}
+
+				json.outPretty.value = JSON.stringify(v, null, indent);
+			}
+		};
+
+		json.oneliner = function() {
+			let v;
+			try {
+				v = JSON.parse(json.inJSON.value);
+			} catch (e) {
+				json.err.innerHTML = e.message
+			}
+
+			if (v) {
+				json.out1liner.value = JSON.stringify(v);
+			}
+		}
+
+		json.update = () => {
+			json.prettyPrint();
+			json.oneliner();
+		}
+
+		for (let r of json.indentRadios) {
+			r.onchange = json.update;
+		}
+
+		json.inJSON.oninput = json.inJSON.onchange = json.update;
+	</script>
+</div>

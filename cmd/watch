@@ -1,0 +1,49 @@
+#!/bin/bash
+
+WATCHME=("./tools" "./tpl")
+
+echo "Watching" ${WATCHME[@]}
+
+function log {
+	echo -e "\e[36mwatch\e[0m" $@ >&2
+}
+
+function mtime {
+	stat -c %Y "$1"
+}
+
+LASTMOD=0
+
+function findLastMTime {
+	local MT=$LASTMOD
+	for MASK in ${WATCHME[@]}; do
+		local FOUNDFILES=$(find "$MASK" -type f)
+		read -r -d $'\n' -a FILES <<< $FOUNDFILES
+		for FILE in ${FILES[@]}; do
+			local FMT=$(mtime "$FILE")
+
+			if [[ $FMT > $LASTMOD ]]; then
+				log "$FILE has changed."
+			fi
+
+			if [[ $FMT > $MT ]]; then
+				MT=$FMT
+			fi
+		done
+	done
+
+	echo $MT
+}
+
+while [[ 1 = 1 ]]; do
+	MT=$(findLastMTime)
+
+	if [[ $MT > $LASTMOD ]]; then
+		LASTMOD=$MT
+		log "Gotta build!"
+		cmd/build
+		echo ""
+	fi
+
+	sleep 1s
+done
