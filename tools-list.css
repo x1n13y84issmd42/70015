@@ -7,17 +7,23 @@
 	margin: 0 0 1pt 0;
 }
 
-.unfocused {
-	/* width: 400px !important; */
-	/* height: 300px !important; */
-
-	/* z-index: 0; */
-	/* visibility: hidden; */
-}
-
-.tool.unfocused > .controls {
+/* .unfocused > .controls {
+	opacity: 0;
 	display: none;
+	-webkit-transition: all 400ms ease-in-out;
+	-moz-transition: all 400ms ease-in-out;
+	-o-transition: all 400ms ease-in-out;
+	transition: all 400ms ease-in-out;
 }
+
+.focused {
+	-webkit-transition: all 400ms ease-in-out;
+	-moz-transition: all 400ms ease-in-out;
+	-o-transition: all 400ms ease-in-out;
+	transition: all 400ms ease-in-out;
+
+	opacity: 1;
+} */
 
 .tool > .preview > h1:hover {
 	font-size: 26pt;
