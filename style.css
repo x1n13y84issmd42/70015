@@ -15,6 +15,7 @@
 .tool.unfocused > .controls {
 	opacity: 0;
 	background-color: white;
+	display: none;
 
 	transition: opacity 200ms ease-in-out, background-color 200ms ease-in-out;
 }
