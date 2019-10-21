@@ -68,6 +68,13 @@
     padding: 12px;
 	letter-spacing: 1pt;
 	margin-bottom: 2em;
+	border: 2px #99DDFF solid;
+}
+
+.tool > .controls > textarea[disabled],
+.tool > .controls > input[type=text][disabled] {
+	border: 1px #AAA solid;
+    background: #F3F3F3;
 }
 
 .tool .subcontrols {
