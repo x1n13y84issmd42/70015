@@ -1,19 +1,23 @@
 #!/bin/bash
 
+# Folders to watch for changes in.
 WATCHME=("./tools" "./tpl")
 
 echo "Watching" ${WATCHME[@]}
 
+# Logging function.
 function log {
 	echo -e "\e[36mwatch\e[0m" $@ >&2
 }
 
+# Gets last modification time for a file.
 function mtime {
 	stat -c %Y "$1"
 }
 
 LASTMOD=0
 
+# Loops through files in the $WATCHME dirs looking for the ones updated after the $LASTMOD time.
 function findLastMTime {
 	local MT=$LASTMOD
 	for MASK in ${WATCHME[@]}; do
@@ -35,6 +39,7 @@ function findLastMTime {
 	echo $MT
 }
 
+# Runs findLastMTime every second and triggers cmd/build if there were changes.
 while [[ 1 = 1 ]]; do
 	MT=$(findLastMTime)
 
