@@ -1,9 +1,17 @@
 <div class="tool unfocused col3" id="unixtime" data-tag="unixtime">
 	<div class="preview"><h1>Unixtime</h1></div>
 	<div class="controls smaller">
-		<label for="unixtime-inTimestamp">Unixtime:</label>
-		<input type="text" class="inTimestamp" id="unixtime-inTimestamp"  autofocus>
-		<p class="outDate"></p>
+		<label for="unixtime-inTimestamp">Unixtime</label>
+		<input type="text" class="inTimestamp" id="unixtime-inTimestamp" autofocus>
+		<div class="left">
+			<div class="typographyDate">
+				<p class="l1">&nbsp;</p>
+			</div>
+		</div>
+
+		<div class="right">
+			<p class="outDate"></p>
+		</div>
 	</div>
 
 	<script>
@@ -11,12 +19,60 @@
 			inTS: (e) => e.querySelectorAll('.inTimestamp')[0],
 			outDate: (e) => e.querySelectorAll('.outDate')[0],
 		});
-		
+
 		unixtime.convert = function() {
 			let d = new Date();
 			d.setTime(unixtime.inTS.value + "000")
 			unixtime.outDate.innerHTML = d.toString();
+			typographyDate(d);
 		};
+
+		function typographyDate(d) {
+			let timezone = undefined;
+			let eTZT = document.createElement("p");
+			let opts = {
+				timezone,
+				weekday: "long",
+				month: "long",
+				year: "numeric",
+				day: "numeric",
+				hour: "numeric",
+				minute: "numeric",
+				second: "numeric",
+			};
+			let locale = "en-US";
+			let weekday = d.toLocaleDateString(locale, {timezone, weekday: "long"});
+			let weekdayClass = "l" + weekday.length;
+			let month = d.toLocaleDateString(locale, {timezone, month: "long", day: "numeric"});
+			let monthClass = "l" + month.length;
+			let year = d.toLocaleDateString(locale, {timezone, year: "numeric"});
+			let yearClass = "l" + year.length;
+			let time = d.toLocaleDateString(locale, {timezone, hour: "numeric", minute: "numeric", second: "numeric"});
+			let timeClass = "l" + time.length;
+
+			let weekdayE = document.createElement("p");
+			weekdayE.classList.add("weekday", weekdayClass);
+			weekdayE.innerHTML = weekday;
+			let monthE = document.createElement("p");
+			monthE.classList.add("month", monthClass);
+			monthE.innerHTML = month;
+			let yearE = document.createElement("p");
+			yearE.classList.add("year", yearClass);
+			yearE.innerHTML = year;
+			let timeE = document.createElement("p");
+			timeE.classList.add("time", timeClass);
+			timeE.innerHTML = time;
+
+			let tdE = unixtime.$(".typographyDate")[0];
+
+			while (tdE.firstChild)
+				tdE.removeChild(tdE.firstChild)
+
+			tdE.appendChild(weekdayE);
+			tdE.appendChild(monthE);
+			tdE.appendChild(yearE);
+			tdE.appendChild(timeE);
+		}
 		
 		unixtime.inTS.oninput = unixtime.inTS.onchange = unixtime.convert;
 		</script>

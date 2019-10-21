@@ -29,13 +29,20 @@
 	width: 60%;
 }
 
-.tool > .controls {
-	padding: 5% 10%;
-	width: 80%;
-	height: 100%;
+.tool > .controls .left {
+	float: left;
+	width: 50%;
+}
+
+.tool > .controls .right {
+	float: right;
+	width: 50%;
 }
 
 .tool > .controls {
+	padding: 5% 10%;
+	width: 80%;
+	/* height: 100%; */
 	opacity: 1;
 	background-color: white;
 	transition: opacity 200ms ease-in-out, background-color 200ms ease-in-out;
@@ -71,7 +78,7 @@
 
 .tool .subcontrols a.copy {
 	margin-left: 20px;
-    color: #333;
+    color: #00BBFF;
     text-decoration: none;
     float: right;
 	font-size: 16pt;
@@ -110,7 +117,7 @@
 	position: absolute;
 	right: 2%;
 	top: 2%;
-	color: #bbb;
+	color: #00BBFF;
 	cursor: pointer;
 }
 
@@ -141,3 +148,90 @@
 	-moz-transition: all 100ms ease-in-out;
 	-o-transition: all 100ms ease-in-out;
 }
+
+.timezones > p {
+	opacity: 0;
+	font-family: Quicksand;
+}
+
+.timezones > p.v {
+	opacity: 1;
+	font-family: Quicksand;
+	transition: all 400ms ease-in-out;
+	-webkit-transition: all 400ms ease-in-out;
+	-moz-transition: all 400ms ease-in-out;
+	-o-transition: all 400ms ease-in-out;
+}
+							
+.timezones > p > i {
+	margin-right: 20px;
+	font-family: inherit;
+	display: inline-block;
+	width: 110px;
+	font-style: normal;
+}
+
+.timezones > p > span {
+	font-family: inherit;
+	font-size: 125%;
+}
+
+#unixtime .typographyDate {
+	font-family: Share Tech Mono;
+}
+
+#unixtime .typographyDate > * {
+	font-family: inherit;
+	line-height: 90%;
+}
+
+#unixtime .typographyDate > .l1 {font-size: 500.00pt;}
+#unixtime .typographyDate > .l2 {font-size: 250.00pt;}
+#unixtime .typographyDate > .l3 {font-size: 166.67pt;}
+#unixtime .typographyDate > .l4 {font-size: 125.00pt;}
+#unixtime .typographyDate > .l5 {font-size: 100.00pt;}
+#unixtime .typographyDate > .l6 {font-size: 83.33pt;}
+#unixtime .typographyDate > .l7 {font-size: 71.43pt;}
+#unixtime .typographyDate > .l8 {font-size: 62.50pt;}
+#unixtime .typographyDate > .l9 {font-size: 55.56pt;}
+#unixtime .typographyDate > .l10 {font-size: 50.00pt;}
+#unixtime .typographyDate > .l11 {font-size: 45.45pt;}
+#unixtime .typographyDate > .l12 {font-size: 41.67pt;}
+#unixtime .typographyDate > .l13 {font-size: 38.46pt;}
+#unixtime .typographyDate > .l14 {font-size: 35.71pt;}
+#unixtime .typographyDate > .l15 {font-size: 33.33pt;}
+#unixtime .typographyDate > .l16 {font-size: 31.25pt;}
+#unixtime .typographyDate > .l17 {font-size: 29.41pt;}
+#unixtime .typographyDate > .l18 {font-size: 27.78pt;}
+#unixtime .typographyDate > .l19 {font-size: 26.32pt;}
+#unixtime .typographyDate > .l20 {font-size: 25.00pt;}
+#unixtime .typographyDate > .l21 {font-size: 23.81pt;}
+#unixtime .typographyDate > .l22 {font-size: 22.73pt;}
+#unixtime .typographyDate > .l23 {font-size: 21.74pt;}
+#unixtime .typographyDate > .l24 {font-size: 20.83pt;}
+#unixtime .typographyDate > .l25 {font-size: 20.00pt;}
+#unixtime .typographyDate > .l26 {font-size: 19.23pt;}
+#unixtime .typographyDate > .l27 {font-size: 18.52pt;}
+#unixtime .typographyDate > .l28 {font-size: 17.86pt;}
+#unixtime .typographyDate > .l29 {font-size: 17.24pt;}
+#unixtime .typographyDate > .l30 {font-size: 16.67pt;}
+#unixtime .typographyDate > .l31 {font-size: 16.13pt;}
+#unixtime .typographyDate > .l32 {font-size: 15.63pt;}
+#unixtime .typographyDate > .l33 {font-size: 15.15pt;}
+#unixtime .typographyDate > .l34 {font-size: 14.71pt;}
+#unixtime .typographyDate > .l35 {font-size: 14.29pt;}
+#unixtime .typographyDate > .l36 {font-size: 13.89pt;}
+#unixtime .typographyDate > .l37 {font-size: 13.51pt;}
+#unixtime .typographyDate > .l38 {font-size: 13.16pt;}
+#unixtime .typographyDate > .l39 {font-size: 12.82pt;}
+#unixtime .typographyDate > .l40 {font-size: 12.50pt;}
+#unixtime .typographyDate > .l41 {font-size: 12.20pt;}
+#unixtime .typographyDate > .l42 {font-size: 11.90pt;}
+#unixtime .typographyDate > .l43 {font-size: 11.63pt;}
+#unixtime .typographyDate > .l44 {font-size: 11.36pt;}
+#unixtime .typographyDate > .l45 {font-size: 11.11pt;}
+#unixtime .typographyDate > .l46 {font-size: 10.87pt;}
+#unixtime .typographyDate > .l47 {font-size: 10.64pt;}
+#unixtime .typographyDate > .l48 {font-size: 10.42pt;}
+#unixtime .typographyDate > .l49 {font-size: 10.20pt;}
+#unixtime .typographyDate > .l50 {font-size: 10.00pt;}
