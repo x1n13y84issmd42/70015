@@ -38,7 +38,9 @@
 					this[p] = props[p](this.E);
 				}
 
-				E.onclick = () => focus(id);
+				E.querySelector('.preview').onclick = () => {
+					focus(id);
+				}
 
 				let ctrls = E.querySelector(".controls");
 				let eClose = document.createElement("a");
@@ -47,6 +49,11 @@
 				eClose.onclick = (e) => {unfocus(id); e.preventDefault();e.cancelBubble=true;}
 				ctrls.append(eClose);
 			}
+
+			Tool.prototype.$ = function(s) {
+				return this.E.querySelectorAll(s);
+			}
+
 		</script>
 	</head>
 	<body>
