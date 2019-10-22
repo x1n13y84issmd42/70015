@@ -54,6 +54,42 @@
 				return this.E.querySelectorAll(s);
 			}
 
+			Tool.prototype.T = function(s, v) {
+				this.tplNodes(this.$(s));				
+			}
+
+			Tool.prototype.tplNodes = function(nodes, v) {
+				for (e of nodes) {
+					switch (e.tagName) {
+						case "INPUT":
+						case "TEXTAREA":
+							e.value = v;
+						break;
+
+						default:
+							e.innerHTML = v;
+						break;
+					}
+				}
+			}
+
+			Tool.prototype.Component = function(s) {
+				let args = Array.prototype.slice.apply(arguments);
+				let compID = args.shift();
+				let compE = this.$(`.components .${compID}`)[0];
+
+				if (compE) {
+					compE = compE.cloneNode(true);
+
+					for (let aI in args) {
+						let nodes = compE.querySelectorAll(`[data-arg="${aI}"]`);
+						this.tplNodes(nodes, args[aI])
+					}
+
+					return compE;
+				}
+			}
+
 		</script>
 	</head>
 	<body>
@@ -210,23 +246,23 @@
 			let locale = "en-US";
 			let weekday = d.toLocaleDateString(locale, {timezone, weekday: "long"});
 			let weekdayClass = "l" + weekday.length;
+			let weekdayE = document.createElement("p");
 			let month = d.toLocaleDateString(locale, {timezone, month: "long", day: "numeric"});
 			let monthClass = "l" + month.length;
+			let monthE = document.createElement("p");
 			let year = d.toLocaleDateString(locale, {timezone, year: "numeric"});
 			let yearClass = "l" + year.length;
+			let yearE = document.createElement("p");
 			let time = d.toLocaleDateString(locale, {timezone, hour: "numeric", minute: "numeric", second: "numeric"});
 			let timeClass = "l" + time.length;
+			let timeE = document.createElement("p");
 
-			let weekdayE = document.createElement("p");
 			weekdayE.classList.add("weekday", weekdayClass);
 			weekdayE.innerHTML = weekday;
-			let monthE = document.createElement("p");
 			monthE.classList.add("month", monthClass);
 			monthE.innerHTML = month;
-			let yearE = document.createElement("p");
 			yearE.classList.add("year", yearClass);
 			yearE.innerHTML = year;
-			let timeE = document.createElement("p");
 			timeE.classList.add("time", timeClass);
 			timeE.innerHTML = time;
 
@@ -244,7 +280,7 @@
 		unixtime.inTS.oninput = unixtime.inTS.onchange = unixtime.convert;
 		</script>
 </div><div class="tool unfocused col1" id="urldecode" data-tag="url encode decode">
-	<div class="preview"><h1>URL De-/Encode</h1></div>
+	<div class="preview"><h1>URL Transcode</h1></div>
 	<div class="controls smaller">
 		<label for="urldecode-encinput">URL-encoded string</label>
 		<input type="text" class="encinput" id="urldecode-encinput" autofocus tabindex="11">
@@ -269,6 +305,86 @@
 		urldecoder.encoded.oninput = urldecoder.encoded.onchange = urldecoder.decode;
 		urldecoder.decoded.oninput = urldecoder.decoded.onchange = urldecoder.encode;
 	</script>
+</div><div class="tool unfocused" id="urlparse" data-tag="urlparse">
+	<div class="preview"><h1>URL Parser</h1></div>
+	<div class="controls smaller">
+		<label for="urlparse-url">URL</label>
+		<input type="text" name="urlparse-url" id="urlparse-url" spellcheck="false" autofocus>
+
+		<div class="fields">
+		</div>
+	</div>
+
+	<script>
+		let urlparse = new Tool("urlparse", {
+			URL: () => document.getElementById("urlparse-url")
+		})
+
+		urlparse.URL.onchange = urlparse.URL.oninput = () => {
+			let fields = urlparse.$(".fields")[0];
+			while (fields.firstChild)
+				fields.removeChild(fields.firstChild);
+
+			let url = new URL(urlparse.URL.value);
+			
+			if (url.protocol) {
+				fields.appendChild(urlparse.Component("urlprop", "Protocol", url.protocol));
+			}
+
+			if (url.hostname) {
+				fields.appendChild(urlparse.Component("urlprop", "Domain", url.hostname));
+			}
+
+			if (url.username) {
+				fields.appendChild(urlparse.Component("urlprop", "Username", url.username));
+			}
+
+			if (url.password) {
+				fields.appendChild(urlparse.Component("urlprop", "Password", url.password));
+			}
+
+			if (url.path) {
+				fields.appendChild(urlparse.Component("urlprop", "Path", url.path));
+			} else if (url.pathname) {
+				fields.appendChild(urlparse.Component("urlprop", "Path", url.pathname));
+			}
+
+			if (url.port) {
+				fields.appendChild(urlparse.Component("urlprop", "Port", url.port));
+			}
+
+			if (url.hash) {
+				fields.appendChild(urlparse.Component("urlprop", "Hash", url.hash));
+			}
+
+			/* if (url.search) {
+				fields.appendChild(urlparse.Component("urlprop", "Query string", url.search));
+			} */
+			
+			if (url.searchParams) {
+				fields.appendChild(urlparse.Component("urlprop-section", "Query parameters"));
+				for (let e of url.searchParams.entries()) {
+					fields.appendChild(urlparse.Component("urlprop-sub", e[0], e[1]));
+				}
+			}
+		};
+	</script>
+
+	<div class="components">
+		<div class="urlprop">
+			<span class="label" data-arg="0"></span>
+			<span class="value" data-arg="1"></span>
+		</div>
+		
+		<div class="urlprop urlprop-section">
+			<span class="label" data-arg="0"></span>
+		</div>
+		
+		<div class="urlprop urlprop-sub">
+			<span class="label" data-arg="0"></span>
+			<span class="value" data-arg="1"></span>
+		</div>
+	</div>
 </div>		</div>
 
 		<script>
@@ -277,6 +393,7 @@
 				tools.add('unixtime')
 				tools.add('base64')
 				tools.add('json')
+				tools.add('urlparse')
 				
 				let filter = document.getElementById("filter");
 				filter.onchange = filter.oninput = () => {

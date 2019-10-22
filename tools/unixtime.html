@@ -43,23 +43,23 @@
 			let locale = "en-US";
 			let weekday = d.toLocaleDateString(locale, {timezone, weekday: "long"});
 			let weekdayClass = "l" + weekday.length;
+			let weekdayE = document.createElement("p");
 			let month = d.toLocaleDateString(locale, {timezone, month: "long", day: "numeric"});
 			let monthClass = "l" + month.length;
+			let monthE = document.createElement("p");
 			let year = d.toLocaleDateString(locale, {timezone, year: "numeric"});
 			let yearClass = "l" + year.length;
+			let yearE = document.createElement("p");
 			let time = d.toLocaleDateString(locale, {timezone, hour: "numeric", minute: "numeric", second: "numeric"});
 			let timeClass = "l" + time.length;
+			let timeE = document.createElement("p");
 
-			let weekdayE = document.createElement("p");
 			weekdayE.classList.add("weekday", weekdayClass);
 			weekdayE.innerHTML = weekday;
-			let monthE = document.createElement("p");
 			monthE.classList.add("month", monthClass);
 			monthE.innerHTML = month;
-			let yearE = document.createElement("p");
 			yearE.classList.add("year", yearClass);
 			yearE.innerHTML = year;
-			let timeE = document.createElement("p");
 			timeE.classList.add("time", timeClass);
 			timeE.innerHTML = time;
 

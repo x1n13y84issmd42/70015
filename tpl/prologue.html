@@ -54,6 +54,42 @@
 				return this.E.querySelectorAll(s);
 			}
 
+			Tool.prototype.T = function(s, v) {
+				this.tplNodes(this.$(s));				
+			}
+
+			Tool.prototype.tplNodes = function(nodes, v) {
+				for (e of nodes) {
+					switch (e.tagName) {
+						case "INPUT":
+						case "TEXTAREA":
+							e.value = v;
+						break;
+
+						default:
+							e.innerHTML = v;
+						break;
+					}
+				}
+			}
+
+			Tool.prototype.Component = function(s) {
+				let args = Array.prototype.slice.apply(arguments);
+				let compID = args.shift();
+				let compE = this.$(`.components .${compID}`)[0];
+
+				if (compE) {
+					compE = compE.cloneNode(true);
+
+					for (let aI in args) {
+						let nodes = compE.querySelectorAll(`[data-arg="${aI}"]`);
+						this.tplNodes(nodes, args[aI])
+					}
+
+					return compE;
+				}
+			}
+
 		</script>
 	</head>
 	<body>

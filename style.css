@@ -1,7 +1,7 @@
 * {
 	margin: 0;
 	padding: 0;
-	font-family: sans-serif;
+	font-family: Quicksand;
 }
 
 .focused {
@@ -156,6 +156,10 @@
 	-o-transition: all 100ms ease-in-out;
 }
 
+.tool > .components {
+	display: none;
+}
+
 .timezones > p {
 	opacity: 0;
 	font-family: Quicksand;
@@ -242,3 +246,20 @@
 #unixtime .typographyDate > .l48 {font-size: 10.42pt;}
 #unixtime .typographyDate > .l49 {font-size: 10.20pt;}
 #unixtime .typographyDate > .l50 {font-size: 10.00pt;}
+
+.urlprop {
+	font-size: 16px;
+}
+
+.urlprop-sub {
+	margin-left: 50px;
+}
+
+.urlprop > .label {
+	display: inline-block;
+	width: 100px;
+}
+
+.urlprop > .value {
+	font-size: 22px;
+}

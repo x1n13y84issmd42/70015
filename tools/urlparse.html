@@ -1,0 +1,81 @@
+<div class="tool unfocused" id="urlparse" data-tag="urlparse">
+	<div class="preview"><h1>URL Parser</h1></div>
+	<div class="controls smaller">
+		<label for="urlparse-url">URL</label>
+		<input type="text" name="urlparse-url" id="urlparse-url" spellcheck="false" autofocus>
+
+		<div class="fields">
+		</div>
+	</div>
+
+	<script>
+		let urlparse = new Tool("urlparse", {
+			URL: () => document.getElementById("urlparse-url")
+		})
+
+		urlparse.URL.onchange = urlparse.URL.oninput = () => {
+			let fields = urlparse.$(".fields")[0];
+			while (fields.firstChild)
+				fields.removeChild(fields.firstChild);
+
+			let url = new URL(urlparse.URL.value);
+			
+			if (url.protocol) {
+				fields.appendChild(urlparse.Component("urlprop", "Protocol", url.protocol));
+			}
+
+			if (url.hostname) {
+				fields.appendChild(urlparse.Component("urlprop", "Domain", url.hostname));
+			}
+
+			if (url.username) {
+				fields.appendChild(urlparse.Component("urlprop", "Username", url.username));
+			}
+
+			if (url.password) {
+				fields.appendChild(urlparse.Component("urlprop", "Password", url.password));
+			}
+
+			if (url.path) {
+				fields.appendChild(urlparse.Component("urlprop", "Path", url.path));
+			} else if (url.pathname) {
+				fields.appendChild(urlparse.Component("urlprop", "Path", url.pathname));
+			}
+
+			if (url.port) {
+				fields.appendChild(urlparse.Component("urlprop", "Port", url.port));
+			}
+
+			if (url.hash) {
+				fields.appendChild(urlparse.Component("urlprop", "Hash", url.hash));
+			}
+
+			/* if (url.search) {
+				fields.appendChild(urlparse.Component("urlprop", "Query string", url.search));
+			} */
+			
+			if (url.searchParams) {
+				fields.appendChild(urlparse.Component("urlprop-section", "Query parameters"));
+				for (let e of url.searchParams.entries()) {
+					fields.appendChild(urlparse.Component("urlprop-sub", e[0], e[1]));
+				}
+			}
+		};
+	</script>
+
+	<div class="components">
+		<div class="urlprop">
+			<span class="label" data-arg="0"></span>
+			<span class="value" data-arg="1"></span>
+		</div>
+		
+		<div class="urlprop urlprop-section">
+			<span class="label" data-arg="0"></span>
+		</div>
+		
+		<div class="urlprop urlprop-sub">
+			<span class="label" data-arg="0"></span>
+			<span class="value" data-arg="1"></span>
+		</div>
+	</div>
+</div>
