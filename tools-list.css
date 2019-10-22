@@ -76,17 +76,6 @@
 	/* position: relative; */
 }
 
-#filter {
-	position: absolute;
-	left: 50%;
-	width: 800px;
-	margin-left: -400px;
-	top: 50%;
-	margin-top: -100px;
-	font-size: 32pt;
-	font-family: Quicksand;
-}
-
 .tool > .controls {
 	position: absolute;
 	left: 0;
