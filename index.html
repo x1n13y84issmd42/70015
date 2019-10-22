@@ -224,24 +224,23 @@
 			s.onchange = json.update;
 		}
 
-		function JSON1Liner(name, v, quote, escapeQuotes) {
+		function JSON1Liner(name, v, quoteNames, escapeQuotes) {
+			let quote = (s) => escapeQuotes ? `\\"${s}\\"` : `"${s}"`;
 			let namePrefix = '';
-			name && (namePrefix = name);
-			name && quote && (namePrefix = escapeQuotes ? `\\"${namePrefix}\\"` : `"${namePrefix}"`);
-			namePrefix && (namePrefix += ':');
+			name && (namePrefix = name) && quoteNames && (namePrefix = quote(namePrefix)) && (namePrefix += ':');
 
 			switch (typeof v) {
 				case 'string':
-					return `${namePrefix}"${v}"`;
+					return namePrefix + quote(v);
 
 				case 'number':
 					return namePrefix + v.toString();
 
 				case 'object':
 					if (v instanceof Array) {
-						return `${namePrefix}[` + v.map((vv) => JSON1Liner(undefined, vv, quote, escapeQuotes)).join(',') + "]";
+						return `${namePrefix}[` + v.map((vv) => JSON1Liner(undefined, vv, quoteNames, escapeQuotes)).join(',') + "]";
 					} else {
-						return `${namePrefix}{` + Object.keys(v).map((vk) => JSON1Liner(vk, v[vk], quote, escapeQuotes)) + "}";
+						return `${namePrefix}{` + Object.keys(v).map((vk) => JSON1Liner(vk, v[vk], quoteNames, escapeQuotes)) + "}";
 					}
 					break
 			}
