@@ -2,8 +2,8 @@
 	<div class="preview"><h1>JSON Format</h1></div>
 	<div class="controls">
 		<label for="json-jsonInput">JSON input</label>
-		<textarea class="jsonInput" id="json-jsonInput" autofocus spellcheck="false"></textarea>
-		<p class="jsonErr error"></p>
+		<textarea class="jsonInput" id="json-jsonInput" autofocus spellcheck="false" style="margin-bottom:0.5em;"></textarea>
+		<p class="jsonErr error"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
 		
 		<label for="json-1liner">One-liner JSON</label>
 		<div class="subcontrols" data-for="json-1liner">
@@ -62,9 +62,9 @@
 			let v;
 			try {
 				v = JSON.parse(json.inJSON.value);
-				json.err.innerHTML = '';
+				json.Error('jsonErr', '');
 			} catch (e) {
-				json.err.innerHTML = e.message
+				json.Error('jsonErr', e.message);
 			}
 
 			json.prettyPrint(v);

@@ -49,10 +49,18 @@
 }
 
 .tool > .controls > .error {
-	background-color: red;
-	color: white;
+	color: red;
 	font-size: 16pt;
 	font-family: Quicksand;
+	visibility: hidden;
+}
+
+.tool > .controls > .error.shown {
+	visibility: visible;
+}
+
+.tool > .controls > .error > i.fas {
+	margin-right: 5px;
 }
 
 .tool > .controls > label {
@@ -302,4 +310,8 @@
 	text-align: center;
 	font-size: 16px;
 	color: #666;
+}
+
+#json .jsonErr {
+	margin-bottom: 2em;
 }

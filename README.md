@@ -11,3 +11,4 @@ A small set of utility functions often useful in development with clean interfac
 * [ ] Switch tools / move to another tool function.
 * [ ] Locale / UI language selection.
 * [ ] Remember last input for tools and use it as default on first focus.
+* [ ] Unixtime: time zone selection.

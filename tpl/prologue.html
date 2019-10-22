@@ -90,6 +90,19 @@
 				}
 			}
 
+			Tool.prototype.Error = function(id, err) {
+				let errEs = this.$(`.${id}`);
+				for (let errE of errEs) {
+					if (err) {
+						errE.classList.add('shown');
+						errE.firstChild.nextSibling.innerHTML = err;
+					} else {
+						errE.classList.remove('shown');
+						errE.firstChild.nextSibling.innerHTML = '&nbsp;';
+					}
+				}
+			}
+
 		</script>
 	</head>
 	<body>
