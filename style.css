@@ -257,7 +257,9 @@
 
 .urlprop > .label {
 	display: inline-block;
-	width: 100px;
+    width: 100px;
+    top: -1px;
+    position: relative;
 }
 
 .urlprop > .value {
