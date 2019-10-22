@@ -157,8 +157,8 @@
 				<input type="checkbox" name="json-1liner-quote-identifiers" id="json-1liner-quote-identifiers">
 				Quote names
 			</label>
-			<label for="json-1liner-escape">
-				<input type="checkbox" name="json-1liner-escape" id="json-1liner-escape">
+			<label for="json-1liner-escape-quotes">
+				<input type="checkbox" name="json-1liner-escape-quotes" id="json-1liner-escape-quotes">
 				Escape the quotes
 			</label>
 			<a class="copy"><span>COPY</span><i class="far fa-copy"></i></a>
@@ -182,6 +182,9 @@
 			outPretty: (e) => e.querySelectorAll('#json-pretty')[0],
 			out1liner: (e) => e.querySelectorAll('#json-1liner')[0],
 			indentRadios: (e) => e.querySelectorAll('input[name=json-pretty-indent]'),
+			switches: (e) => e.querySelectorAll('input[type=radio],input[type=checkbox]'),
+			quoteCheck: (e) => document.getElementById('json-1liner-quote-identifiers'),
+			escapeQuotesCheck: (e) => document.getElementById('json-1liner-escape-quotes'),
 			err: (e) => e.querySelectorAll('.jsonErr')[0],
 		});
 
@@ -200,7 +203,7 @@
 
 		json.oneliner = function(v) {
 			if (v) {
-				json.out1liner.value = JSON.stringify(v);
+				json.out1liner.value = JSON1Liner(undefined, v, json.quoteCheck.checked, json.escapeQuotesCheck.checked);
 			}
 		}
 
@@ -217,8 +220,31 @@
 			json.oneliner(v);
 		}
 
-		for (let r of json.indentRadios) {
-			r.onchange = json.update;
+		for (let s of json.switches) {
+			s.onchange = json.update;
+		}
+
+		function JSON1Liner(name, v, quote, escapeQuotes) {
+			let namePrefix = '';
+			name && (namePrefix = name);
+			name && quote && (namePrefix = escapeQuotes ? `\\"${namePrefix}\\"` : `"${namePrefix}"`);
+			namePrefix && (namePrefix += ':');
+
+			switch (typeof v) {
+				case 'string':
+					return `${namePrefix}"${v}"`;
+
+				case 'number':
+					return namePrefix + v.toString();
+
+				case 'object':
+					if (v instanceof Array) {
+						return `${namePrefix}[` + v.map((vv) => JSON1Liner(undefined, vv, quote, escapeQuotes)).join(',') + "]";
+					} else {
+						return `${namePrefix}{` + Object.keys(v).map((vk) => JSON1Liner(vk, v[vk], quote, escapeQuotes)) + "}";
+					}
+					break
+			}
 		}
 
 		json.inJSON.oninput = json.inJSON.onchange = json.update;
