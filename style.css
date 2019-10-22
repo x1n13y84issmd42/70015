@@ -297,3 +297,9 @@
 .urlprop > .value {
 	font-size: 22px;
 }
+
+.tool .controls .bothways {
+	text-align: center;
+	font-size: 16px;
+	color: #666;
+}
