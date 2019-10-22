@@ -7,6 +7,10 @@
 		
 		<label for="json-1liner">One-liner JSON</label>
 		<div class="subcontrols" data-for="json-1liner">
+			<label for="json-1liner-quote-identifiers">
+				<input type="checkbox" name="json-1liner-quote-identifiers" id="json-1liner-quote-identifiers">
+				Quote names
+			</label>
 			<label for="json-1liner-escape">
 				<input type="checkbox" name="json-1liner-escape" id="json-1liner-escape">
 				Escape the quotes
@@ -19,8 +23,8 @@
 		<div class="subcontrols" data-for="json-pretty">
 			<label for="">Indent with</label>
 			<label for="json-pretty-indent-tabs"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-tabs" value="	" checked>tabs</label>
-			<label for="json-pretty-indent-2spaces"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-2spaces" value="  ">2 spaces</label>
 			<label for="json-pretty-indent-4spaces"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-4spaces" value="    ">4 spaces</label>
+			<label for="json-pretty-indent-2spaces"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-2spaces" value="  ">2 spaces</label>
 			<a class="copy"><span>COPY</span><i class="far fa-copy"></i></a>
 		</div>
 		<textarea id="json-pretty" rows="8" spellcheck="false" disabled></textarea>
@@ -35,14 +39,7 @@
 			err: (e) => e.querySelectorAll('.jsonErr')[0],
 		});
 
-		json.prettyPrint = function() {
-			let v;
-			try {
-				v = JSON.parse(json.inJSON.value);
-			} catch (e) {
-				json.err.innerHTML = e.message
-			}
-
+		json.prettyPrint = function(v) {
 			if (v) {
 				let indent = "\t";
 				for (let r of json.indentRadios) {
@@ -55,22 +52,23 @@
 			}
 		};
 
-		json.oneliner = function() {
-			let v;
-			try {
-				v = JSON.parse(json.inJSON.value);
-			} catch (e) {
-				json.err.innerHTML = e.message
-			}
-
+		json.oneliner = function(v) {
 			if (v) {
 				json.out1liner.value = JSON.stringify(v);
 			}
 		}
 
 		json.update = () => {
-			json.prettyPrint();
-			json.oneliner();
+			let v;
+			try {
+				v = JSON.parse(json.inJSON.value);
+				json.err.innerHTML = '';
+			} catch (e) {
+				json.err.innerHTML = e.message
+			}
+
+			json.prettyPrint(v);
+			json.oneliner(v);
 		}
 
 		for (let r of json.indentRadios) {
