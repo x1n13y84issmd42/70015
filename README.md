@@ -15,3 +15,4 @@ A small set of utility functions often useful in development, with clean interfa
 * [x] More advanced build system (multiple file lists + outputs, like for HTML, scripts and styles).
 * [ ] Keyboard shortcuts / keystrokes.
 * [ ] Tool: CSS colors (RGB-HSL-HEX conversion).
+* [ ] Tool: Hasher (MD5/SHA*/etc hashes).
