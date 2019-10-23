@@ -5,34 +5,8 @@
 		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 		<link href="./style.css" rel="stylesheet">
 		<script src="./app.js"></script>
-		<script>
-			let tools = new Tools()
-
-			function focus(id) {
-				let el = document.getElementById(id);
-				if (el) {
-					el.classList.replace('unfocused', 'focused');
-					el.focus();
-					let af = el.querySelector("[autofocus]")
-					if (af) {
-						af.focus();
-					}
-				}
-
-				document.body.onkeydown = (e) => {
-					if (e.key == 'Escape') {
-						unfocus(id);
-					}
-				}
-			}
-
-			function unfocus(id) {
-				tools.unfocus(id);
-				filter.focus();
-			}
-		</script>
 	</head>
-	<body>
+	<body style="display:none;">
 		<div id="front-center">
 			<input type="text" name="" id="filter" autofocus>
 			<div class="footer">
@@ -43,6 +17,10 @@
 				<span class="c">With elitism in ♥</span>
 			</div>
 		</div>
+
+		<script>
+			let tools = new Tools()
+		</script>
 
 		<div id="tools"><div class="tool unfocused col2" id="base64" data-tag="base64">
 	<div class="preview"><h1>Base64</h1></div>
@@ -75,7 +53,7 @@
 			};
 		}
 
-		let base64 = new TBase64("base64");
+		tools.add(new TBase64("base64"));
 	</script>
 </div><div class="tool unfocused col3" id="json" data-tag="json format">
 	<div class="preview"><h1>JSON Format</h1></div>
@@ -187,7 +165,7 @@
 			}
 		}
 
-		let json = new TJSON('json');
+		tools.add(new TJSON('json'));
 	</script>
 
 	<style>
@@ -277,7 +255,7 @@
 			}
 		}
 
-		let unixtime = new TUnixtime("unixtime");
+		tools.add(new TUnixtime("unixtime"));
 
 	</script>
 </div><div class="tool unfocused col1" id="urldecode" data-tag="url encode decode">
@@ -311,7 +289,7 @@
 
 		}
 
-		let urldecoder = new TURLTranscoder("urldecode");
+		tools.add(new TURLTranscoder("urldecode"));
 
 	</script>
 
@@ -481,7 +459,7 @@
 						fields.appendChild(this.Component("urlprop", "Query string", url.search));
 					} */
 					
-					if (url.searchParams) {
+					if (url.search && url.searchParams) {
 						fields.appendChild(this.Component("urlprop-section", "Query"));
 						for (let e of url.searchParams.entries()) {
 							fields.appendChild(this.Component("urlprop-sub", e[0], e[1]));
@@ -491,7 +469,7 @@
 			}
 		}
 
-		let urlparse = new TURLParser("urlparse");
+		tools.add(new TURLParser("urlparse"));
 		
 	</script>
 
@@ -514,13 +492,17 @@
 </div>		</div>
 
 		<script>
-			document.body.onload = () => {
-				tools.add('urldecode')
-				tools.add('unixtime')
-				tools.add('base64')
-				tools.add('json')
-				tools.add('urlparse')
-				
+			function focus(id) {
+				tools.focus(id);
+			}
+
+			function unfocus(id) {
+				tools.unfocus(id);
+				window.location.hash = '';
+				filter.focus();
+			}
+
+			document.body.onload = () => {				
 				let filter = document.getElementById("filter");
 				filter.onchange = filter.oninput = () => {
 					tools.filter(filter.value);
@@ -539,6 +521,12 @@
 						tools.filter("");
 					}
 				}
+
+				if (window.location.hash) {
+					tools.focus(window.location.hash.substr(1));
+				}
+
+				tools.render();
 			}
 		</script>
 	</body>

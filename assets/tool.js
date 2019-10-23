@@ -5,6 +5,8 @@ class Tool {
 		E.querySelector('.preview').onclick = () => {
 			focus(id);
 		}
+
+		this.ID = id;
 	
 		let ctrls = E.querySelector(".controls");
 		let eClose = document.createElement("a");

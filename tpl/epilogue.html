@@ -1,13 +1,17 @@
 		</div>
 
 		<script>
-			document.body.onload = () => {
-				tools.add('urldecode')
-				tools.add('unixtime')
-				tools.add('base64')
-				tools.add('json')
-				tools.add('urlparse')
-				
+			function focus(id) {
+				tools.focus(id);
+			}
+
+			function unfocus(id) {
+				tools.unfocus(id);
+				window.location.hash = '';
+				filter.focus();
+			}
+
+			document.body.onload = () => {				
 				let filter = document.getElementById("filter");
 				filter.onchange = filter.oninput = () => {
 					tools.filter(filter.value);
@@ -26,6 +30,12 @@
 						tools.filter("");
 					}
 				}
+
+				if (window.location.hash) {
+					tools.focus(window.location.hash.substr(1));
+				}
+
+				tools.render();
 			}
 		</script>
 	</body>

@@ -55,7 +55,7 @@
 						fields.appendChild(this.Component("urlprop", "Query string", url.search));
 					} */
 					
-					if (url.searchParams) {
+					if (url.search && url.searchParams) {
 						fields.appendChild(this.Component("urlprop-section", "Query"));
 						for (let e of url.searchParams.entries()) {
 							fields.appendChild(this.Component("urlprop-sub", e[0], e[1]));
@@ -65,7 +65,7 @@
 			}
 		}
 
-		let urlparse = new TURLParser("urlparse");
+		tools.add(new TURLParser("urlparse"));
 		
 	</script>
 

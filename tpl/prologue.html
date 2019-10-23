@@ -4,34 +4,8 @@
 		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 		<link href="./style.css" rel="stylesheet">
 		<script src="./app.js"></script>
-		<script>
-			let tools = new Tools()
-
-			function focus(id) {
-				let el = document.getElementById(id);
-				if (el) {
-					el.classList.replace('unfocused', 'focused');
-					el.focus();
-					let af = el.querySelector("[autofocus]")
-					if (af) {
-						af.focus();
-					}
-				}
-
-				document.body.onkeydown = (e) => {
-					if (e.key == 'Escape') {
-						unfocus(id);
-					}
-				}
-			}
-
-			function unfocus(id) {
-				tools.unfocus(id);
-				filter.focus();
-			}
-		</script>
 	</head>
-	<body>
+	<body style="display:none;">
 		<div id="front-center">
 			<input type="text" name="" id="filter" autofocus>
 			<div class="footer">
@@ -42,5 +16,9 @@
 				<span class="c">With elitism in ♥</span>
 			</div>
 		</div>
+
+		<script>
+			let tools = new Tools()
+		</script>
 
 		<div id="tools">
