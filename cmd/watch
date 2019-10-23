@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Folders to watch for changes in.
-WATCHME=("./tools" "./tpl")
+WATCHME=("./tools" "./tpl" "./assets")
 
 echo "Watching" ${WATCHME[@]}
 
@@ -46,6 +46,7 @@ while [[ 1 = 1 ]]; do
 	if [[ $MT > $LASTMOD ]]; then
 		LASTMOD=$MT
 		log "Gotta build!"
+		echo ""
 		cmd/build
 		echo ""
 	fi

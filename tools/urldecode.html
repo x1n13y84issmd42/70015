@@ -9,20 +9,27 @@
 	</div>
 
 	<script>
-		let urldecoder = new Tool("urldecode", {
-			encoded: (e) => e.querySelectorAll('.encinput')[0],
-			decoded: (e) => e.querySelectorAll('.decinput')[0],
-		});
+		class TURLTranscoder extends Tool {
+			constructor(id) {
+				super(id)
 
-		urldecoder.decode = function() {
-			urldecoder.decoded.value = decodeURIComponent(urldecoder.encoded.value);
-		};
-		
-		urldecoder.encode = function() {
-			urldecoder.encoded.value = encodeURIComponent(urldecoder.decoded.value);
-		};
+				this.encoded = this.E.querySelectorAll('.encinput')[0];
+				this.decoded = this.E.querySelectorAll('.decinput')[0];
+				this.encoded.oninput = this.encoded.onchange = () => this.decode();
+				this.decoded.oninput = this.decoded.onchange = () => this.encode();
+			}
+	
+			decode() {
+				this.decoded.value = decodeURIComponent(this.encoded.value);
+			};
+			
+			encode() {
+				this.encoded.value = encodeURIComponent(this.decoded.value);
+			};
 
-		urldecoder.encoded.oninput = urldecoder.encoded.onchange = urldecoder.decode;
-		urldecoder.decoded.oninput = urldecoder.decoded.onchange = urldecoder.encode;
+		}
+
+		let urldecoder = new TURLTranscoder("urldecode");
+
 	</script>
 </div>

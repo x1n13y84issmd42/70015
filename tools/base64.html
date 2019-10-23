@@ -9,20 +9,26 @@
 	</div>
 
 	<script>
-		let base64 = new Tool("base64", {
-			inBase64: (e) => e.querySelectorAll('.base64Input')[0],
-			inAscii: (e) => e.querySelectorAll('.asciiInput')[0],
-		});
+		class TBase64 extends Tool {
+			constructor(id) {
+				super(id);
 
-		base64.decode = function() {
-			base64.inAscii.value = atob(base64.inBase64.value);
-		};
-		
-		base64.encode = function() {
-			base64.inBase64.value = btoa(base64.inAscii.value);
-		};
+				this.inBase64 = this.E.querySelectorAll('.base64Input')[0];
+				this.inAscii = this.E.querySelectorAll('.asciiInput')[0];
 
-		base64.inBase64.oninput = base64.inBase64.onchange = base64.decode;
-		base64.inAscii.oninput = base64.inAscii.onchange = base64.encode;
+				this.inBase64.oninput = this.inBase64.onchange = () => this.decode();
+				this.inAscii.oninput = this.inAscii.onchange = () => this.encode();
+			}
+
+			decode() {
+				this.inAscii.value = atob(this.inBase64.value);
+			};
+			
+			encode() {
+				this.inBase64.value = btoa(this.inAscii.value);
+			};
+		}
+
+		let base64 = new TBase64("base64");
 	</script>
 </div>

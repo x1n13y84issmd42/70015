@@ -1,4 +1,5 @@
 #!/bin/bash
+IFS=
 
 OUTFILE="index.html"
 
@@ -6,17 +7,28 @@ function log {
 	echo -e "\e[33mbuild\e[0m" $@ >&2
 }
 
-log "Building $OUTFILE"
 
-log "Adding a prologue"
-cat "tpl/prologue.html" > $OUTFILE
+function build {
+	local OUTFILE=$1
+	shift;
 
-for tool in ./tools/*; do
-	log "Adding " $tool
-	cat $tool >> $OUTFILE
-done
+	log "Building $OUTFILE"
 
-log "Adding an epilogue"
-cat "tpl/epilogue.html" >> $OUTFILE
+	echo "" > $OUTFILE
 
-log "Done."
+	local MASKS=($@)
+	for MASK in ${MASKS[@]}; do
+		local FILES=$(find "$MASK" -type f)
+		for file in ${FILES[@]}; do
+			log "  Adding " $file
+			cat $file >> $OUTFILE
+		done
+	done
+
+
+	log "$OUTFILE is ready.\n"
+}
+
+build index.html tpl/prologue.html tools/*.html tpl/epilogue.html
+build style.css assets/*.css
+build app.js assets/*.js

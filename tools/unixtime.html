@@ -15,65 +15,72 @@
 	</div>
 
 	<script>
-		let unixtime = new Tool("unixtime", {
-			inTS: (e) => e.querySelectorAll('.inTimestamp')[0],
-			outDate: (e) => e.querySelectorAll('.outDate')[0],
-		});
+		class TUnixtime extends Tool {
+			constructor(id) {
+				super(id);
 
-		unixtime.convert = function() {
-			let d = new Date();
-			d.setTime(unixtime.inTS.value + "000")
-			unixtime.outDate.innerHTML = d.toString();
-			typographyDate(d);
-		};
+				this.inTS = this.E.querySelectorAll('.inTimestamp')[0];
+				this.outDate = this.E.querySelectorAll('.outDate')[0];
 
-		function typographyDate(d) {
-			let timezone = undefined;
-			let eTZT = document.createElement("p");
-			let opts = {
-				timezone,
-				weekday: "long",
-				month: "long",
-				year: "numeric",
-				day: "numeric",
-				hour: "numeric",
-				minute: "numeric",
-				second: "numeric",
-			};
-			let locale = "en-US";
-			let weekday = d.toLocaleDateString(locale, {timezone, weekday: "long"});
-			let weekdayClass = "l" + weekday.length;
-			let weekdayE = document.createElement("p");
-			let month = d.toLocaleDateString(locale, {timezone, month: "long", day: "numeric"});
-			let monthClass = "l" + month.length;
-			let monthE = document.createElement("p");
-			let year = d.toLocaleDateString(locale, {timezone, year: "numeric"});
-			let yearClass = "l" + year.length;
-			let yearE = document.createElement("p");
-			let time = d.toLocaleDateString(locale, {timezone, hour: "numeric", minute: "numeric", second: "numeric"});
-			let timeClass = "l" + time.length;
-			let timeE = document.createElement("p");
+				this.inTS.oninput = this.inTS.onchange = () => this.convert();
+			}
 
-			weekdayE.classList.add("weekday", weekdayClass);
-			weekdayE.innerHTML = weekday;
-			monthE.classList.add("month", monthClass);
-			monthE.innerHTML = month;
-			yearE.classList.add("year", yearClass);
-			yearE.innerHTML = year;
-			timeE.classList.add("time", timeClass);
-			timeE.innerHTML = time;
+			convert() {
+				let d = new Date();
+				d.setTime(this.inTS.value + "000")
+				this.outDate.innerHTML = d.toString();
+				this.typographyDate(d);
+			}
 
-			let tdE = unixtime.$(".typographyDate")[0];
+			typographyDate(d) {
+				let timezone = undefined;
+				let eTZT = document.createElement("p");
+				let opts = {
+					timezone,
+					weekday: "long",
+					month: "long",
+					year: "numeric",
+					day: "numeric",
+					hour: "numeric",
+					minute: "numeric",
+					second: "numeric",
+				};
+				let locale = "en-US";
+				let weekday = d.toLocaleDateString(locale, {timezone, weekday: "long"});
+				let weekdayClass = "l" + weekday.length;
+				let weekdayE = document.createElement("p");
+				let month = d.toLocaleDateString(locale, {timezone, month: "long", day: "numeric"});
+				let monthClass = "l" + month.length;
+				let monthE = document.createElement("p");
+				let year = d.toLocaleDateString(locale, {timezone, year: "numeric"});
+				let yearClass = "l" + year.length;
+				let yearE = document.createElement("p");
+				let time = d.toLocaleDateString(locale, {timezone, hour: "numeric", minute: "numeric", second: "numeric"});
+				let timeClass = "l" + time.length;
+				let timeE = document.createElement("p");
 
-			while (tdE.firstChild)
-				tdE.removeChild(tdE.firstChild)
+				weekdayE.classList.add("weekday", weekdayClass);
+				weekdayE.innerHTML = weekday;
+				monthE.classList.add("month", monthClass);
+				monthE.innerHTML = month;
+				yearE.classList.add("year", yearClass);
+				yearE.innerHTML = year;
+				timeE.classList.add("time", timeClass);
+				timeE.innerHTML = time;
 
-			tdE.appendChild(weekdayE);
-			tdE.appendChild(monthE);
-			tdE.appendChild(yearE);
-			tdE.appendChild(timeE);
+				let tdE = this.$(".typographyDate")[0];
+
+				while (tdE.firstChild)
+					tdE.removeChild(tdE.firstChild)
+
+				tdE.appendChild(weekdayE);
+				tdE.appendChild(monthE);
+				tdE.appendChild(yearE);
+				tdE.appendChild(timeE);
+			}
 		}
-		
-		unixtime.inTS.oninput = unixtime.inTS.onchange = unixtime.convert;
-		</script>
+
+		let unixtime = new TUnixtime("unixtime");
+
+	</script>
 </div>

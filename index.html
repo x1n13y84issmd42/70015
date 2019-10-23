@@ -1,12 +1,12 @@
+
 <html>
 	<head>
 		<link href="https://fonts.googleapis.com/css?family=Abril+Fatface|Share+Tech+Mono|Bungee+Shade|Cinzel:400,700|Cute+Font|Faster+One|Monoton|Permanent+Marker|Quicksand:400,600,700|Special+Elite|Vibes&display=swap" rel="stylesheet">
 		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 		<link href="./style.css" rel="stylesheet">
-		<link href="./tools-list.css" rel="stylesheet">
-		<script src="./tools-list.js"></script>
+		<script src="./app.js"></script>
 		<script>
-			let tools = new Tools(400, 300, document.body)
+			let tools = new Tools()
 
 			function focus(id) {
 				let el = document.getElementById(id);
@@ -30,79 +30,6 @@
 				tools.unfocus(id);
 				filter.focus();
 			}
-
-			function Tool(id, props) {
-				let E = this.E = document.getElementById(id);
-
-				for (let p in props) {
-					this[p] = props[p](this.E);
-				}
-
-				E.querySelector('.preview').onclick = () => {
-					focus(id);
-				}
-
-				let ctrls = E.querySelector(".controls");
-				let eClose = document.createElement("a");
-				eClose.innerHTML = "<span>CLOSE</span><i>&#x1f7a8</i>";
-				eClose.classList.add("close");
-				eClose.onclick = (e) => {unfocus(id); e.preventDefault();e.cancelBubble=true;}
-				ctrls.append(eClose);
-			}
-
-			Tool.prototype.$ = function(s) {
-				return this.E.querySelectorAll(s);
-			}
-
-			Tool.prototype.T = function(s, v) {
-				this.tplNodes(this.$(s));				
-			}
-
-			Tool.prototype.tplNodes = function(nodes, v) {
-				for (e of nodes) {
-					switch (e.tagName) {
-						case "INPUT":
-						case "TEXTAREA":
-							e.value = v;
-						break;
-
-						default:
-							e.innerHTML = v;
-						break;
-					}
-				}
-			}
-
-			Tool.prototype.Component = function(s) {
-				let args = Array.prototype.slice.apply(arguments);
-				let compID = args.shift();
-				let compE = this.$(`.components .${compID}`)[0];
-
-				if (compE) {
-					compE = compE.cloneNode(true);
-
-					for (let aI in args) {
-						let nodes = compE.querySelectorAll(`[data-arg="${aI}"]`);
-						this.tplNodes(nodes, args[aI])
-					}
-
-					return compE;
-				}
-			}
-
-			Tool.prototype.Error = function(id, err) {
-				let errEs = this.$(`.${id}`);
-				for (let errE of errEs) {
-					if (err) {
-						errE.classList.add('shown');
-						errE.firstChild.nextSibling.innerHTML = err;
-					} else {
-						errE.classList.remove('shown');
-						errE.firstChild.nextSibling.innerHTML = '&nbsp;';
-					}
-				}
-			}
-
 		</script>
 	</head>
 	<body>
@@ -128,21 +55,27 @@
 	</div>
 
 	<script>
-		let base64 = new Tool("base64", {
-			inBase64: (e) => e.querySelectorAll('.base64Input')[0],
-			inAscii: (e) => e.querySelectorAll('.asciiInput')[0],
-		});
+		class TBase64 extends Tool {
+			constructor(id) {
+				super(id);
 
-		base64.decode = function() {
-			base64.inAscii.value = atob(base64.inBase64.value);
-		};
-		
-		base64.encode = function() {
-			base64.inBase64.value = btoa(base64.inAscii.value);
-		};
+				this.inBase64 = this.E.querySelectorAll('.base64Input')[0];
+				this.inAscii = this.E.querySelectorAll('.asciiInput')[0];
 
-		base64.inBase64.oninput = base64.inBase64.onchange = base64.decode;
-		base64.inAscii.oninput = base64.inAscii.onchange = base64.encode;
+				this.inBase64.oninput = this.inBase64.onchange = () => this.decode();
+				this.inAscii.oninput = this.inAscii.onchange = () => this.encode();
+			}
+
+			decode() {
+				this.inAscii.value = atob(this.inBase64.value);
+			};
+			
+			encode() {
+				this.inBase64.value = btoa(this.inAscii.value);
+			};
+		}
+
+		let base64 = new TBase64("base64");
 	</script>
 </div><div class="tool unfocused col3" id="json" data-tag="json format">
 	<div class="preview"><h1>JSON Format</h1></div>
@@ -177,57 +110,65 @@
 	</div>
 	
 	<script>
-		let json = new Tool("json", {
-			inJSON: (e) => e.querySelectorAll('.jsonInput')[0],
-			outPretty: (e) => e.querySelectorAll('#json-pretty')[0],
-			out1liner: (e) => e.querySelectorAll('#json-1liner')[0],
-			indentRadios: (e) => e.querySelectorAll('input[name=json-pretty-indent]'),
-			switches: (e) => e.querySelectorAll('input[type=radio],input[type=checkbox]'),
-			quoteCheck: (e) => document.getElementById('json-1liner-quote-identifiers'),
-			escapeQuotesCheck: (e) => document.getElementById('json-1liner-escape-quotes'),
-			err: (e) => e.querySelectorAll('.jsonErr')[0],
-		});
+		class TJSON extends Tool {
+			constructor(id) {
+				super(id);
 
-		json.prettyPrint = function(v) {
-			if (v) {
-				let indent = "\t";
-				for (let r of json.indentRadios) {
-					if (r.checked) {
-						indent = r.value;
-					}
+				this.inJSON = this.E.querySelectorAll('.jsonInput')[0];
+				this.outPretty = this.E.querySelectorAll('#json-pretty')[0];
+				this.out1liner = this.E.querySelectorAll('#json-1liner')[0];
+				this.indentRadios = this.E.querySelectorAll('input[name=json-pretty-indent]');
+				this.quoteCheck = document.getElementById('json-1liner-quote-identifiers');
+				this.escapeQuotesCheck = document.getElementById('json-1liner-escape-quotes');
+
+				let update = () => {
+					this.update();
+				}
+				
+				let switches = this.E.querySelectorAll('input[type=radio],input[type=checkbox]');
+				for (let s of switches) {
+					s.onchange = update;
 				}
 
-				json.outPretty.value = JSON.stringify(v, null, indent);
-			}
-		};
-
-		json.oneliner = function(v) {
-			if (v) {
-				json.out1liner.value = JSON1Liner(undefined, v, json.quoteCheck.checked, json.escapeQuotesCheck.checked);
-			}
-		}
-
-		json.update = () => {
-			let v;
-			try {
-				v = JSON.parse(json.inJSON.value);
-				json.Error('jsonErr', '');
-			} catch (e) {
-				json.Error('jsonErr', e.message);
+				this.inJSON.oninput = this.inJSON.onchange = update;
 			}
 
-			json.prettyPrint(v);
-			json.oneliner(v);
-		}
+			update() {
+				try {
+					let v = JSON.parse(this.inJSON.value);
+					this.Error('jsonErr', '');
+					this.prettyPrint(v);
+					this.oneliner(v);
+				} catch (e) {
+					this.Error('jsonErr', e.message);
+				}
+			}
 
-		for (let s of json.switches) {
-			s.onchange = json.update;
+			prettyPrint(v) {
+				if (v) {
+					let indent = "\t";
+					for (let r of this.indentRadios) {
+						if (r.checked) {
+							indent = r.value;
+						}
+					}
+
+					this.outPretty.value = JSON.stringify(v, null, indent);
+				}
+			}
+
+			oneliner(v) {
+				if (v) {
+					this.out1liner.value = JSON1Liner(undefined, v, this.quoteCheck.checked, this.escapeQuotesCheck.checked);
+				}
+			}
 		}
 
 		function JSON1Liner(name, v, quoteNames, escapeQuotes) {
 			let quote = (s) => escapeQuotes ? `\\"${s}\\"` : `"${s}"`;
 			let namePrefix = '';
-			name && (namePrefix = name) && quoteNames && (namePrefix = quote(namePrefix)) && (namePrefix += ':');
+			name && (namePrefix = name) && quoteNames && (namePrefix = quote(namePrefix));
+			namePrefix && (namePrefix += ':');
 
 			switch (typeof v) {
 				case 'string':
@@ -246,7 +187,7 @@
 			}
 		}
 
-		json.inJSON.oninput = json.inJSON.onchange = json.update;
+		let json = new TJSON('json');
 	</script>
 </div><div class="tool unfocused col3" id="unixtime" data-tag="unixtime">
 	<div class="preview"><h1>Unixtime</h1></div>
@@ -265,67 +206,74 @@
 	</div>
 
 	<script>
-		let unixtime = new Tool("unixtime", {
-			inTS: (e) => e.querySelectorAll('.inTimestamp')[0],
-			outDate: (e) => e.querySelectorAll('.outDate')[0],
-		});
+		class TUnixtime extends Tool {
+			constructor(id) {
+				super(id);
 
-		unixtime.convert = function() {
-			let d = new Date();
-			d.setTime(unixtime.inTS.value + "000")
-			unixtime.outDate.innerHTML = d.toString();
-			typographyDate(d);
-		};
+				this.inTS = this.E.querySelectorAll('.inTimestamp')[0];
+				this.outDate = this.E.querySelectorAll('.outDate')[0];
 
-		function typographyDate(d) {
-			let timezone = undefined;
-			let eTZT = document.createElement("p");
-			let opts = {
-				timezone,
-				weekday: "long",
-				month: "long",
-				year: "numeric",
-				day: "numeric",
-				hour: "numeric",
-				minute: "numeric",
-				second: "numeric",
-			};
-			let locale = "en-US";
-			let weekday = d.toLocaleDateString(locale, {timezone, weekday: "long"});
-			let weekdayClass = "l" + weekday.length;
-			let weekdayE = document.createElement("p");
-			let month = d.toLocaleDateString(locale, {timezone, month: "long", day: "numeric"});
-			let monthClass = "l" + month.length;
-			let monthE = document.createElement("p");
-			let year = d.toLocaleDateString(locale, {timezone, year: "numeric"});
-			let yearClass = "l" + year.length;
-			let yearE = document.createElement("p");
-			let time = d.toLocaleDateString(locale, {timezone, hour: "numeric", minute: "numeric", second: "numeric"});
-			let timeClass = "l" + time.length;
-			let timeE = document.createElement("p");
+				this.inTS.oninput = this.inTS.onchange = () => this.convert();
+			}
 
-			weekdayE.classList.add("weekday", weekdayClass);
-			weekdayE.innerHTML = weekday;
-			monthE.classList.add("month", monthClass);
-			monthE.innerHTML = month;
-			yearE.classList.add("year", yearClass);
-			yearE.innerHTML = year;
-			timeE.classList.add("time", timeClass);
-			timeE.innerHTML = time;
+			convert() {
+				let d = new Date();
+				d.setTime(this.inTS.value + "000")
+				this.outDate.innerHTML = d.toString();
+				this.typographyDate(d);
+			}
 
-			let tdE = unixtime.$(".typographyDate")[0];
+			typographyDate(d) {
+				let timezone = undefined;
+				let eTZT = document.createElement("p");
+				let opts = {
+					timezone,
+					weekday: "long",
+					month: "long",
+					year: "numeric",
+					day: "numeric",
+					hour: "numeric",
+					minute: "numeric",
+					second: "numeric",
+				};
+				let locale = "en-US";
+				let weekday = d.toLocaleDateString(locale, {timezone, weekday: "long"});
+				let weekdayClass = "l" + weekday.length;
+				let weekdayE = document.createElement("p");
+				let month = d.toLocaleDateString(locale, {timezone, month: "long", day: "numeric"});
+				let monthClass = "l" + month.length;
+				let monthE = document.createElement("p");
+				let year = d.toLocaleDateString(locale, {timezone, year: "numeric"});
+				let yearClass = "l" + year.length;
+				let yearE = document.createElement("p");
+				let time = d.toLocaleDateString(locale, {timezone, hour: "numeric", minute: "numeric", second: "numeric"});
+				let timeClass = "l" + time.length;
+				let timeE = document.createElement("p");
 
-			while (tdE.firstChild)
-				tdE.removeChild(tdE.firstChild)
+				weekdayE.classList.add("weekday", weekdayClass);
+				weekdayE.innerHTML = weekday;
+				monthE.classList.add("month", monthClass);
+				monthE.innerHTML = month;
+				yearE.classList.add("year", yearClass);
+				yearE.innerHTML = year;
+				timeE.classList.add("time", timeClass);
+				timeE.innerHTML = time;
 
-			tdE.appendChild(weekdayE);
-			tdE.appendChild(monthE);
-			tdE.appendChild(yearE);
-			tdE.appendChild(timeE);
+				let tdE = this.$(".typographyDate")[0];
+
+				while (tdE.firstChild)
+					tdE.removeChild(tdE.firstChild)
+
+				tdE.appendChild(weekdayE);
+				tdE.appendChild(monthE);
+				tdE.appendChild(yearE);
+				tdE.appendChild(timeE);
+			}
 		}
-		
-		unixtime.inTS.oninput = unixtime.inTS.onchange = unixtime.convert;
-		</script>
+
+		let unixtime = new TUnixtime("unixtime");
+
+	</script>
 </div><div class="tool unfocused col1" id="urldecode" data-tag="url encode decode">
 	<div class="preview"><h1>URL Transcode</h1></div>
 	<div class="controls smaller">
@@ -337,21 +285,28 @@
 	</div>
 
 	<script>
-		let urldecoder = new Tool("urldecode", {
-			encoded: (e) => e.querySelectorAll('.encinput')[0],
-			decoded: (e) => e.querySelectorAll('.decinput')[0],
-		});
+		class TURLTranscoder extends Tool {
+			constructor(id) {
+				super(id)
 
-		urldecoder.decode = function() {
-			urldecoder.decoded.value = decodeURIComponent(urldecoder.encoded.value);
-		};
-		
-		urldecoder.encode = function() {
-			urldecoder.encoded.value = encodeURIComponent(urldecoder.decoded.value);
-		};
+				this.encoded = this.E.querySelectorAll('.encinput')[0];
+				this.decoded = this.E.querySelectorAll('.decinput')[0];
+				this.encoded.oninput = this.encoded.onchange = () => this.decode();
+				this.decoded.oninput = this.decoded.onchange = () => this.encode();
+			}
+	
+			decode() {
+				this.decoded.value = decodeURIComponent(this.encoded.value);
+			};
+			
+			encode() {
+				this.encoded.value = encodeURIComponent(this.decoded.value);
+			};
 
-		urldecoder.encoded.oninput = urldecoder.encoded.onchange = urldecoder.decode;
-		urldecoder.decoded.oninput = urldecoder.decoded.onchange = urldecoder.encode;
+		}
+
+		let urldecoder = new TURLTranscoder("urldecode");
+
 	</script>
 </div><div class="tool unfocused" id="urlparse" data-tag="urlparse">
 	<div class="preview"><h1>URL Parser</h1></div>
@@ -364,58 +319,64 @@
 	</div>
 
 	<script>
-		let urlparse = new Tool("urlparse", {
-			URL: () => document.getElementById("urlparse-url")
-		})
+		class TURLParser extends Tool {
+			constructor(id) {
+				super(id);
+				this.URL = document.getElementById("urlparse-url");
 
-		urlparse.URL.onchange = urlparse.URL.oninput = () => {
-			let fields = urlparse.$(".fields")[0];
-			while (fields.firstChild)
-				fields.removeChild(fields.firstChild);
+				this.URL.onchange = this.URL.oninput = () => {
+					let fields = this.$(".fields")[0];
+					while (fields.firstChild)
+						fields.removeChild(fields.firstChild);
 
-			let url = new URL(urlparse.URL.value);
-			
-			if (url.protocol) {
-				fields.appendChild(urlparse.Component("urlprop", "Protocol", url.protocol));
+					let url = new URL(this.URL.value);
+					
+					if (url.protocol) {
+						fields.appendChild(this.Component("urlprop", "Protocol", url.protocol));
+					}
+
+					if (url.hostname) {
+						fields.appendChild(this.Component("urlprop", "Domain", url.hostname));
+					}
+
+					if (url.username) {
+						fields.appendChild(this.Component("urlprop", "Username", url.username));
+					}
+
+					if (url.password) {
+						fields.appendChild(this.Component("urlprop", "Password", url.password));
+					}
+
+					if (url.path) {
+						fields.appendChild(this.Component("urlprop", "Path", url.path));
+					} else if (url.pathname) {
+						fields.appendChild(this.Component("urlprop", "Path", url.pathname));
+					}
+
+					if (url.port) {
+						fields.appendChild(this.Component("urlprop", "Port", url.port));
+					}
+
+					if (url.hash) {
+						fields.appendChild(this.Component("urlprop", "Hash", url.hash));
+					}
+
+					/* if (url.search) {
+						fields.appendChild(this.Component("urlprop", "Query string", url.search));
+					} */
+					
+					if (url.searchParams) {
+						fields.appendChild(this.Component("urlprop-section", "Query"));
+						for (let e of url.searchParams.entries()) {
+							fields.appendChild(this.Component("urlprop-sub", e[0], e[1]));
+						}
+					}
+				};
 			}
+		}
 
-			if (url.hostname) {
-				fields.appendChild(urlparse.Component("urlprop", "Domain", url.hostname));
-			}
-
-			if (url.username) {
-				fields.appendChild(urlparse.Component("urlprop", "Username", url.username));
-			}
-
-			if (url.password) {
-				fields.appendChild(urlparse.Component("urlprop", "Password", url.password));
-			}
-
-			if (url.path) {
-				fields.appendChild(urlparse.Component("urlprop", "Path", url.path));
-			} else if (url.pathname) {
-				fields.appendChild(urlparse.Component("urlprop", "Path", url.pathname));
-			}
-
-			if (url.port) {
-				fields.appendChild(urlparse.Component("urlprop", "Port", url.port));
-			}
-
-			if (url.hash) {
-				fields.appendChild(urlparse.Component("urlprop", "Hash", url.hash));
-			}
-
-			/* if (url.search) {
-				fields.appendChild(urlparse.Component("urlprop", "Query string", url.search));
-			} */
-			
-			if (url.searchParams) {
-				fields.appendChild(urlparse.Component("urlprop-section", "Query parameters"));
-				for (let e of url.searchParams.entries()) {
-					fields.appendChild(urlparse.Component("urlprop-sub", e[0], e[1]));
-				}
-			}
-		};
+		let urlparse = new TURLParser("urlparse");
+		
 	</script>
 
 	<div class="components">
@@ -426,6 +387,7 @@
 		
 		<div class="urlprop urlprop-section">
 			<span class="label" data-arg="0"></span>
+			<span class="value">&nbsp;</span>
 		</div>
 		
 		<div class="urlprop urlprop-sub">

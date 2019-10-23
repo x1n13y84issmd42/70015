@@ -31,57 +31,65 @@
 	</div>
 	
 	<script>
-		let json = new Tool("json", {
-			inJSON: (e) => e.querySelectorAll('.jsonInput')[0],
-			outPretty: (e) => e.querySelectorAll('#json-pretty')[0],
-			out1liner: (e) => e.querySelectorAll('#json-1liner')[0],
-			indentRadios: (e) => e.querySelectorAll('input[name=json-pretty-indent]'),
-			switches: (e) => e.querySelectorAll('input[type=radio],input[type=checkbox]'),
-			quoteCheck: (e) => document.getElementById('json-1liner-quote-identifiers'),
-			escapeQuotesCheck: (e) => document.getElementById('json-1liner-escape-quotes'),
-			err: (e) => e.querySelectorAll('.jsonErr')[0],
-		});
+		class TJSON extends Tool {
+			constructor(id) {
+				super(id);
 
-		json.prettyPrint = function(v) {
-			if (v) {
-				let indent = "\t";
-				for (let r of json.indentRadios) {
-					if (r.checked) {
-						indent = r.value;
-					}
+				this.inJSON = this.E.querySelectorAll('.jsonInput')[0];
+				this.outPretty = this.E.querySelectorAll('#json-pretty')[0];
+				this.out1liner = this.E.querySelectorAll('#json-1liner')[0];
+				this.indentRadios = this.E.querySelectorAll('input[name=json-pretty-indent]');
+				this.quoteCheck = document.getElementById('json-1liner-quote-identifiers');
+				this.escapeQuotesCheck = document.getElementById('json-1liner-escape-quotes');
+
+				let update = () => {
+					this.update();
+				}
+				
+				let switches = this.E.querySelectorAll('input[type=radio],input[type=checkbox]');
+				for (let s of switches) {
+					s.onchange = update;
 				}
 
-				json.outPretty.value = JSON.stringify(v, null, indent);
-			}
-		};
-
-		json.oneliner = function(v) {
-			if (v) {
-				json.out1liner.value = JSON1Liner(undefined, v, json.quoteCheck.checked, json.escapeQuotesCheck.checked);
-			}
-		}
-
-		json.update = () => {
-			let v;
-			try {
-				v = JSON.parse(json.inJSON.value);
-				json.Error('jsonErr', '');
-			} catch (e) {
-				json.Error('jsonErr', e.message);
+				this.inJSON.oninput = this.inJSON.onchange = update;
 			}
 
-			json.prettyPrint(v);
-			json.oneliner(v);
-		}
+			update() {
+				try {
+					let v = JSON.parse(this.inJSON.value);
+					this.Error('jsonErr', '');
+					this.prettyPrint(v);
+					this.oneliner(v);
+				} catch (e) {
+					this.Error('jsonErr', e.message);
+				}
+			}
 
-		for (let s of json.switches) {
-			s.onchange = json.update;
+			prettyPrint(v) {
+				if (v) {
+					let indent = "\t";
+					for (let r of this.indentRadios) {
+						if (r.checked) {
+							indent = r.value;
+						}
+					}
+
+					this.outPretty.value = JSON.stringify(v, null, indent);
+				}
+			}
+
+			oneliner(v) {
+				if (v) {
+					this.out1liner.value = JSON1Liner(undefined, v, this.quoteCheck.checked, this.escapeQuotesCheck.checked);
+				}
+			}
 		}
 
 		function JSON1Liner(name, v, quoteNames, escapeQuotes) {
 			let quote = (s) => escapeQuotes ? `\\"${s}\\"` : `"${s}"`;
 			let namePrefix = '';
-			name && (namePrefix = name) && quoteNames && (namePrefix = quote(namePrefix)) && (namePrefix += ':');
+			name && (namePrefix = name) && quoteNames && (namePrefix = quote(namePrefix));
+			namePrefix && (namePrefix += ':');
 
 			switch (typeof v) {
 				case 'string':
@@ -100,6 +108,6 @@
 			}
 		}
 
-		json.inJSON.oninput = json.inJSON.onchange = json.update;
+		let json = new TJSON('json');
 	</script>
 </div>

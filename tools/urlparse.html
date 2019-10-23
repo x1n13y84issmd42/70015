@@ -9,58 +9,64 @@
 	</div>
 
 	<script>
-		let urlparse = new Tool("urlparse", {
-			URL: () => document.getElementById("urlparse-url")
-		})
+		class TURLParser extends Tool {
+			constructor(id) {
+				super(id);
+				this.URL = document.getElementById("urlparse-url");
 
-		urlparse.URL.onchange = urlparse.URL.oninput = () => {
-			let fields = urlparse.$(".fields")[0];
-			while (fields.firstChild)
-				fields.removeChild(fields.firstChild);
+				this.URL.onchange = this.URL.oninput = () => {
+					let fields = this.$(".fields")[0];
+					while (fields.firstChild)
+						fields.removeChild(fields.firstChild);
 
-			let url = new URL(urlparse.URL.value);
-			
-			if (url.protocol) {
-				fields.appendChild(urlparse.Component("urlprop", "Protocol", url.protocol));
+					let url = new URL(this.URL.value);
+					
+					if (url.protocol) {
+						fields.appendChild(this.Component("urlprop", "Protocol", url.protocol));
+					}
+
+					if (url.hostname) {
+						fields.appendChild(this.Component("urlprop", "Domain", url.hostname));
+					}
+
+					if (url.username) {
+						fields.appendChild(this.Component("urlprop", "Username", url.username));
+					}
+
+					if (url.password) {
+						fields.appendChild(this.Component("urlprop", "Password", url.password));
+					}
+
+					if (url.path) {
+						fields.appendChild(this.Component("urlprop", "Path", url.path));
+					} else if (url.pathname) {
+						fields.appendChild(this.Component("urlprop", "Path", url.pathname));
+					}
+
+					if (url.port) {
+						fields.appendChild(this.Component("urlprop", "Port", url.port));
+					}
+
+					if (url.hash) {
+						fields.appendChild(this.Component("urlprop", "Hash", url.hash));
+					}
+
+					/* if (url.search) {
+						fields.appendChild(this.Component("urlprop", "Query string", url.search));
+					} */
+					
+					if (url.searchParams) {
+						fields.appendChild(this.Component("urlprop-section", "Query"));
+						for (let e of url.searchParams.entries()) {
+							fields.appendChild(this.Component("urlprop-sub", e[0], e[1]));
+						}
+					}
+				};
 			}
+		}
 
-			if (url.hostname) {
-				fields.appendChild(urlparse.Component("urlprop", "Domain", url.hostname));
-			}
-
-			if (url.username) {
-				fields.appendChild(urlparse.Component("urlprop", "Username", url.username));
-			}
-
-			if (url.password) {
-				fields.appendChild(urlparse.Component("urlprop", "Password", url.password));
-			}
-
-			if (url.path) {
-				fields.appendChild(urlparse.Component("urlprop", "Path", url.path));
-			} else if (url.pathname) {
-				fields.appendChild(urlparse.Component("urlprop", "Path", url.pathname));
-			}
-
-			if (url.port) {
-				fields.appendChild(urlparse.Component("urlprop", "Port", url.port));
-			}
-
-			if (url.hash) {
-				fields.appendChild(urlparse.Component("urlprop", "Hash", url.hash));
-			}
-
-			/* if (url.search) {
-				fields.appendChild(urlparse.Component("urlprop", "Query string", url.search));
-			} */
-			
-			if (url.searchParams) {
-				fields.appendChild(urlparse.Component("urlprop-section", "Query parameters"));
-				for (let e of url.searchParams.entries()) {
-					fields.appendChild(urlparse.Component("urlprop-sub", e[0], e[1]));
-				}
-			}
-		};
+		let urlparse = new TURLParser("urlparse");
+		
 	</script>
 
 	<div class="components">
@@ -71,6 +77,7 @@
 		
 		<div class="urlprop urlprop-section">
 			<span class="label" data-arg="0"></span>
+			<span class="value">&nbsp;</span>
 		</div>
 		
 		<div class="urlprop urlprop-sub">

@@ -1,16 +1,11 @@
 class Tools {
-
-	constructor(tw, th, container) {
-		this.tx = 0;
-		this.ty = 0;
-		this.tw = tw;
-		this.th = th;
+	constructor(container) {
 		this.container = container;
 		this.tools = [];
 	}
 
-	add(tileID) {
-		let eTool = document.getElementById(tileID);
+	add(toolID) {
+		let eTool = document.getElementById(toolID);
 		this.tools.push(eTool);
 	}
 	

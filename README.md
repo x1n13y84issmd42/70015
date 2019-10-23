@@ -12,5 +12,5 @@ A small set of utility functions often useful in development with clean interfac
 * [ ] Locale / UI language selection.
 * [ ] Remember last input for tools and use it as default on first focus.
 * [ ] Unixtime: time zone selection.
-* [ ] More advanced build system (multiple file lists + outputs, like for HTML, scripts and styles).
+* [x] More advanced build system (multiple file lists + outputs, like for HTML, scripts and styles).
 * [ ] Keyboard shortcuts / keystrokes.
