@@ -1,10 +1,9 @@
 #!/bin/bash
-IFS=
 
 OUTFILE="index.html"
 
 function log {
-	echo -e "\e[33mbuild\e[0m" $@ >&2
+	_IFS=$IFS && IFS='' && echo -e "\e[33mbuild\e[0m" $@ >&2 && IFS=$_IFS
 }
 
 
@@ -12,7 +11,7 @@ function build {
 	local OUTFILE=$1
 	shift;
 
-	log "Building $OUTFILE"
+	log "Building \e[33m\e[7m$OUTFILE\e[0m"
 
 	echo "" > $OUTFILE
 

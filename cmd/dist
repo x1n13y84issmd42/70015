@@ -5,7 +5,7 @@
 
 # Logging function.
 function log {
-	echo -e "\e[35m dist\e[0m" $@ >&2
+	_IFS=$IFS && IFS='' && echo -e "\e[35m dist\e[0m" $@ >&2 && IFS=$_IFS
 }
 
 # Looking for NPM scripts referenced by sources in the folders.
@@ -13,7 +13,7 @@ SOURCES=("./tools/*" "./tpl/*")
 SRCUSED=$(cat ${SOURCES[@]} | grep -E "<script[[:space:]]{0,1}src=\"./node_modules")
 IFS=$'\n'
 
-log "The used node_modules/ scripts are"
+log "The used NPM scripts are"
 
 # Trimming the grep output and getting file paths.
 for S in ${SRCUSED[@]}; do
@@ -22,7 +22,7 @@ for S in ${SRCUSED[@]}; do
 	SL=${SL%\?*}
 	NMUSED+=($SL)
 
-	log $SL
+	log "  \e[35m\e[7m$SL\e[0m"
 done
 
 function isused {
@@ -35,7 +35,7 @@ function isused {
 	return 255
 }
 
-log "Deleting the rest..."
+log "Deleting the rest from the ./node_modules folder..."
 
 C=0
 FILES=$(find ./node_modules/* -type f)
@@ -46,4 +46,4 @@ for FILE in ${FILES[@]}; do
 	fi
 done
 
-log "Deleted $C files from the node_modules/ folder."
+log "Done, deleted $C files."

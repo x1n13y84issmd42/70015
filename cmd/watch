@@ -3,11 +3,9 @@
 # Folders to watch for changes in.
 WATCHME=("./tools" "./tpl" "./assets")
 
-echo "Watching" ${WATCHME[@]}
-
 # Logging function.
 function log {
-	echo -e "\e[36mwatch\e[0m" $@ >&2
+	_IFS=$IFS && IFS='' && echo -e "\e[36mwatch\e[0m" $@ >&2 && IFS=$_IFS
 }
 
 # Gets last modification time for a file.
@@ -27,7 +25,7 @@ function findLastMTime {
 			local FMT=$(mtime "$FILE")
 
 			if [[ $FMT > $LASTMOD ]]; then
-				log "$FILE has changed."
+				log "  \e[36m\e[7m$FILE\e[0m has changed."
 			fi
 
 			if [[ $FMT > $MT ]]; then
@@ -39,6 +37,7 @@ function findLastMTime {
 	echo $MT
 }
 
+log "Watching" ${WATCHME[@]}
 # Runs findLastMTime every second and triggers cmd/build if there were changes.
 while [[ 1 = 1 ]]; do
 	MT=$(findLastMTime)
@@ -50,6 +49,7 @@ while [[ 1 = 1 ]]; do
 		cmd/build
 		cmd/dist
 		echo ""
+		log "Watching" ${WATCHME[@]}
 	fi
 
 	sleep 1s
