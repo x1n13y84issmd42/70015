@@ -24,6 +24,11 @@ class Tool {
 		this.tplNodes(this.$(s));				
 	}
 
+	removeChildren(e) {
+		while (e.firstChild)
+			e.removeChild(e.firstChild);
+	}
+
 	tplNodes(nodes, v) {
 		for (let e of nodes) {
 			switch (e.tagName) {
@@ -48,6 +53,10 @@ class Tool {
 			compE = compE.cloneNode(true);
 	
 			for (let aI in args) {
+				if (compE.dataset.arg == aI) {
+					this.tplNodes([compE], args[aI])
+				}
+
 				let nodes = compE.querySelectorAll(`[data-arg="${aI}"]`);
 				this.tplNodes(nodes, args[aI])
 			}
