@@ -14,5 +14,7 @@ A small set of utility functions often useful in development, with clean interfa
 * [x] More advanced build system (multiple file lists + outputs, like for HTML, scripts and styles).
 * [ ] Feature: keyboard shortcuts / keystrokes.
 * [ ] Tool: CSS colors (RGB-HSL-HEX conversion).
-* [ ] Tool: Hasher (MD5/SHA*/etc hashes).
+* [x] Tool: Hasher (MD5/SHA*/etc hashes).
+* [ ] Tool: Object converter (JSON <-> YAML <-> XML?).
+* [ ] JSON mapper.
 * [ ] Feature: sharing (base64 encode some JSON and read it from `#`).
