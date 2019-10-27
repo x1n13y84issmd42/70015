@@ -1,0 +1,48 @@
+#!/bin/bash
+
+# This script goes through the project sources and gathers referenced node_modules scripts.
+# Then it deletes everything from the node_modules/ folder which is not used.
+
+# Logging function.
+function log {
+	echo -e "\e[35m dist\e[0m" $@ >&2
+}
+
+# Looking for NPM scripts referenced by sources in the folders.
+SOURCES=("./tools/*" "./tpl/*")
+SRCUSED=$(cat ${SOURCES[@]} | grep -E "<script[[:space:]]{0,1}src=\"./node_modules")
+IFS=$'\n'
+
+log "The used node_modules/ scripts are"
+
+# Trimming the grep output and getting file paths.
+for S in ${SRCUSED[@]}; do
+	SL=${S#*\"}
+	SL=${SL%\"*}
+	NMUSED+=($SL)
+
+	log $SL
+done
+
+function isused {
+	for UF in ${NMUSED[@]}; do
+		if [[ $UF == $1 ]]; then
+			return 0
+		fi
+	done
+
+	return 255
+}
+
+log "Deleting the rest..."
+
+C=0
+FILES=$(find ./node_modules/* -type f)
+for FILE in ${FILES[@]}; do
+	if ! isused $FILE; then
+		rm $FILE
+		let C=($C+1)
+	fi
+done
+
+log "Deleted $C files from the node_modules/ folder."
