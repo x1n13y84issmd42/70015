@@ -61,7 +61,7 @@
 				let year = d.toLocaleDateString(locale, {timezone, year: "numeric"});
 				let yearClass = "l" + year.length;
 				let yearE = document.createElement("p");
-				let time = d.toLocaleDateString(locale, {timezone, hour: "numeric", minute: "numeric", second: "numeric"});
+				let time = d.toLocaleDateString(locale, {timezone, hour: "numeric", minute: "numeric", second: "numeric"}).split(', ')[1];
 				let timeClass = "l" + time.length;
 				let timeE = document.createElement("p");
 
