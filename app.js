@@ -107,21 +107,22 @@ class Tools {
 	}
 
 	filter(s) {
-		for (let tool of this.tools) {
+		for (let tI in this.tools) {
+			let tool = this.tools[tI];
 			if (s) {
 				for (let sch of s) {
-					if (tool.dataset.tag.includes(sch)) {
-						tool.classList.add("matched");
-						tool.classList.remove("filteredOut");
+					if (tool.E.dataset.tag.includes(sch)) {
+						tool.E.classList.add("matched");
+						tool.E.classList.remove("filteredOut");
 					} else {
-						tool.classList.add("filteredOut");
-						tool.classList.remove("matched");
+						tool.E.classList.add("filteredOut");
+						tool.E.classList.remove("matched");
 						break;
 					}
 				}
 			} else {
-				tool.classList.remove("filteredOut");
-				tool.classList.remove("matched");
+				tool.E.classList.remove("filteredOut");
+				tool.E.classList.remove("matched");
 			}
 		}
 	}
