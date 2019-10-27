@@ -112,6 +112,11 @@ input[type=radio]:checked {
 	margin-bottom: 2em;
 }
 
+.tool > .controls h1 {
+	font-size: 22pt;
+	font-weight: normal;
+}
+
 .tool > .controls {
 	padding: 5% 10%;
 	width: 80%;
@@ -137,7 +142,7 @@ input[type=radio]:checked {
 }
 
 .tool > .controls > label {
-	font-size: 24pt;
+	font-size: 22pt;
 	font-family: Quicksand;
 }
 
