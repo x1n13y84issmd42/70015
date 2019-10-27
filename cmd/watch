@@ -48,6 +48,7 @@ while [[ 1 = 1 ]]; do
 		log "Gotta build!"
 		echo ""
 		cmd/build
+		cmd/dist
 		echo ""
 	fi
 

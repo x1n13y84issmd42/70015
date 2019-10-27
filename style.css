@@ -236,6 +236,27 @@ input[type=radio]:checked {
 	display: none;
 }
 
+.kvpair {
+	font-size: 16px;
+}
+
+.kvpair-sub {
+	margin-left: 50px;
+}
+
+.kvpair > .label {
+	display: inline-block;
+	width: 100px;
+	top: -1px;
+	position: relative;
+	margin-right: 20px;
+	text-align: right;
+}
+
+.kvpair > .value {
+	font-size: 22px;
+}
+
 .tool {
 	display: block;
 	margin: 0 0 1pt 0;

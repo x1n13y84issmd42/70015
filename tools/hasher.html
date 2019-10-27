@@ -1,0 +1,63 @@
+<div class="tool unfocused col2" id="hasher" data-tag="hash md5 sha des">
+	<div class="preview"><h1>Hasher</h1></div>
+	<div class="controls">
+		<label for="hasherInput">Input</label>
+		<input type="text" class="hasherInput" id="hasherInput" autofocus tabindex="21" />
+		
+		<label for="hasherKeyInput">Encryption key</label>
+		<input type="text" class="hasherKeyInput" id="hasherKeyInput" autofocus tabindex="21" />
+
+		<div class="results"></div>
+	</div>
+
+	<script src="./node_modules/crypto-js/crypto-js.js"></script>
+	<script src="./node_modules/js-crc/build/crc.min.js"></script>
+
+	<script>
+		class THasher extends Tool {
+			constructor(id) {
+				super(id);
+
+				this.input = this.E.querySelectorAll('.hasherInput')[0];
+				this.keyInput = this.E.querySelectorAll('.hasherKeyInput')[0];
+
+				this.keyInput.oninput = this.keyInput.onchange = this.input.oninput = this.input.onchange = () => this.hash();
+			}
+
+			hash() {
+				let results = this.$(".results")[0];
+				while (results.firstChild)
+					results.removeChild(results.firstChild);
+
+				results.appendChild(this.Component('hash', "MD5", CryptoJS.enc.Hex.stringify(CryptoJS.MD5(this.input.value))))
+				
+				results.appendChild(this.Component('hash', "SHA256", CryptoJS.enc.Hex.stringify(CryptoJS.SHA256(this.input.value))))
+				
+				results.appendChild(this.Component('hash', "SHA1", CryptoJS.enc.Hex.stringify(CryptoJS.SHA1(this.input.value))))
+				
+				let aes = CryptoJS.AES.encrypt(this.input.value, this.keyInput.value, {keySize: 128});
+				// console.log(aes);
+				// console.log(aes.key.toString());
+				// console.log(aes.iv.toString());
+				// console.log(aes.ciphertext.toString());
+				// console.log(CryptoJS.enc.Hex.stringify(aes.key));
+				// console.log(CryptoJS.enc.Hex.stringify(aes.iv));
+				// console.log(CryptoJS.enc.Hex.stringify(aes.ciphertext));
+				results.appendChild(this.Component('hash', "AES", CryptoJS.enc.Hex.stringify(aes.ciphertext)))
+				
+				results.appendChild(this.Component('hash', "CRC16", crc16(this.input.value)));
+				
+				results.appendChild(this.Component('hash', "CRC32", crc32(this.input.value)));
+			};
+		}
+
+		tools.add(new THasher("hasher"));
+	</script>
+
+	<div class="components">
+		<div class="hash kvpair">
+			<span class="label" data-arg="0"></span>
+			<span class="value" data-arg="1"></span>
+		</div>
+	</div>
+</div>
