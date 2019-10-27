@@ -7,14 +7,14 @@
 #front-center {
 	position: absolute;
 	left: 50%;
-	width: 800px;
-	margin-left: -400px;
+	width: 700px;
+	margin-left: -350px;
 	top: 35%;
 }
 
 #filter {
-	width: 800px;
-	font-size: 32pt;
+	width: 100%;
+	font-size: 28pt;
 	font-family: Quicksand;
 }
 
