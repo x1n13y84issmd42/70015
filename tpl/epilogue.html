@@ -13,6 +13,12 @@
 
 			function onclickCopyToClipboard(e) {
 				let from = e.currentTarget;
+
+				if (from.dataset.value) {
+					Clipboard.copy(from.dataset.value);
+					return;
+				}
+
 				if (from.dataset.from) {
 					from = document.getElementById(from.dataset.from);
 				}
