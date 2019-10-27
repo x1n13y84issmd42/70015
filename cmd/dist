@@ -19,6 +19,7 @@ log "The used node_modules/ scripts are"
 for S in ${SRCUSED[@]}; do
 	SL=${S#*\"}
 	SL=${SL%\"*}
+	SL=${SL%\?*}
 	NMUSED+=($SL)
 
 	log $SL
