@@ -29,6 +29,12 @@
 	width: 50%;
 }
 
+.tool > .controls .left.l40 {width: 40%;}
+.tool > .controls .left.l30 {width: 30%;}
+
+.tool > .controls .right.r60 {width: 60%;}
+.tool > .controls .right.r70 {width: 70%;}
+
 .tool > .controls .right {
 	float: right;
 	width: 50%;
