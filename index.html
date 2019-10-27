@@ -37,8 +37,8 @@
 			constructor(id) {
 				super(id);
 
-				this.inBase64 = this.E.querySelectorAll('.base64Input')[0];
-				this.inAscii = this.E.querySelectorAll('.asciiInput')[0];
+				this.inBase64 = this.$('.base64Input')[0];
+				this.inAscii = this.$('.asciiInput')[0];
 
 				this.inBase64.oninput = this.inBase64.onchange = () => this.decode();
 				this.inAscii.oninput = this.inAscii.onchange = () => this.encode();
@@ -78,8 +78,8 @@
 			constructor(id) {
 				super(id);
 
-				this.input = this.E.querySelectorAll('.hasherInput')[0];
-				this.keyInput = this.E.querySelectorAll('.hasherKeyInput')[0];
+				this.input = this.$('.hasherInput')[0];
+				this.keyInput = this.$('.hasherKeyInput')[0];
 
 				this.keyInput.oninput = this.keyInput.onchange = this.input.oninput = this.input.onchange = () => this.hash();
 			}
@@ -163,10 +163,10 @@
 			constructor(id) {
 				super(id);
 
-				this.inJSON = this.E.querySelectorAll('.jsonInput')[0];
-				this.outPretty = this.E.querySelectorAll('#json-pretty')[0];
-				this.out1liner = this.E.querySelectorAll('#json-1liner')[0];
-				this.indentRadios = this.E.querySelectorAll('input[name=json-pretty-indent]');
+				this.inJSON = this.$('.jsonInput')[0];
+				this.outPretty = this.$('#json-pretty')[0];
+				this.out1liner = this.$('#json-1liner')[0];
+				this.indentRadios = this.$('input[name=json-pretty-indent]');
 				this.quoteCheck = document.getElementById('json-1liner-quote-identifiers');
 				this.escapeQuotesCheck = document.getElementById('json-1liner-escape-quotes');
 
@@ -174,7 +174,7 @@
 					this.update();
 				}
 				
-				let switches = this.E.querySelectorAll('input[type=radio],input[type=checkbox]');
+				let switches = this.$('input[type=radio],input[type=checkbox]');
 				for (let s of switches) {
 					s.onchange = update;
 				}
@@ -266,8 +266,8 @@
 			constructor(id) {
 				super(id);
 
-				this.inTS = this.E.querySelectorAll('.inTimestamp')[0];
-				this.dates = this.E.querySelectorAll('.dates')[0];
+				this.inTS = this.$('.inTimestamp')[0];
+				this.dates = this.$('.dates')[0];
 
 				this.inTS.oninput = this.inTS.onchange = () => this.convert();
 			}
@@ -297,6 +297,7 @@
 					minute: "numeric",
 					second: "numeric",
 				};
+
 				let locale = "en-US";
 				let weekday = d.toLocaleDateString(locale, {timezone, weekday: "long"});
 				let weekdayClass = "l" + weekday.length;
@@ -321,9 +322,7 @@
 				timeE.innerHTML = time;
 
 				let tdE = this.$(".typographyDate")[0];
-
-				while (tdE.firstChild)
-					tdE.removeChild(tdE.firstChild)
+				this.removeChildren(tdE)
 
 				tdE.appendChild(weekdayE);
 				tdE.appendChild(monthE);
@@ -446,8 +445,8 @@
 			constructor(id) {
 				super(id)
 
-				this.encoded = this.E.querySelectorAll('.encinput')[0];
-				this.decoded = this.E.querySelectorAll('.decinput')[0];
+				this.encoded = this.$('.encinput')[0];
+				this.decoded = this.$('.decinput')[0];
 				this.encoded.oninput = this.encoded.onchange = () => this.decode();
 				this.decoded.oninput = this.decoded.onchange = () => this.encode();
 			}

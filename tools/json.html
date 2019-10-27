@@ -35,10 +35,10 @@
 			constructor(id) {
 				super(id);
 
-				this.inJSON = this.E.querySelectorAll('.jsonInput')[0];
-				this.outPretty = this.E.querySelectorAll('#json-pretty')[0];
-				this.out1liner = this.E.querySelectorAll('#json-1liner')[0];
-				this.indentRadios = this.E.querySelectorAll('input[name=json-pretty-indent]');
+				this.inJSON = this.$('.jsonInput')[0];
+				this.outPretty = this.$('#json-pretty')[0];
+				this.out1liner = this.$('#json-1liner')[0];
+				this.indentRadios = this.$('input[name=json-pretty-indent]');
 				this.quoteCheck = document.getElementById('json-1liner-quote-identifiers');
 				this.escapeQuotesCheck = document.getElementById('json-1liner-escape-quotes');
 
@@ -46,7 +46,7 @@
 					this.update();
 				}
 				
-				let switches = this.E.querySelectorAll('input[type=radio],input[type=checkbox]');
+				let switches = this.$('input[type=radio],input[type=checkbox]');
 				for (let s of switches) {
 					s.onchange = update;
 				}

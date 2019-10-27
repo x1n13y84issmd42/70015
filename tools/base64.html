@@ -13,8 +13,8 @@
 			constructor(id) {
 				super(id);
 
-				this.inBase64 = this.E.querySelectorAll('.base64Input')[0];
-				this.inAscii = this.E.querySelectorAll('.asciiInput')[0];
+				this.inBase64 = this.$('.base64Input')[0];
+				this.inAscii = this.$('.asciiInput')[0];
 
 				this.inBase64.oninput = this.inBase64.onchange = () => this.decode();
 				this.inAscii.oninput = this.inAscii.onchange = () => this.encode();

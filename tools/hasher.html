@@ -21,8 +21,8 @@
 			constructor(id) {
 				super(id);
 
-				this.input = this.E.querySelectorAll('.hasherInput')[0];
-				this.keyInput = this.E.querySelectorAll('.hasherKeyInput')[0];
+				this.input = this.$('.hasherInput')[0];
+				this.keyInput = this.$('.hasherKeyInput')[0];
 
 				this.keyInput.oninput = this.keyInput.onchange = this.input.oninput = this.input.onchange = () => this.hash();
 			}

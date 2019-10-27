@@ -19,8 +19,8 @@
 			constructor(id) {
 				super(id);
 
-				this.inTS = this.E.querySelectorAll('.inTimestamp')[0];
-				this.dates = this.E.querySelectorAll('.dates')[0];
+				this.inTS = this.$('.inTimestamp')[0];
+				this.dates = this.$('.dates')[0];
 
 				this.inTS.oninput = this.inTS.onchange = () => this.convert();
 			}
@@ -50,6 +50,7 @@
 					minute: "numeric",
 					second: "numeric",
 				};
+
 				let locale = "en-US";
 				let weekday = d.toLocaleDateString(locale, {timezone, weekday: "long"});
 				let weekdayClass = "l" + weekday.length;
@@ -74,9 +75,7 @@
 				timeE.innerHTML = time;
 
 				let tdE = this.$(".typographyDate")[0];
-
-				while (tdE.firstChild)
-					tdE.removeChild(tdE.firstChild)
+				this.removeChildren(tdE)
 
 				tdE.appendChild(weekdayE);
 				tdE.appendChild(monthE);
