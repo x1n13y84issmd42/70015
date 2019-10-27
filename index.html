@@ -8,7 +8,7 @@
 	</head>
 	<body style="display:none;">
 		<div id="front-center">
-			<input type="text" name="" id="filter" autofocus>
+			<input type="text" name="" id="filter" autofocus autocomplete="off">
 			<div class="footer">
 				<span class="c">© 2019 x1n13y84issmd42</span>
 				<span class="pipe"></span>
@@ -55,6 +55,68 @@
 
 		tools.add(new TBase64("base64"));
 	</script>
+</div><div class="tool unfocused col2" id="hasher" data-tag="hash md5 sha des">
+	<div class="preview"><h1>Hasher</h1></div>
+	<div class="controls">
+		<label for="hasherInput">Input</label>
+		<input type="text" class="hasherInput" id="hasherInput" autofocus tabindex="21" />
+		
+		<label for="hasherKeyInput">Encryption key</label>
+		<input type="text" class="hasherKeyInput" id="hasherKeyInput" autofocus tabindex="21" />
+
+		<div class="results"></div>
+	</div>
+
+	<script src="./node_modules/crypto-js/crypto-js.js"></script>
+	<script src="./node_modules/js-crc/build/crc.min.js"></script>
+
+	<script>
+		class THasher extends Tool {
+			constructor(id) {
+				super(id);
+
+				this.input = this.E.querySelectorAll('.hasherInput')[0];
+				this.keyInput = this.E.querySelectorAll('.hasherKeyInput')[0];
+
+				this.keyInput.oninput = this.keyInput.onchange = this.input.oninput = this.input.onchange = () => this.hash();
+			}
+
+			hash() {
+				let results = this.$(".results")[0];
+				while (results.firstChild)
+					results.removeChild(results.firstChild);
+
+				results.appendChild(this.Component('hash', "MD5", CryptoJS.enc.Hex.stringify(CryptoJS.MD5(this.input.value))))
+				
+				results.appendChild(this.Component('hash', "SHA256", CryptoJS.enc.Hex.stringify(CryptoJS.SHA256(this.input.value))))
+				
+				results.appendChild(this.Component('hash', "SHA1", CryptoJS.enc.Hex.stringify(CryptoJS.SHA1(this.input.value))))
+				
+				let aes = CryptoJS.AES.encrypt(this.input.value, this.keyInput.value, {keySize: 128});
+				// console.log(aes);
+				// console.log(aes.key.toString());
+				// console.log(aes.iv.toString());
+				// console.log(aes.ciphertext.toString());
+				// console.log(CryptoJS.enc.Hex.stringify(aes.key));
+				// console.log(CryptoJS.enc.Hex.stringify(aes.iv));
+				// console.log(CryptoJS.enc.Hex.stringify(aes.ciphertext));
+				results.appendChild(this.Component('hash', "AES", CryptoJS.enc.Hex.stringify(aes.ciphertext)))
+				
+				results.appendChild(this.Component('hash', "CRC16", crc16(this.input.value)));
+				
+				results.appendChild(this.Component('hash', "CRC32", crc32(this.input.value)));
+			};
+		}
+
+		tools.add(new THasher("hasher"));
+	</script>
+
+	<div class="components">
+		<div class="hash kvpair">
+			<span class="label" data-arg="0"></span>
+			<span class="value" data-arg="1"></span>
+		</div>
+	</div>
 </div><div class="tool unfocused col3" id="json" data-tag="json format">
 	<div class="preview"><h1>JSON Format</h1></div>
 	<div class="controls">
@@ -259,40 +321,6 @@
 		tools.add(new TUnixtime("unixtime"));
 
 	</script>
-</div><div class="tool unfocused col1" id="urldecode" data-tag="url encode decode">
-	<div class="preview"><h1>URL Transcode</h1></div>
-	<div class="controls smaller">
-		<label for="urldecode-encinput">URL-encoded string</label>
-		<input type="text" class="encinput" id="urldecode-encinput" autofocus tabindex="11">
-		<div class="bothways">It works ⇃both↾ ways.</div>
-		<label for="urldecode-encinput">ASCII string</label>
-		<input type="text" class="decinput" id="urldecode-decinput" tabindex="12" onFocus="this.tabIndex=10;" onBlur="this.tabIndex=12;">
-	</div>
-
-	<script>
-		class TURLTranscoder extends Tool {
-			constructor(id) {
-				super(id)
-
-				this.encoded = this.E.querySelectorAll('.encinput')[0];
-				this.decoded = this.E.querySelectorAll('.decinput')[0];
-				this.encoded.oninput = this.encoded.onchange = () => this.decode();
-				this.decoded.oninput = this.decoded.onchange = () => this.encode();
-			}
-	
-			decode() {
-				this.decoded.value = decodeURIComponent(this.encoded.value);
-			};
-			
-			encode() {
-				this.encoded.value = encodeURIComponent(this.decoded.value);
-			};
-
-		}
-
-		tools.add(new TURLTranscoder("urldecode"));
-
-	</script>
 
 	<style>
 		.timezones > p {
@@ -381,28 +409,41 @@
 		#unixtime .typographyDate > .l48 {font-size: 10.42pt;}
 		#unixtime .typographyDate > .l49 {font-size: 10.20pt;}
 		#unixtime .typographyDate > .l50 {font-size: 10.00pt;}
-
-		.urlprop {
-			font-size: 16px;
-		}
-
-		.urlprop-sub {
-			margin-left: 50px;
-		}
-
-		.urlprop > .label {
-			display: inline-block;
-			width: 100px;
-			top: -1px;
-			position: relative;
-			margin-right: 20px;
-			text-align: right;
-		}
-
-		.urlprop > .value {
-			font-size: 22px;
-		}
 	</style>
+</div><div class="tool unfocused col1" id="urldecode" data-tag="url encode decode">
+	<div class="preview"><h1>URL Transcode</h1></div>
+	<div class="controls smaller">
+		<label for="urldecode-encinput">URL-encoded string</label>
+		<input type="text" class="encinput" id="urldecode-encinput" autofocus tabindex="11">
+		<div class="bothways">It works ⇃both↾ ways.</div>
+		<label for="urldecode-encinput">ASCII string</label>
+		<input type="text" class="decinput" id="urldecode-decinput" tabindex="12" onFocus="this.tabIndex=10;" onBlur="this.tabIndex=12;">
+	</div>
+
+	<script>
+		class TURLTranscoder extends Tool {
+			constructor(id) {
+				super(id)
+
+				this.encoded = this.E.querySelectorAll('.encinput')[0];
+				this.decoded = this.E.querySelectorAll('.decinput')[0];
+				this.encoded.oninput = this.encoded.onchange = () => this.decode();
+				this.decoded.oninput = this.decoded.onchange = () => this.encode();
+			}
+	
+			decode() {
+				this.decoded.value = decodeURIComponent(this.encoded.value);
+			};
+			
+			encode() {
+				this.encoded.value = encodeURIComponent(this.decoded.value);
+			};
+
+		}
+
+		tools.add(new TURLTranscoder("urldecode"));
+
+	</script>
 </div><div class="tool unfocused" id="urlparse" data-tag="urlparse">
 	<div class="preview"><h1>URL Parser</h1></div>
 	<div class="controls smaller">
@@ -475,17 +516,17 @@
 	</script>
 
 	<div class="components">
-		<div class="urlprop">
+		<div class="urlprop kvpair">
 			<span class="label" data-arg="0"></span>
 			<span class="value" data-arg="1"></span>
 		</div>
 		
-		<div class="urlprop urlprop-section">
+		<div class="urlprop kvpair urlprop-section">
 			<span class="label" data-arg="0"></span>
 			<span class="value">&nbsp;</span>
 		</div>
 		
-		<div class="urlprop urlprop-sub">
+		<div class="urlprop kvpair urlprop-sub">
 			<span class="label" data-arg="0"></span>
 			<span class="value" data-arg="1"></span>
 		</div>
