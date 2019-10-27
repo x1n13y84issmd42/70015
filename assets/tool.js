@@ -60,6 +60,8 @@ class Tool {
 				let nodes = compE.querySelectorAll(`[data-arg="${aI}"]`);
 				this.tplNodes(nodes, args[aI])
 			}
+
+			compE.querySelectorAll('.copy').forEach((v, k, p) => {v.onclick = onclickCopyToClipboard});
 	
 			return compE;
 		}

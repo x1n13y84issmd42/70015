@@ -14,6 +14,16 @@
 	transition: opacity 200ms ease-in-out, background-color 200ms ease-in-out;
 }
 
+.tool.focused {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	min-height: 100%;
+	background-color: white;
+	overflow: auto;
+}
+
 .tool.focused > .preview {
 	opacity: 0;
 }
@@ -21,7 +31,7 @@
 .tool > .controls.smaller {
 	padding: 5% 20%;
     width: 60%;
-    min-height: 80%;
+    /* min-height: 80%; */
 }
 
 .tool > .controls .left {
@@ -53,7 +63,7 @@
 .tool > .controls {
 	padding: 5% 10%;
 	width: 80%;
-	min-height: 80%;
+	/* min-height: 80%; */
 	opacity: 1;
 	background-color: white;
 	transition: opacity 200ms ease-in-out, background-color 200ms ease-in-out;
@@ -98,7 +108,7 @@
 
 .tool .subcontrols {
 	float: right;
-	width: 1200px;
+	width: auto;
 	padding-top: 10px;
 }
 
@@ -181,6 +191,7 @@
 
 .kvpair {
 	font-size: 16px;
+	display: table-row;
 }
 
 .kvpair-sub {
@@ -189,14 +200,29 @@
 
 .kvpair > .label {
 	display: inline-block;
-	width: 100px;
-	top: -1px;
-	position: relative;
-	margin-right: 20px;
-	text-align: right;
+    min-width: 100px;
+    padding-right: 20px;
+    text-align: right;
+	display: table-cell;
+	vertical-align: top;
 }
 
-.kvpair > .value {
+.kvpair > div {
+	display: table-cell;
+}
+
+.kvpair .value {
 	font-size: 22px;
 	word-break: break-all;
+	display: inline-block;
+}
+
+.kvpair .value.copy {
+	cursor: pointer;
+}
+
+.kvpair .value.copy:hover {
+	color: #00BBFF;
+	transform: scale(1.05);
+	transition: all 100ms ease-in-out;
 }

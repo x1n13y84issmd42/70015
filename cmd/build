@@ -21,6 +21,7 @@ function build {
 		for file in ${FILES[@]}; do
 			log "  Adding " $file
 			cat $file >> $OUTFILE
+			echo -e '\n\n' >> $OUTFILE
 		done
 	done
 

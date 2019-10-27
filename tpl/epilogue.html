@@ -11,6 +11,26 @@
 				filter.focus();
 			}
 
+			function onclickCopyToClipboard(e) {
+				let from = e.currentTarget;
+				if (from.dataset.from) {
+					from = document.getElementById(from.dataset.from);
+				}
+
+				if (from) {	
+					switch (from.tagName) {
+						case "INPUT":
+						case "TEXTAREA":
+							Clipboard.copy(from.value);
+							break;
+							
+						default:
+							Clipboard.copy(from.innerHTML);
+							break;
+					}
+				}
+			}
+
 			document.body.onload = () => {				
 				let filter = document.getElementById("filter");
 				filter.onchange = filter.oninput = () => {
@@ -30,6 +50,8 @@
 						tools.filter("");
 					}
 				}
+
+				document.querySelectorAll('.copy').forEach((v, k, p) => {v.onclick = onclickCopyToClipboard});
 
 				if (window.location.hash) {
 					tools.focus(window.location.hash.substr(1));
