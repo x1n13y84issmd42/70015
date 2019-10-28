@@ -320,11 +320,29 @@ input[type=radio]:checked {
  * animation scale-up-center
  * ----------------------------------------
  */
- @keyframes scale-up-center {
+@keyframes scale-up-center {
 	0% {transform: scale(1.05);}
 	30% {transform: scale(1.1);}
 	100% {transform: scale(1.05);}
-  }
+}
+
+.floater {
+	position: absolute;
+    opacity: 1;
+    font-size: 12pt;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 5px 18px;
+    border-radius: 10px;
+	margin-top: 0px;
+}
+
+.floater.vanishing {
+	margin-top: -75px;
+	opacity: 0;
+	transition: all 600ms ease-in-out;
+}
 
 
 

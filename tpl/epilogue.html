@@ -24,12 +24,30 @@
 				}, time);
 			}
 
+			function copiedFloater(x, y) {
+				let fltr = document.createElement('div');
+				fltr.classList.add("floater");
+				fltr.style.left = (x - 45) + "px";
+				fltr.style.top = (y - 35) + "px";
+				fltr.innerHTML = 'Copied.';
+				document.body.appendChild(fltr);
+
+				setTimeout(() => {
+					fltr.classList.add("vanishing");
+				}, 0);
+
+				setTimeout(() => {
+					document.body.removeChild(fltr);
+				}, 1000);
+			}
+
 			function onclickCopyToClipboard(e) {
 				let from = e.currentTarget;
 
 				if (from.dataset.value) {
-					tmpStyle(from, 'copied', 200);
 					Clipboard.copy(from.dataset.value);
+					tmpStyle(from, 'copied', 200);
+					copiedFloater(e.pageX, e.pageY);
 					return;
 				}
 				
@@ -50,10 +68,11 @@
 					}
 
 					tmpStyle(from, 'copied', 200);
+					copiedFloater(e.pageX, e.pageY);
 				}
 			}
 
-			document.body.onload = () => {				
+			document.body.onload = () => {
 				let filter = document.getElementById("filter");
 				filter.oninput = () => {
 					tools.filter(filter.value);
