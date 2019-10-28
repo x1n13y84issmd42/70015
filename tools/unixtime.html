@@ -22,7 +22,7 @@
 				this.inTS = this.$('.inTimestamp')[0];
 				this.dates = this.$('.dates')[0];
 
-				this.inTS.oninput = this.inTS.onchange = () => this.convert();
+				this.inTS.oninput = () => this.convert();
 			}
 
 			convert() {

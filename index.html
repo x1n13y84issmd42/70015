@@ -43,8 +43,8 @@
 				this.inBase64 = this.$('.base64Input')[0];
 				this.inAscii = this.$('.asciiInput')[0];
 
-				this.inBase64.oninput = this.inBase64.onchange = () => this.decode();
-				this.inAscii.oninput = this.inAscii.onchange = () => this.encode();
+				this.inBase64.oninput = () => this.decode();
+				this.inAscii.oninput = () => this.encode();
 			}
 
 			decode() {
@@ -87,7 +87,7 @@
 				this.input = this.$('.hasherInput')[0];
 				this.keyInput = this.$('.hasherKeyInput')[0];
 
-				this.keyInput.oninput = this.keyInput.onchange = this.input.oninput = this.input.onchange = () => this.hash();
+				this.keyInput.oninput = this.input.oninput = () => this.hash();
 			}
 
 			hash() {
@@ -191,7 +191,7 @@
 					s.onchange = update;
 				}
 
-				this.inJSON.oninput = this.inJSON.onchange = update;
+				this.inJSON.oninput = update;
 			}
 
 			update() {
@@ -288,7 +288,7 @@
 				this.inTS = this.$('.inTimestamp')[0];
 				this.dates = this.$('.dates')[0];
 
-				this.inTS.oninput = this.inTS.onchange = () => this.convert();
+				this.inTS.oninput = () => this.convert();
 			}
 
 			convert() {
@@ -485,8 +485,8 @@
 
 				this.encoded = this.$('.encinput')[0];
 				this.decoded = this.$('.decinput')[0];
-				this.encoded.oninput = this.encoded.onchange = () => this.decode();
-				this.decoded.oninput = this.decoded.onchange = () => this.encode();
+				this.encoded.oninput = () => this.decode();
+				this.decoded.oninput = () => this.encode();
 			}
 	
 			decode() {
@@ -521,7 +521,7 @@
 				super(id);
 				this.URL = document.getElementById("urlparse-url");
 
-				this.URL.onchange = this.URL.oninput = () => {
+				this.URL.oninput = () => {
 					let fields = this.$(".fields")[0];
 					while (fields.firstChild)
 						fields.removeChild(fields.firstChild);
@@ -652,7 +652,7 @@
 
 			document.body.onload = () => {				
 				let filter = document.getElementById("filter");
-				filter.onchange = filter.oninput = () => {
+				filter.oninput = () => {
 					tools.filter(filter.value);
 				}
 				

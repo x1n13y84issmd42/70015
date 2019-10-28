@@ -14,7 +14,7 @@
 				super(id);
 				this.URL = document.getElementById("urlparse-url");
 
-				this.URL.onchange = this.URL.oninput = () => {
+				this.URL.oninput = () => {
 					let fields = this.$(".fields")[0];
 					while (fields.firstChild)
 						fields.removeChild(fields.firstChild);

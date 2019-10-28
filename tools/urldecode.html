@@ -21,8 +21,8 @@
 
 				this.encoded = this.$('.encinput')[0];
 				this.decoded = this.$('.decinput')[0];
-				this.encoded.oninput = this.encoded.onchange = () => this.decode();
-				this.decoded.oninput = this.decoded.onchange = () => this.encode();
+				this.encoded.oninput = () => this.decode();
+				this.decoded.oninput = () => this.encode();
 			}
 	
 			decode() {

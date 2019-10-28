@@ -16,8 +16,8 @@
 				this.inBase64 = this.$('.base64Input')[0];
 				this.inAscii = this.$('.asciiInput')[0];
 
-				this.inBase64.oninput = this.inBase64.onchange = () => this.decode();
-				this.inAscii.oninput = this.inAscii.onchange = () => this.encode();
+				this.inBase64.oninput = () => this.decode();
+				this.inAscii.oninput = () => this.encode();
 			}
 
 			decode() {

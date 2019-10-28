@@ -55,7 +55,7 @@
 
 			document.body.onload = () => {				
 				let filter = document.getElementById("filter");
-				filter.onchange = filter.oninput = () => {
+				filter.oninput = () => {
 					tools.filter(filter.value);
 				}
 				
