@@ -4,7 +4,7 @@
 		<label for="unixtime-inTimestamp">Unixtime</label>
 		<input type="text" class="inTimestamp" id="unixtime-inTimestamp" autofocus>
 		<div class="left l40">
-			<div class="typographyDate">
+			<div class="typographyDate copy">
 				<p class="l10">&nbsp;</p>
 			</div>
 		</div>
@@ -77,6 +77,8 @@
 				let tdE = this.$(".typographyDate")[0];
 				this.removeChildren(tdE)
 
+				tdE.dataset.value = `${weekday}, ${month} ${year}, ${time}`;
+
 				tdE.appendChild(weekdayE);
 				tdE.appendChild(monthE);
 				tdE.appendChild(yearE);
@@ -118,11 +120,19 @@
 
 		#unixtime .typographyDate {
 			font-family: Share Tech Mono;
+			width: 370px;
+		}
+		
+		#unixtime .typographyDate:hover {
+			transform: scale(1.05);
+			color: #00BBFF;
+			transition: all 100ms ease-in-out;
 		}
 
 		#unixtime .typographyDate > * {
 			font-family: inherit;
 			line-height: 90%;
+			cursor: pointer;
 		}
 
 		#unixtime .typographyDate > .l1 {font-size: 500.00pt;}
@@ -180,7 +190,7 @@
 	<div class="components">
 		<div class="kvpair subsection">
 			<h1 data-arg="0"></h1>
-			<span class="value" data-arg="1"></span>
+			<a class="value copy" data-arg="1"></a>
 		</div>
 	</div>
 </div>

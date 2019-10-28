@@ -11,6 +11,48 @@
 				filter.focus();
 			}
 
+			/**
+			 * Temporarily applies a class to an element. The class is removed after the specified amount of time passes.
+			 * @param {HTMLElement} e An element to style.
+			 * @param {string} className A class name to apply temporarily.
+			 * @param {number} time A time period the class should be removed after.
+			 */
+			function tmpStyle(e, className, time) {
+				e.classList.add(className);
+				setTimeout(() => {
+					e.classList.remove(className);
+				}, time);
+			}
+
+			function onclickCopyToClipboard(e) {
+				let from = e.currentTarget;
+
+				if (from.dataset.value) {
+					tmpStyle(from, 'copied', 200);
+					Clipboard.copy(from.dataset.value);
+					return;
+				}
+				
+				if (from.dataset.from) {
+					from = document.getElementById(from.dataset.from);
+				}
+				
+				if (from) {	
+					switch (from.tagName) {
+						case "INPUT":
+						case "TEXTAREA":
+							Clipboard.copy(from.value);
+							break;
+							
+						default:
+							Clipboard.copy(from.innerHTML);
+							break;
+					}
+
+					tmpStyle(from, 'copied', 200);
+				}
+			}
+
 			document.body.onload = () => {				
 				let filter = document.getElementById("filter");
 				filter.onchange = filter.oninput = () => {
@@ -30,6 +72,8 @@
 						tools.filter("");
 					}
 				}
+
+				document.querySelectorAll('.copy').forEach((v, k, p) => {v.onclick = onclickCopyToClipboard});
 
 				if (window.location.hash) {
 					tools.focus(window.location.hash.substr(1));

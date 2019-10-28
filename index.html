@@ -22,7 +22,10 @@
 			let tools = new Tools()
 		</script>
 
-		<div id="tools"><div class="tool unfocused col2" id="base64" data-tag="base64">
+		<div id="tools">
+
+
+<div class="tool unfocused col2" id="base64" data-tag="base64">
 	<div class="preview"><h1>Base64</h1></div>
 	<div class="controls smaller">
 		<label for="base64Input">Base64-encoded string</label>
@@ -55,7 +58,10 @@
 
 		tools.add(new TBase64("base64"));
 	</script>
-</div><div class="tool unfocused col2" id="hasher" data-tag="hash md5 sha des">
+</div>
+
+
+<div class="tool unfocused col2" id="hasher" data-tag="hash md5 sha des">
 	<div class="preview"><h1>Hasher</h1></div>
 	<div class="controls smaller">
 		<label for="hasherInput">Input</label>
@@ -122,14 +128,17 @@
 	</script>
 
 	<div class="components">
-		<h1 class="sectionLabel" data-arg="0">Hashes</h1>
+		<h1 class="sectionLabel" data-arg="0"></h1>
 
 		<div class="hash kvpair">
 			<span class="label" data-arg="0"></span>
-			<span class="value" data-arg="1"></span>
+			<span class="value copy" data-arg="1"></span>
 		</div>
 	</div>
-</div><div class="tool unfocused col3" id="json" data-tag="json format">
+</div>
+
+
+<div class="tool unfocused col3" id="json" data-tag="json format">
 	<div class="preview"><h1>JSON Format</h1></div>
 	<div class="controls">
 		<label for="json-jsonInput">JSON input</label>
@@ -146,7 +155,7 @@
 				<input type="checkbox" name="json-1liner-escape-quotes" id="json-1liner-escape-quotes">
 				Escape the quotes
 			</label>
-			<a class="copy"><span>COPY</span><i class="far fa-copy"></i></a>
+			<a class="copy" data-from="json-1liner"><span>COPY</span><i class="far fa-copy"></i></a>
 		</div>
 		<input type="text" name="json-1liner" id="json-1liner" spellcheck="false" disabled>
 		
@@ -156,7 +165,7 @@
 			<label for="json-pretty-indent-tabs"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-tabs" value="	" checked>tabs</label>
 			<label for="json-pretty-indent-4spaces"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-4spaces" value="    ">4 spaces</label>
 			<label for="json-pretty-indent-2spaces"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-2spaces" value="  ">2 spaces</label>
-			<a class="copy"><span>COPY</span><i class="far fa-copy"></i></a>
+			<a class="copy" data-from="json-pretty"><span>COPY</span><i class="far fa-copy"></i></a>
 		</div>
 		<textarea id="json-pretty" rows="8" spellcheck="false" disabled></textarea>
 	</div>
@@ -247,14 +256,21 @@
 		#json .jsonErr {
 			margin-bottom: 2em;
 		}
+
+		#json .subcontrols {
+			width: 1000px;
+		}
 	</style>
-</div><div class="tool unfocused col3" id="unixtime" data-tag="unixtime">
+</div>
+
+
+<div class="tool unfocused col3" id="unixtime" data-tag="unixtime">
 	<div class="preview"><h1>Unixtime</h1></div>
 	<div class="controls smaller">
 		<label for="unixtime-inTimestamp">Unixtime</label>
 		<input type="text" class="inTimestamp" id="unixtime-inTimestamp" autofocus>
 		<div class="left l40">
-			<div class="typographyDate">
+			<div class="typographyDate copy">
 				<p class="l10">&nbsp;</p>
 			</div>
 		</div>
@@ -327,6 +343,8 @@
 				let tdE = this.$(".typographyDate")[0];
 				this.removeChildren(tdE)
 
+				tdE.dataset.value = `${weekday}, ${month} ${year}, ${time}`;
+
 				tdE.appendChild(weekdayE);
 				tdE.appendChild(monthE);
 				tdE.appendChild(yearE);
@@ -368,11 +386,19 @@
 
 		#unixtime .typographyDate {
 			font-family: Share Tech Mono;
+			width: 370px;
+		}
+		
+		#unixtime .typographyDate:hover {
+			transform: scale(1.05);
+			color: #00BBFF;
+			transition: all 100ms ease-in-out;
 		}
 
 		#unixtime .typographyDate > * {
 			font-family: inherit;
 			line-height: 90%;
+			cursor: pointer;
 		}
 
 		#unixtime .typographyDate > .l1 {font-size: 500.00pt;}
@@ -430,16 +456,25 @@
 	<div class="components">
 		<div class="kvpair subsection">
 			<h1 data-arg="0"></h1>
-			<span class="value" data-arg="1"></span>
+			<a class="value copy" data-arg="1"></a>
 		</div>
 	</div>
-</div><div class="tool unfocused col1" id="urldecode" data-tag="url encode decode">
+</div>
+
+
+<div class="tool unfocused col1" id="urldecode" data-tag="url trans encode decode">
 	<div class="preview"><h1>URL Transcode</h1></div>
 	<div class="controls smaller">
 		<label for="urldecode-encinput">URL-encoded string</label>
+		<div class="subcontrols">
+			<a class="copy" data-from="urldecode-encinput"><span>COPY</span><i class="far fa-copy"></i></a>
+		</div>
 		<input type="text" class="encinput" id="urldecode-encinput" autofocus tabindex="11">
 		<div class="bothways">It works ⇃both↾ ways.</div>
 		<label for="urldecode-encinput">ASCII string</label>
+		<div class="subcontrols">
+			<a class="copy" data-from="urldecode-decinput"><span>COPY</span><i class="far fa-copy"></i></a>
+		</div>
 		<input type="text" class="decinput" id="urldecode-decinput" tabindex="12" onFocus="this.tabIndex=10;" onBlur="this.tabIndex=12;">
 	</div>
 
@@ -467,7 +502,10 @@
 		tools.add(new TURLTranscoder("urldecode"));
 
 	</script>
-</div><div class="tool unfocused" id="urlparse" data-tag="urlparse">
+</div>
+
+
+<div class="tool unfocused" id="urlparse" data-tag="urlparse">
 	<div class="preview"><h1>URL Parser</h1></div>
 	<div class="controls smaller">
 		<label for="urlparse-url">URL</label>
@@ -541,7 +579,7 @@
 	<div class="components">
 		<div class="urlprop kvpair">
 			<span class="label" data-arg="0"></span>
-			<span class="value" data-arg="1"></span>
+			<span class="value copy" data-arg="1"></span>
 		</div>
 		
 		<div class="urlprop kvpair urlprop-section">
@@ -551,10 +589,13 @@
 		
 		<div class="urlprop kvpair urlprop-sub">
 			<span class="label" data-arg="0"></span>
-			<span class="value" data-arg="1"></span>
+			<span class="value copy" data-arg="1"></span>
 		</div>
 	</div>
-</div>		</div>
+</div>
+
+
+		</div>
 
 		<script>
 			function focus(id) {
@@ -565,6 +606,48 @@
 				tools.unfocus(id);
 				window.location.hash = '';
 				filter.focus();
+			}
+
+			/**
+			 * Temporarily applies a class to an element. The class is removed after the specified amount of time passes.
+			 * @param {HTMLElement} e An element to style.
+			 * @param {string} className A class name to apply temporarily.
+			 * @param {number} time A time period the class should be removed after.
+			 */
+			function tmpStyle(e, className, time) {
+				e.classList.add(className);
+				setTimeout(() => {
+					e.classList.remove(className);
+				}, time);
+			}
+
+			function onclickCopyToClipboard(e) {
+				let from = e.currentTarget;
+
+				if (from.dataset.value) {
+					tmpStyle(from, 'copied', 200);
+					Clipboard.copy(from.dataset.value);
+					return;
+				}
+				
+				if (from.dataset.from) {
+					from = document.getElementById(from.dataset.from);
+				}
+				
+				if (from) {	
+					switch (from.tagName) {
+						case "INPUT":
+						case "TEXTAREA":
+							Clipboard.copy(from.value);
+							break;
+							
+						default:
+							Clipboard.copy(from.innerHTML);
+							break;
+					}
+
+					tmpStyle(from, 'copied', 200);
+				}
 			}
 
 			document.body.onload = () => {				
@@ -587,6 +670,8 @@
 					}
 				}
 
+				document.querySelectorAll('.copy').forEach((v, k, p) => {v.onclick = onclickCopyToClipboard});
+
 				if (window.location.hash) {
 					tools.focus(window.location.hash.substr(1));
 				}
@@ -596,3 +681,5 @@
 		</script>
 	</body>
 </html>
+
+
