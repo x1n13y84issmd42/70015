@@ -44,7 +44,7 @@ class Tool {
 		}
 	}
 
-	Component = function(s) {
+	Component(s) {
 		let args = Array.prototype.slice.apply(arguments);
 		let compID = args.shift();
 		let compE = this.$(`.components .${compID}`)[0];
@@ -67,7 +67,7 @@ class Tool {
 		}
 	}
 
-	Error = function(id, err) {
+	Error(id, err) {
 		let errEs = this.$(`.${id}`);
 		for (let errE of errEs) {
 			if (err) {
