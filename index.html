@@ -316,6 +316,7 @@
 				try {
 					this.yaml.value = jsyaml.safeDump(JSON.parse(this.json.value));
 					this.Error('jsonErr', '');
+					this.Error('yamlErr', '');
 				} catch (e) {
 					this.Error('jsonErr', e.message);
 					this.yaml.value = '¯\\_(ツ)_/¯';
@@ -333,6 +334,7 @@
 				try {
 					this.json.value = JSON.stringify(jsyaml.safeLoad(this.yaml.value), undefined, indent);
 					this.Error('yamlErr', '');
+					this.Error('jsonErr', '');
 				} catch (e) {
 					this.Error('yamlErr', e.message);
 					this.json.value = '¯\\_(ツ)_/¯';
