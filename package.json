@@ -18,6 +18,7 @@
   "homepage": "https://github.com/x1n13y84issmd42/70015#readme",
   "dependencies": {
     "crypto-js": "^3.1.9-1",
-    "js-crc": "^0.2.0"
+    "js-crc": "^0.2.0",
+    "js-yaml": "^3.13.1"
   }
 }

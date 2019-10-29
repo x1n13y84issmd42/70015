@@ -1,9 +1,11 @@
 <div class="tool unfocused col3" id="json" data-tag="json format">
 	<div class="preview"><h1>JSON Format</h1></div>
 	<div class="controls">
-		<label for="json-jsonInput">JSON input</label>
-		<textarea class="jsonInput" id="json-jsonInput" autofocus spellcheck="false" style="margin-bottom:0.5em;"></textarea>
-		<p class="jsonErr error"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
+		<section>
+			<label for="json-jsonInput">JSON input</label>
+			<textarea class="jsonInput" id="json-jsonInput" autofocus spellcheck="false" style="margin-bottom:0.5em;"></textarea>
+			<p class="jsonErr error inset"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
+		</section>
 		
 		<label for="json-1liner">One-liner JSON</label>
 		<div class="subcontrols" data-for="json-1liner">
@@ -113,10 +115,6 @@
 	</script>
 
 	<style>
-		#json .jsonErr {
-			margin-bottom: 2em;
-		}
-
 		#json .subcontrols {
 			width: 1000px;
 		}

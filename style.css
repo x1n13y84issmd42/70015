@@ -110,6 +110,20 @@ input[type=radio]:checked {
     /* min-height: 80%; */
 }
 
+.tool > .controls > section .error.inset {
+	position: absolute;
+	bottom: 0;
+	background: red;
+	color: white;
+	padding: 3px 15px;
+	border-top-right-radius: 9px;
+}
+
+.tool > .controls > section {
+	position: relative;
+	margin-bottom: 2em;
+}
+
 .tool > .controls .left {
 	float: left;
 	width: 50%;
@@ -145,28 +159,28 @@ input[type=radio]:checked {
 	transition: opacity 200ms ease-in-out, background-color 200ms ease-in-out;
 }
 
-.tool > .controls > .error {
+.tool > .controls .error {
 	color: red;
 	font-size: 16pt;
 	font-family: Quicksand;
 	visibility: hidden;
 }
 
-.tool > .controls > .error.shown {
+.tool > .controls .error.shown {
 	visibility: visible;
 }
 
-.tool > .controls > .error > i.fas {
+.tool > .controls .error > i.fas {
 	margin-right: 5px;
 }
 
-.tool > .controls > label {
+.tool > .controls label {
 	font-size: 22pt;
 	font-family: Quicksand;
 }
 
-.tool > .controls > textarea,
-.tool > .controls > input[type=text] {
+.tool > .controls textarea,
+.tool > .controls input[type=text] {
 	width: 100%;
     display: block;
     font-size: 16pt;
@@ -176,8 +190,8 @@ input[type=radio]:checked {
 	border: 2px #99DDFF solid;
 }
 
-.tool > .controls > textarea[disabled],
-.tool > .controls > input[type=text][disabled] {
+.tool > .controls textarea[disabled],
+.tool > .controls input[type=text][disabled] {
 	border: 1px #AAA solid;
     background: #F3F3F3;
 }
@@ -217,13 +231,13 @@ input[type=radio]:checked {
 	-o-transition: all 100ms ease-in-out;
 }
 
-.tool > .controls > .subcontrols > label {
+.tool > .controls .subcontrols > label {
 	font-size: 12pt;
 	font-family: Quicksand;
 	margin-right: 20px;
 }
 
-.tool > .controls > a.close {
+.tool > .controls a.close {
 	font-family: Quicksand;
 	font-size: 24pt;
 	position: absolute;
@@ -233,17 +247,17 @@ input[type=radio]:checked {
 	cursor: pointer;
 }
 
-.tool > .controls > a.close > * {
+.tool > .controls a.close > * {
 	line-height: 24pt;
 	vertical-align: middle;
 }
 
-.tool > .controls > a.close > i {
+.tool > .controls a.close > i {
 	font-style: normal;
 	font-size: 36pt;
 }
 
-.tool > .controls > a.close > span {
+.tool > .controls a.close > span {
 	font-size: 12pt;
 	opacity: 0;
 	transition: all 100ms ease-in-out;
@@ -252,7 +266,7 @@ input[type=radio]:checked {
 	-o-transition: all 100ms ease-in-out;
 }
 
-.tool > .controls > a.close:hover > span {
+.tool > .controls a.close:hover > span {
 	font-size: 12pt;
 	opacity: 1;
 	transition: all 100ms ease-in-out;
