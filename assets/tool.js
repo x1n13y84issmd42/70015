@@ -7,6 +7,7 @@ class Tool {
 		}
 
 		this.ID = id;
+		this._autoinput = false;
 	
 		let ctrls = E.querySelector(".controls");
 		let eClose = document.createElement("a");
@@ -14,10 +15,24 @@ class Tool {
 		eClose.classList.add("close");
 		eClose.onclick = (e) => {unfocus(id); e.preventDefault();e.cancelBubble=true;}
 		ctrls.append(eClose);
+
+		this.switches = this.$('input[type=radio],input[type=checkbox]');
 	}
 
 	$(s) {
 		return this.E.querySelectorAll(s);
+	}
+
+	$$(id) {
+		return document.getElementById(`${this.ID}-${id}`);
+	}
+
+	autoinput(ai) {
+		if (ai) {
+			this._autoinput = !!ai;
+		} else {
+			return this._autoinput;
+		}
 	}
 
 	T(s, v) {

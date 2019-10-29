@@ -1,0 +1,87 @@
+<div class="tool unfocused" id="jsonyaml">
+	<div class="preview">
+		<h1>JSON&mdash;YAML Conversion</h1>
+	</div>
+	<div class="controls smaller">
+		<section>
+			<label for="jsonyaml-json">JSON</label>
+			<div class="subcontrols">
+				<label for="">Indent with</label>
+				<label for="json-prettyIndentTabs"><input type="radio" name="json-pretty-indent" id="json-prettyIndentTabs" value="	" checked>tabs</label>
+				<label for="json-prettyIndent4spaces"><input type="radio" name="json-pretty-indent" id="json-prettyIndent4spaces" value="    ">4 spaces</label>
+				<label for="json-prettyIndent2spaces"><input type="radio" name="json-pretty-indent" id="json-prettyIndent2spaces" value="  ">2 spaces</label>
+				<a class="copy" data-from="jsonyaml-json"><span>COPY</span><i class="far fa-copy"></i></a>
+			</div>
+			<textarea id="jsonyaml-json" cols="30" rows="9"></textarea>
+			<p class="jsonErr error inset"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
+		</section>
+		
+		<div class="bothways">It works ⇃both↾ ways.</div>
+		
+		<section>
+			<label for="jsonyaml-yaml">YAML</label>
+			<div class="subcontrols">
+				<a class="copy" data-from="jsonyaml-yaml"><span>COPY</span><i class="far fa-copy"></i></a>
+			</div>
+			<textarea id="jsonyaml-yaml" cols="30" rows="9"></textarea>
+			<p class="yamlErr error inset"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
+		</section>
+	</div>
+
+	<script src="./node_modules/js-yaml/dist/js-yaml.min.js"></script>
+
+	<script>
+		class TJSONYAML extends Tool {
+			constructor(id) {
+				super(id);
+
+				this.json = this.$$('json');
+				this.yaml = this.$$('yaml');
+
+				this.json.oninput = () => this.toYAML();
+				this.yaml.oninput = () => this.toJSON();
+
+				this.indentRadios = this.$('input[name=json-pretty-indent]');
+
+				for (let s of this.switches) {
+					s.onchange = () => this.toJSON();
+				}
+			}
+
+			toYAML() {
+				try {
+					this.yaml.value = jsyaml.safeDump(JSON.parse(this.json.value));
+					this.Error('jsonErr', '');
+				} catch (e) {
+					this.Error('jsonErr', e.message);
+					this.yaml.value = '¯\\_(ツ)_/¯';
+				}
+			}
+
+			toJSON() {
+				let indent = "\t";
+				for (let r of this.indentRadios) {
+					if (r.checked) {
+						indent = r.value;
+					}
+				}
+
+				try {
+					this.json.value = JSON.stringify(jsyaml.safeLoad(this.yaml.value), undefined, indent);
+					this.Error('yamlErr', '');
+				} catch (e) {
+					this.Error('yamlErr', e.message);
+					this.json.value = '¯\\_(ツ)_/¯';
+				}
+			}
+		}
+
+		tools.add(new TJSONYAML('jsonyaml'));
+	</script>
+
+	<style>
+		#jsonyaml .subcontrols {
+			width: 1000px;
+		}
+	</style>
+</div>

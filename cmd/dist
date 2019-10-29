@@ -46,4 +46,6 @@ for FILE in ${FILES[@]}; do
 	fi
 done
 
+rm -r ./node_modules/.bin
+
 log "Done, deleted $C files."
