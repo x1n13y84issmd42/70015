@@ -241,7 +241,7 @@ input[type=radio]:checked {
 	font-family: Quicksand;
 	font-size: 24pt;
 	position: absolute;
-	right: 2%;
+	left: 2%;
 	top: 2%;
 	color: #00BBFF;
 	cursor: pointer;
@@ -254,7 +254,8 @@ input[type=radio]:checked {
 
 .tool > .controls a.close > i {
 	font-style: normal;
-	font-size: 36pt;
+	font-size: 32pt;
+	margin-right: 5px;
 }
 
 .tool > .controls a.close > span {

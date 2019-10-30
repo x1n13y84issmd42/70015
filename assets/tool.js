@@ -11,7 +11,7 @@ class Tool {
 	
 		let ctrls = E.querySelector(".controls");
 		let eClose = document.createElement("a");
-		eClose.innerHTML = "<span>CLOSE</span><i>&#x1f7a8</i>";
+		eClose.innerHTML = "<i>&#x1F860</i><span>CLOSE</span>";
 		eClose.classList.add("close");
 		eClose.onclick = (e) => {unfocus(id); e.preventDefault();e.cancelBubble=true;}
 		ctrls.append(eClose);

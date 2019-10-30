@@ -45,7 +45,7 @@ class Tool {
 	
 		let ctrls = E.querySelector(".controls");
 		let eClose = document.createElement("a");
-		eClose.innerHTML = "<span>CLOSE</span><i>&#x1f7a8</i>";
+		eClose.innerHTML = "<i>&#x1F860</i><span>CLOSE</span>";
 		eClose.classList.add("close");
 		eClose.onclick = (e) => {unfocus(id); e.preventDefault();e.cancelBubble=true;}
 		ctrls.append(eClose);
@@ -173,7 +173,7 @@ class Tools {
 			let tool = this.tools[tI];
 			if (s) {
 				for (let sch of s) {
-					if (tool.E.dataset.tag.includes(sch)) {
+					if (tool.E.dataset.tag && tool.E.dataset.tag.includes(sch)) {
 						tool.E.classList.add("matched");
 						tool.E.classList.remove("filteredOut");
 					} else {
