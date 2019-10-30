@@ -39,7 +39,7 @@ class Tools {
 			let tool = this.tools[tI];
 			if (s) {
 				for (let sch of s) {
-					if (tool.E.dataset.tag.includes(sch)) {
+					if (tool.E.dataset.tag && tool.E.dataset.tag.includes(sch)) {
 						tool.E.classList.add("matched");
 						tool.E.classList.remove("filteredOut");
 					} else {
