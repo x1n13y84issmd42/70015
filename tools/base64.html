@@ -1,11 +1,29 @@
 <div class="tool unfocused col2" id="base64" data-tag="base64">
 	<div class="preview"><h1>Base64</h1></div>
 	<div class="controls smaller">
-		<label for="base64-base64">Base64-encoded string</label>
-		<textarea id="base64-base64" autofocus tabindex="21" rows="5"></textarea>
+		<section>
+			<label for="base64-base64">Base64-encoded string</label>
+			<textarea id="base64-base64" autofocus tabindex="21" rows="5"></textarea>
+			<div class="switch">
+				<span>Reuse this string</span>
+				<div>
+					<a data-to="hasher" data-value-from="base64" data-value-as="input">Hash it</a>
+				</div>
+			</div>
+		</section>
+		
 		<div class="bothways">It works ⇃both↾ ways.</div>
-		<label for="base64-asciiInput">ASCII string</label>
-		<textarea id="base64-asciiInput" tabindex="22" onFocus="this.tabIndex=20;" onBlur="this.tabIndex=22;" rows="10"></textarea>
+		
+		<section>
+			<label for="base64-asciiInput">ASCII string</label>
+			<textarea id="base64-asciiInput" tabindex="22" onFocus="this.tabIndex=20;" onBlur="this.tabIndex=22;" rows="10"></textarea>
+			<div class="switch">
+				<span>Reuse this string</span>
+				<div>
+					<a data-to="hasher" data-value-from="asciiInput" data-value-as="input">Hash it</a>
+				</div>
+			</div>
+		</section>
 	</div>
 
 	<script>

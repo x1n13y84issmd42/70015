@@ -121,6 +121,11 @@
     background: #F3F3F3;
 }
 
+.tool > .controls section > input[type=text],
+.tool > .controls section > textarea {
+	margin-bottom: 0;
+}
+
 .tool .subcontrols {
 	float: right;
 	width: auto;
@@ -359,6 +364,7 @@
 	transition: all 200ms linear;
 	font-size: 14px;
 	color: white;
+	z-index: 99;
 }
 
 .switch > div {

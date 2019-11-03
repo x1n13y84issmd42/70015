@@ -29,11 +29,29 @@
 <div class="tool unfocused col2" id="base64" data-tag="base64">
 	<div class="preview"><h1>Base64</h1></div>
 	<div class="controls smaller">
-		<label for="base64-base64">Base64-encoded string</label>
-		<textarea id="base64-base64" autofocus tabindex="21" rows="5"></textarea>
+		<section>
+			<label for="base64-base64">Base64-encoded string</label>
+			<textarea id="base64-base64" autofocus tabindex="21" rows="5"></textarea>
+			<div class="switch">
+				<span>Reuse this string</span>
+				<div>
+					<a data-to="hasher" data-value-from="base64" data-value-as="input">Hash it</a>
+				</div>
+			</div>
+		</section>
+		
 		<div class="bothways">It works ⇃both↾ ways.</div>
-		<label for="base64-asciiInput">ASCII string</label>
-		<textarea id="base64-asciiInput" tabindex="22" onFocus="this.tabIndex=20;" onBlur="this.tabIndex=22;" rows="10"></textarea>
+		
+		<section>
+			<label for="base64-asciiInput">ASCII string</label>
+			<textarea id="base64-asciiInput" tabindex="22" onFocus="this.tabIndex=20;" onBlur="this.tabIndex=22;" rows="10"></textarea>
+			<div class="switch">
+				<span>Reuse this string</span>
+				<div>
+					<a data-to="hasher" data-value-from="asciiInput" data-value-as="input">Hash it</a>
+				</div>
+			</div>
+		</section>
 	</div>
 
 	<script>
@@ -77,8 +95,8 @@
 <div class="tool unfocused col2" id="hasher" data-tag="hash md5 sha des">
 	<div class="preview"><h1>Hasher</h1></div>
 	<div class="controls smaller">
-		<label for="hasherInput">Input</label>
-		<input type="text" class="hasherInput" id="hasherInput" autofocus tabindex="21" />
+		<label for="hasher-input">Input</label>
+		<input type="text" id="hasher-input" autofocus tabindex="21" />
 
 		<div class="checksums subsection"></div>
 		
@@ -97,7 +115,7 @@
 			constructor(id) {
 				super(id);
 
-				this.input = this.$('.hasherInput')[0];
+				this.input = this.$$('input');
 				this.keyInput = this.$('.hasherKeyInput')[0];
 
 				this.keyInput.oninput = this.input.oninput = () => this.hash();
@@ -135,6 +153,13 @@
 				ciphers.appendChild(this.Component('hash', "AES", aes.ciphertext.toString()));
 				ciphers.appendChild(this.Component('hash', "DES", des.ciphertext.toString()));
 			};
+
+			import(data) {
+				if (data.input) {
+					this.T([this.$$('input')], data.input);
+					this.hash();
+				}
+			}
 		}
 
 		bench.add(new THasher("hasher"));
@@ -164,32 +189,50 @@
 					<a data-to="jsonyaml" data-value-from="jsonInput" data-value-as="json">Convert it to YAML</a>
 					<a data-to="base64" data-value-from="jsonInput" data-value-as="ascii">Base64-encode it</a>
 				</div>
-			</transfer>
+			</div>
 		</section>
 		
-		<label for="json-1liner">One-liner JSON</label>
-		<div class="subcontrols" data-for="json-1liner">
-			<label for="json-1liner-quote-identifiers">
-				<input type="checkbox" name="json-1liner-quote-identifiers" id="json-1liner-quote-identifiers">
-				Quote names
-			</label>
-			<label for="json-1liner-escape-quotes">
-				<input type="checkbox" name="json-1liner-escape-quotes" id="json-1liner-escape-quotes">
-				Escape the quotes
-			</label>
-			<a class="copy" data-from="json-1liner"><span>COPY</span><i class="far fa-copy"></i></a>
-		</div>
-		<input type="text" id="json-1liner" spellcheck="false" disabled>
+		<section>
+			<label for="json-1liner">One-liner JSON</label>
+			<div class="subcontrols" data-for="json-1liner">
+				<label for="json-1liner-quote-identifiers">
+					<input type="checkbox" name="json-1liner-quote-identifiers" id="json-1liner-quote-identifiers">
+					Quote names
+				</label>
+				<label for="json-1liner-escape-quotes">
+					<input type="checkbox" name="json-1liner-escape-quotes" id="json-1liner-escape-quotes">
+					Escape the quotes
+				</label>
+				<a class="copy" data-from="json-1liner"><span>COPY</span><i class="far fa-copy"></i></a>
+			</div>
+			<input type="text" id="json-1liner" spellcheck="false" disabled>
+			<div class="switch">
+				<span>Reuse this JSON</span>
+				<div>
+					<a data-to="jsonyaml" data-value-from="1liner" data-value-as="json">Convert it to YAML</a>
+					<a data-to="base64" data-value-from="1liner" data-value-as="ascii">Base64-encode it</a>
+				</div>
+			</div>
+		</section>
 		
-		<label for="json-pretty">Pretty JSON</label>
-		<div class="subcontrols" data-for="json-pretty">
-			<label for="">Indent with</label>
-			<label for="json-pretty-indent-tabs"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-tabs" value="	" checked>tabs</label>
-			<label for="json-pretty-indent-4spaces"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-4spaces" value="    ">4 spaces</label>
-			<label for="json-pretty-indent-2spaces"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-2spaces" value="  ">2 spaces</label>
-			<a class="copy" data-from="json-pretty"><span>COPY</span><i class="far fa-copy"></i></a>
-		</div>
-		<textarea id="json-pretty" rows="8" spellcheck="false" disabled></textarea>
+		<section>
+			<label for="json-pretty">Pretty JSON</label>
+			<div class="subcontrols" data-for="json-pretty">
+				<label for="">Indent with</label>
+				<label for="json-pretty-indent-tabs"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-tabs" value="	" checked>tabs</label>
+				<label for="json-pretty-indent-4spaces"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-4spaces" value="    ">4 spaces</label>
+				<label for="json-pretty-indent-2spaces"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-2spaces" value="  ">2 spaces</label>
+				<a class="copy" data-from="json-pretty"><span>COPY</span><i class="far fa-copy"></i></a>
+			</div>
+			<textarea id="json-pretty" rows="8" spellcheck="false" disabled></textarea>
+			<div class="switch">
+				<span>Reuse this JSON</span>
+				<div>
+					<a data-to="jsonyaml" data-value-from="pretty" data-value-as="json">Convert it to YAML</a>
+					<a data-to="base64" data-value-from="pretty" data-value-as="ascii">Base64-encode it</a>
+				</div>
+			</div>
+		</section>
 	</div>
 	
 	<script>
@@ -250,6 +293,13 @@
 					this.out1liner.value = JSON1Liner(undefined, v, this.quoteCheck.checked, this.escapeQuotesCheck.checked);
 				}
 			}
+
+			import(data) {
+				if (data.input) {
+					this.T([this.$$('jsonInput')], data.input)
+					this.update();
+				}
+			}
 		}
 
 		function JSON1Liner(name, v, quoteNames, escapeQuotes) {
@@ -302,6 +352,12 @@
 			</div>
 			<textarea id="jsonyaml-json" cols="30" rows="9"></textarea>
 			<p class="jsonErr error inset"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
+			<div class="switch">
+				<span>Reuse this JSON</span>
+				<div>
+					<a data-to="json" data-value-from="json" data-value-as="input">Format it</a>
+				</div>
+			</div>
 		</section>
 		
 		<div class="bothways">It works ⇃both↾ ways.</div>

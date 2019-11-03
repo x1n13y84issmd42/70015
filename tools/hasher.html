@@ -1,8 +1,8 @@
 <div class="tool unfocused col2" id="hasher" data-tag="hash md5 sha des">
 	<div class="preview"><h1>Hasher</h1></div>
 	<div class="controls smaller">
-		<label for="hasherInput">Input</label>
-		<input type="text" class="hasherInput" id="hasherInput" autofocus tabindex="21" />
+		<label for="hasher-input">Input</label>
+		<input type="text" id="hasher-input" autofocus tabindex="21" />
 
 		<div class="checksums subsection"></div>
 		
@@ -21,7 +21,7 @@
 			constructor(id) {
 				super(id);
 
-				this.input = this.$('.hasherInput')[0];
+				this.input = this.$$('input');
 				this.keyInput = this.$('.hasherKeyInput')[0];
 
 				this.keyInput.oninput = this.input.oninput = () => this.hash();
@@ -59,6 +59,13 @@
 				ciphers.appendChild(this.Component('hash', "AES", aes.ciphertext.toString()));
 				ciphers.appendChild(this.Component('hash', "DES", des.ciphertext.toString()));
 			};
+
+			import(data) {
+				if (data.input) {
+					this.T([this.$$('input')], data.input);
+					this.hash();
+				}
+			}
 		}
 
 		bench.add(new THasher("hasher"));
