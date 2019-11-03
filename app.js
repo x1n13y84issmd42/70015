@@ -292,10 +292,12 @@ class Workbench {
 			t2.E.classList.add('switching', 'slide-left-r');
 			t1.E.classList.add('slide-left-transit');
 			t2.E.classList.add('slide-left-transit');
-
-			setTimeout((id) => {
+			
+			setTimeout((id, _t1, _t2) => {
+				_t1.E.classList.remove('switching', 'slide-left-transit');
+				_t2.E.classList.remove('switching', 'slide-left-r', 'slide-left-transit');
 				this.unfocus(id);
-			}, 400, cfid);
+			}, 400, cfid, t1, t2);
 		} else {
 			throw new Error(`One of the tools not found while switching.`);
 		}
