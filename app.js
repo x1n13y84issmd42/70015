@@ -32,6 +32,47 @@ let Clipboard = {
 }
 
 
+class Config {
+	constructor() {
+		this.data = {};
+		this.load();
+	}
+
+	config(id, k, v) {
+		this.data[id] || (this.data[id] = {});
+		this.data[id][k] = v;
+	}
+
+	get(id) {
+		return this.data[id];
+	}
+
+	load() {
+		throw new Error("Not Implemented Yet");
+	}
+	
+	save() {
+		throw new Error("Not Implemented Yet");
+	}
+}
+
+class LSConfig extends Config {
+	load() {
+		console.log("//TODO: load it from local storage");
+	}
+	
+	save() {
+		console.log("//TODO: load it from local storage");
+	}
+
+	config(id, k, v) {
+		super.config(id, k, v);
+		this.save();
+	}
+}
+
+
+
 class Tool {
 	constructor(id) {
 		let E = this.E = document.getElementById(id);
@@ -42,23 +83,58 @@ class Tool {
 
 		this.ID = id;
 		this._autoinput = false;
+		this.configuration = {};
 	
 		let ctrls = E.querySelector(".controls");
+
 		let eClose = document.createElement("a");
 		eClose.innerHTML = "<i>&#x1F860</i><span>CLOSE</span>";
 		eClose.classList.add("close");
-		eClose.onclick = (e) => {unfocus(id); e.preventDefault();e.cancelBubble=true;}
+		eClose.onclick = (e) => {
+			unfocus(id);
+			e.preventDefault();
+			e.cancelBubble=true;
+		};
+
 		ctrls.append(eClose);
 
 		this.switches = this.$('input[type=radio],input[type=checkbox]');
+
+		let eSwitches = this.$('.switch');
+		for (let eSw of eSwitches) {
+			let as = eSw.querySelectorAll('a');
+			for (let a of as) {
+				a.onclick = () => {
+					let data = {};
+					data[a.dataset.valueAs] = this.$$(a.dataset.valueFrom).value;
+					this.bench.switch(a.dataset.to, data)
+				};
+			}
+		}
+	}
+
+	config(k, v) {
+		this.configuration[k] = v;
+	}
+
+	reconfigure(config) {
+		this.configuration = config || {};
+	}
+
+	setBench(b) {
+		this.bench = b;
 	}
 
 	$(s) {
 		return this.E.querySelectorAll(s);
 	}
 
-	$$(id) {
-		return document.getElementById(`${this.ID}-${id}`);
+	$$(id, v) {
+		if (v) {
+			this.T([document.getElementById(`${this.ID}-${id}`)], v);
+		} else {
+			return document.getElementById(`${this.ID}-${id}`);
+		}
 	}
 
 	autoinput(ai) {
@@ -69,16 +145,12 @@ class Tool {
 		}
 	}
 
-	T(s, v) {
-		this.tplNodes(this.$(s));				
-	}
-
 	removeChildren(e) {
 		while (e.firstChild)
 			e.removeChild(e.firstChild);
 	}
 
-	tplNodes(nodes, v) {
+	T(nodes, v) {
 		for (let e of nodes) {
 			switch (e.tagName) {
 				case "INPUT":
@@ -103,11 +175,11 @@ class Tool {
 	
 			for (let aI in args) {
 				if (compE.dataset.arg == aI) {
-					this.tplNodes([compE], args[aI])
+					this.T([compE], args[aI])
 				}
 
 				let nodes = compE.querySelectorAll(`[data-arg="${aI}"]`);
-				this.tplNodes(nodes, args[aI])
+				this.T(nodes, args[aI])
 			}
 
 			compE.querySelectorAll('.copy').forEach((v, k, p) => {v.onclick = onclickCopyToClipboard});
@@ -128,18 +200,29 @@ class Tool {
 			}
 		}
 	}
+
+	importSchema() {
+		throw new Error('importSchema() is not implemented.')
+	}
+	
+	import(data) {
+		throw new Error('import() is not implemented.')
+	}
 }
 
 
 
-class Tools {
-	constructor(container) {
-		this.container = container;
+class Workbench {
+	constructor(config) {
+		this.config = config;
 		this.tools = {};
+		this.currentlyFocusedID = undefined;
 	}
 
 	add(tool) {
 		this.tools[tool.ID] = tool;
+		tool.setBench(this);
+		tool.reconfigure(this.config.get(tool.ID));
 	}
 	
 	focus(id) {
@@ -152,6 +235,8 @@ class Tools {
 			if (af) {
 				af.focus();
 			}
+
+			this.currentlyFocusedID = id;
 		}
 
 		document.body.onkeydown = (e) => {
@@ -191,6 +276,29 @@ class Tools {
 
 	render() {
 		document.body.style.display = 'block';
+	}
+
+	switch(toID, data) {
+		console.log(`Switching to ${toID}.`, data);
+		// this.unfocus(this.currentlyFocusedID);
+		let t1 = this.tools[this.currentlyFocusedID];
+		let t2 = this.tools[toID];
+		let cfid = this.currentlyFocusedID;
+		this.tools[toID].import(data);
+		this.focus(toID);
+
+		if (t1 && t2) {
+			t1.E.classList.add('switching');
+			t2.E.classList.add('switching', 'slide-left-r');
+			t1.E.classList.add('slide-left-transit');
+			t2.E.classList.add('slide-left-transit');
+
+			setTimeout((id) => {
+				this.unfocus(id);
+			}, 400, cfid);
+		} else {
+			throw new Error(`One of the tools not found while switching.`);
+		}
 	}
 }
 

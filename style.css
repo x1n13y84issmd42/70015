@@ -121,7 +121,7 @@ input[type=radio]:checked {
 
 .tool > .controls > section {
 	position: relative;
-	margin-bottom: 2em;
+	margin-bottom: 3em;
 }
 
 .tool > .controls .left {
@@ -187,7 +187,8 @@ input[type=radio]:checked {
     padding: 12px;
 	letter-spacing: 1pt;
 	margin-bottom: 2em;
-	border: 2px #99DDFF solid;
+	/* border: 2px #99DDFF solid; */
+	border: 2px #00BBFF solid;
 }
 
 .tool > .controls textarea[disabled],
@@ -359,9 +360,6 @@ input[type=radio]:checked {
 	transition: all 600ms ease-in-out;
 }
 
-
-
-
 .tool {
 	display: block;
 	margin: 0 0 1pt 0;
@@ -423,6 +421,64 @@ input[type=radio]:checked {
 	position: absolute;
 	left: 0;
 	top: 0;
+}
+
+.switch {
+	position: absolute;
+	right: 0;
+	min-width: 200px;
+	background: #00BBFF;
+	/* background: #99DDFF; */
+	padding: 7px 15px;
+	border-radius: 0 0 10px 10px;
+	cursor: pointer;
+	transition: all 200ms linear;
+	font-size: 14px;
+	color: white;
+}
+
+.switch > div {
+	overflow: hidden;
+	margin-top: 0;
+	transition: margin-top 200ms linear;
+}
+
+.switch > div > a {
+	display: block;
+	margin-top: -2em;
+	transition: margin-top 200ms linear;
+}
+
+.switch:hover {
+	/* background: #00bbff; */
+	/* color: white; */
+	transition: background, color 200ms linear;
+}
+
+.switch:hover > div {
+	margin-top: 10px;
+	transition: margin-top 200ms linear;
+}
+
+.switch:hover > div > a {
+	cursor: pointer;
+	margin-top: 0;
+	transition: margin-top 200ms linear;
+}
+
+.switch:hover > div > a:hover,
+.switch:hover > span {
+	font-weight: bold;
+	color: white;
+}
+
+.tool.switching.slide-left-r {
+	left: 100%;
+}
+
+.tool.switching.slide-left-transit {
+	margin-left: -100%;
+	transition: margin-left 400ms ease-in-out;
 }
 
 

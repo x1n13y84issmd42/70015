@@ -19,7 +19,8 @@
 		</div>
 
 		<script>
-			let tools = new Tools()
+			let config = new LSConfig();
+			let bench = new Workbench(config);
 		</script>
 
 		<div id="tools">
@@ -28,11 +29,11 @@
 <div class="tool unfocused col2" id="base64" data-tag="base64">
 	<div class="preview"><h1>Base64</h1></div>
 	<div class="controls smaller">
-		<label for="base64Input">Base64-encoded string</label>
-		<textarea class="base64Input" id="base64Input" autofocus tabindex="21"></textarea>
+		<label for="base64-base64">Base64-encoded string</label>
+		<textarea id="base64-base64" autofocus tabindex="21" rows="5"></textarea>
 		<div class="bothways">It works ⇃both↾ ways.</div>
-		<label for="asciiInput">ASCII string</label>
-		<textarea class="asciiInput" tabindex="22" onFocus="this.tabIndex=20;" onBlur="this.tabIndex=22;"></textarea>
+		<label for="base64-asciiInput">ASCII string</label>
+		<textarea id="base64-asciiInput" tabindex="22" onFocus="this.tabIndex=20;" onBlur="this.tabIndex=22;" rows="10"></textarea>
 	</div>
 
 	<script>
@@ -40,8 +41,8 @@
 			constructor(id) {
 				super(id);
 
-				this.inBase64 = this.$('.base64Input')[0];
-				this.inAscii = this.$('.asciiInput')[0];
+				this.inBase64 = this.$$('base64');
+				this.inAscii = this.$$('asciiInput');
 
 				this.inBase64.oninput = () => this.decode();
 				this.inAscii.oninput = () => this.encode();
@@ -54,9 +55,21 @@
 			encode() {
 				this.inBase64.value = btoa(this.inAscii.value);
 			};
+
+			import(data) {
+				if (data.ascii) {
+					this.T([this.$$('asciiInput')], data.ascii);
+					this.encode();
+				}
+				
+				if (data.base64) {
+					this.T([this.$$('base64')], data.base64);
+					this.decode();
+				}
+			}
 		}
 
-		tools.add(new TBase64("base64"));
+		bench.add(new TBase64("base64"));
 	</script>
 </div>
 
@@ -124,7 +137,7 @@
 			};
 		}
 
-		tools.add(new THasher("hasher"));
+		bench.add(new THasher("hasher"));
 	</script>
 
 	<div class="components">
@@ -143,8 +156,15 @@
 	<div class="controls">
 		<section>
 			<label for="json-jsonInput">JSON input</label>
-			<textarea class="jsonInput" id="json-jsonInput" autofocus spellcheck="false" style="margin-bottom:0.5em;"></textarea>
+			<textarea id="json-jsonInput" autofocus spellcheck="false" style="margin-bottom:0;"></textarea>
 			<p class="jsonErr error inset"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
+			<div class="switch">
+				<span>Reuse this JSON</span>
+				<div>
+					<a data-to="jsonyaml" data-value-from="jsonInput" data-value-as="json">Convert it to YAML</a>
+					<a data-to="base64" data-value-from="jsonInput" data-value-as="ascii">Base64-encode it</a>
+				</div>
+			</transfer>
 		</section>
 		
 		<label for="json-1liner">One-liner JSON</label>
@@ -159,7 +179,7 @@
 			</label>
 			<a class="copy" data-from="json-1liner"><span>COPY</span><i class="far fa-copy"></i></a>
 		</div>
-		<input type="text" name="json-1liner" id="json-1liner" spellcheck="false" disabled>
+		<input type="text" id="json-1liner" spellcheck="false" disabled>
 		
 		<label for="json-pretty">Pretty JSON</label>
 		<div class="subcontrols" data-for="json-pretty">
@@ -177,9 +197,9 @@
 			constructor(id) {
 				super(id);
 
-				this.inJSON = this.$('.jsonInput')[0];
-				this.outPretty = this.$('#json-pretty')[0];
-				this.out1liner = this.$('#json-1liner')[0];
+				this.inJSON = this.$$('jsonInput');
+				this.outPretty = this.$$('pretty');
+				this.out1liner = this.$$('1liner');
 				this.indentRadios = this.$('input[name=json-pretty-indent]');
 				this.quoteCheck = document.getElementById('json-1liner-quote-identifiers');
 				this.escapeQuotesCheck = document.getElementById('json-1liner-escape-quotes');
@@ -194,6 +214,10 @@
 				}
 
 				this.inJSON.oninput = update;
+			}
+
+			import(data) {
+				data.json && (this.$$('json', data.json));
 			}
 
 			update() {
@@ -251,7 +275,7 @@
 			}
 		}
 
-		tools.add(new TJSON('json'));
+		bench.add(new TJSON('json'));
 	</script>
 
 	<style>
@@ -340,9 +364,21 @@
 					this.json.value = '¯\\_(ツ)_/¯';
 				}
 			}
+
+			import(data) {
+				if (data.json) {
+					this.T([this.$$('json')], data.json);
+					this.toYAML();
+				}
+				
+				if (data.yaml) {
+					this.T([this.$$('yaml')], data.yaml);
+					this.toJSON();
+				}
+			}
 		}
 
-		tools.add(new TJSONYAML('jsonyaml'));
+		bench.add(new TJSONYAML('jsonyaml'));
 	</script>
 
 	<style>
@@ -441,7 +477,7 @@
 			}
 		}
 
-		tools.add(new TUnixtime("unixtime"));
+		bench.add(new TUnixtime("unixtime"));
 
 	</script>
 
@@ -588,7 +624,7 @@
 
 		}
 
-		tools.add(new TURLTranscoder("urldecode"));
+		bench.add(new TURLTranscoder("urldecode"));
 
 	</script>
 </div>
@@ -661,7 +697,7 @@
 			}
 		}
 
-		tools.add(new TURLParser("urlparse"));
+		bench.add(new TURLParser("urlparse"));
 		
 	</script>
 
@@ -688,11 +724,11 @@
 
 		<script>
 			function focus(id) {
-				tools.focus(id);
+				bench.focus(id);
 			}
 
 			function unfocus(id) {
-				tools.unfocus(id);
+				bench.unfocus(id);
 				window.location.hash = '';
 				filter.focus();
 			}
@@ -761,7 +797,7 @@
 			document.body.onload = () => {
 				let filter = document.getElementById("filter");
 				filter.oninput = () => {
-					tools.filter(filter.value);
+					bench.filter(filter.value);
 				}
 				
 				filter.onkeydown = (e) => {
@@ -774,17 +810,17 @@
 						}
 					} else if (e.key == 'Escape') {
 						filter.value = "";
-						tools.filter("");
+						bench.filter("");
 					}
 				}
 
 				document.querySelectorAll('.copy').forEach((v, k, p) => {v.onclick = onclickCopyToClipboard});
 
 				if (window.location.hash) {
-					tools.focus(window.location.hash.substr(1));
+					bench.focus(window.location.hash.substr(1));
 				}
 
-				tools.render();
+				bench.render();
 			}
 		</script>
 	</body>

@@ -3,8 +3,15 @@
 	<div class="controls">
 		<section>
 			<label for="json-jsonInput">JSON input</label>
-			<textarea class="jsonInput" id="json-jsonInput" autofocus spellcheck="false" style="margin-bottom:0.5em;"></textarea>
+			<textarea id="json-jsonInput" autofocus spellcheck="false" style="margin-bottom:0;"></textarea>
 			<p class="jsonErr error inset"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
+			<div class="switch">
+				<span>Reuse this JSON</span>
+				<div>
+					<a data-to="jsonyaml" data-value-from="jsonInput" data-value-as="json">Convert it to YAML</a>
+					<a data-to="base64" data-value-from="jsonInput" data-value-as="ascii">Base64-encode it</a>
+				</div>
+			</transfer>
 		</section>
 		
 		<label for="json-1liner">One-liner JSON</label>
@@ -19,7 +26,7 @@
 			</label>
 			<a class="copy" data-from="json-1liner"><span>COPY</span><i class="far fa-copy"></i></a>
 		</div>
-		<input type="text" name="json-1liner" id="json-1liner" spellcheck="false" disabled>
+		<input type="text" id="json-1liner" spellcheck="false" disabled>
 		
 		<label for="json-pretty">Pretty JSON</label>
 		<div class="subcontrols" data-for="json-pretty">
@@ -37,9 +44,9 @@
 			constructor(id) {
 				super(id);
 
-				this.inJSON = this.$('.jsonInput')[0];
-				this.outPretty = this.$('#json-pretty')[0];
-				this.out1liner = this.$('#json-1liner')[0];
+				this.inJSON = this.$$('jsonInput');
+				this.outPretty = this.$$('pretty');
+				this.out1liner = this.$$('1liner');
 				this.indentRadios = this.$('input[name=json-pretty-indent]');
 				this.quoteCheck = document.getElementById('json-1liner-quote-identifiers');
 				this.escapeQuotesCheck = document.getElementById('json-1liner-escape-quotes');
@@ -54,6 +61,10 @@
 				}
 
 				this.inJSON.oninput = update;
+			}
+
+			import(data) {
+				data.json && (this.$$('json', data.json));
 			}
 
 			update() {
@@ -111,7 +122,7 @@
 			}
 		}
 
-		tools.add(new TJSON('json'));
+		bench.add(new TJSON('json'));
 	</script>
 
 	<style>

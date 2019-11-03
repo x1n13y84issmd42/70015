@@ -76,9 +76,21 @@
 					this.json.value = '¯\\_(ツ)_/¯';
 				}
 			}
+
+			import(data) {
+				if (data.json) {
+					this.T([this.$$('json')], data.json);
+					this.toYAML();
+				}
+				
+				if (data.yaml) {
+					this.T([this.$$('yaml')], data.yaml);
+					this.toJSON();
+				}
+			}
 		}
 
-		tools.add(new TJSONYAML('jsonyaml'));
+		bench.add(new TJSONYAML('jsonyaml'));
 	</script>
 
 	<style>
