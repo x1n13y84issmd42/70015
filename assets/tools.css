@@ -355,14 +355,14 @@
 .switch {
 	position: absolute;
 	right: 0;
-	min-width: 200px;
+	/* min-width: 200px; */
 	background: #00BBFF;
 	/* background: #99DDFF; */
-	padding: 7px 15px;
+	padding: 7px 0;
 	border-radius: 0 0 10px 10px;
 	cursor: pointer;
 	transition: all 200ms linear;
-	font-size: 14px;
+	font-size: 12pt;
 	color: white;
 	z-index: 99;
 }
@@ -375,6 +375,8 @@
 
 .switch > div > a {
 	display: block;
+	cursor: pointer;
+	color: white;
 	margin-top: -2em;
 	transition: margin-top 200ms linear;
 }
@@ -386,20 +388,22 @@
 }
 
 .switch:hover > div {
-	margin-top: 10px;
-	transition: margin-top 200ms linear;
+	/* margin-top: 10px; */
+	/* transition: margin-top 200ms linear; */
 }
 
 .switch:hover > div > a {
-	cursor: pointer;
 	margin-top: 0;
 	transition: margin-top 200ms linear;
 }
 
-.switch:hover > div > a:hover,
-.switch:hover > span {
-	font-weight: bold;
-	color: white;
+.switch > div > a,
+.switch > span {
+	padding: 7px 15px;
+}
+
+.switch:hover > div > a:hover {
+	background-image: url("./assets/stripes.png");
 }
 
 .tool.switching.slide-left-r {
