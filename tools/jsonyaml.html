@@ -5,19 +5,24 @@
 	<div class="controls smaller">
 		<section>
 			<label for="jsonyaml-json">JSON</label>
-			<div class="subcontrols">
+
+			<div class="overcontrols">
 				<label for="">Indent with</label>
 				<label for="json-prettyIndentTabs"><input type="radio" name="json-pretty-indent" id="json-prettyIndentTabs" value="	" checked>tabs</label>
 				<label for="json-prettyIndent4spaces"><input type="radio" name="json-pretty-indent" id="json-prettyIndent4spaces" value="    ">4 spaces</label>
 				<label for="json-prettyIndent2spaces"><input type="radio" name="json-pretty-indent" id="json-prettyIndent2spaces" value="  ">2 spaces</label>
 				<a class="copy" data-from="jsonyaml-json"><span>COPY</span><i class="far fa-copy"></i></a>
 			</div>
+
 			<textarea id="jsonyaml-json" cols="30" rows="9"></textarea>
 			<p class="jsonErr error inset"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
-			<div class="switch">
-				<span>Reuse this JSON</span>
-				<div>
-					<a data-to="json" data-value-from="json" data-value-as="input">Format it</a>
+
+			<div class="undercontrols">
+				<div class="menu switch">
+					<span>Reuse<i class="fas fa-recycle"></i></span>
+					<div>
+						<a data-to="json" data-value-from="json" data-value-as="input">Format it</a>
+					</div>
 				</div>
 			</div>
 		</section>
@@ -26,11 +31,12 @@
 		
 		<section>
 			<label for="jsonyaml-yaml">YAML</label>
-			<div class="subcontrols">
-				<a class="copy" data-from="jsonyaml-yaml"><span>COPY</span><i class="far fa-copy"></i></a>
-			</div>
 			<textarea id="jsonyaml-yaml" cols="30" rows="9"></textarea>
 			<p class="yamlErr error inset"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
+
+			<div class="undercontrols">
+				<a class="copy" data-from="jsonyaml-yaml"><span>Copy</span><i class="far fa-copy"></i></a>
+			</div>
 		</section>
 	</div>
 

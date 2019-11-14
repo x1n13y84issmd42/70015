@@ -202,13 +202,13 @@ input[type=radio]:checked {
 	margin-bottom: 0;
 }
 
-.tool .subcontrols {
+.tool .overcontrols {
 	float: right;
 	width: auto;
 	padding-top: 10px;
 }
 
-.tool .subcontrols a.copy {
+.tool .overcontrols a.copy {
 	margin-left: 20px;
     color: #00BBFF;
     text-decoration: none;
@@ -217,7 +217,7 @@ input[type=radio]:checked {
 	cursor: pointer;
 }
 
-.tool .subcontrols a.copy > span {
+.tool .overcontrols a.copy > span {
     margin-right: 10px;
     opacity: 0;
     transition: all 100ms ease-in-out;
@@ -229,7 +229,7 @@ input[type=radio]:checked {
     vertical-align: middle;
 }
 
-.tool .subcontrols a.copy:hover > span {
+.tool .overcontrols a.copy:hover > span {
 	opacity: 1;
 	transition: all 100ms ease-in-out;
 	-webkit-transition: all 100ms ease-in-out;
@@ -237,7 +237,7 @@ input[type=radio]:checked {
 	-o-transition: all 100ms ease-in-out;
 }
 
-.tool > .controls .subcontrols > label {
+.tool > .controls .overcontrols > label {
 	font-size: 12pt;
 	font-family: Quicksand;
 	margin-right: 20px;
@@ -428,21 +428,6 @@ input[type=radio]:checked {
 	top: 0;
 }
 
-.switch {
-	position: absolute;
-	right: 0;
-	/* min-width: 200px; */
-	background: #00BBFF;
-	/* background: #99DDFF; */
-	padding: 7px 0;
-	border-radius: 0 0 10px 10px;
-	cursor: pointer;
-	transition: all 200ms linear;
-	font-size: 12pt;
-	color: white;
-	z-index: 99;
-}
-
 .switch > div {
 	overflow: hidden;
 	margin-top: 0;
@@ -450,22 +435,19 @@ input[type=radio]:checked {
 }
 
 .switch > div > a {
-	display: block;
 	cursor: pointer;
 	color: white;
-	margin-top: -2em;
+	margin-top: -3em;
 	transition: margin-top 200ms linear;
 }
 
 .switch:hover {
 	/* background: #00bbff; */
 	/* color: white; */
-	transition: background, color 200ms linear;
+	/* transition: background, color 200ms linear; */
 }
 
 .switch:hover > div {
-	/* margin-top: 10px; */
-	/* transition: margin-top 200ms linear; */
 }
 
 .switch:hover > div > a {
@@ -476,10 +458,52 @@ input[type=radio]:checked {
 .switch > div > a,
 .switch > span {
 	padding: 7px 15px;
+	display: block;
+}
+
+.switch > span > i {
+	margin-left: 10px;
+    float: right;
+    top: 2px;
+    position: relative;
 }
 
 .switch:hover > div > a:hover {
 	background-image: url("./assets/stripes.png");
+}
+
+.switch:hover > div > a:last-child {
+	border-radius: 0 0 10px 10px;
+}
+
+.tool .undercontrols {
+	float: right;
+    width: auto;
+    /* padding-top: 10px; */
+    height: 35px;
+    z-index: 999;
+	position: relative;
+}
+
+.tool .undercontrols > * {
+    background: #00BBFF;
+    padding: 7px 15px;
+    border-radius: 0 0 10px 10px;
+    cursor: pointer;
+    transition: all 200ms linear;
+    font-size: 12pt;
+    color: white;
+    z-index: 99;
+    float: right;
+    margin-left: 20px;
+}
+
+.tool .undercontrols > a > i.far {
+	margin-left: 10px;
+}
+
+.tool .undercontrols > .menu {
+	padding: 0;
 }
 
 .tool.switching.slide-left-r {

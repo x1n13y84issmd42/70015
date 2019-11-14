@@ -5,18 +5,20 @@
 			<label for="json-jsonInput">JSON input</label>
 			<textarea id="json-jsonInput" autofocus spellcheck="false" style="margin-bottom:0;"></textarea>
 			<p class="jsonErr error inset"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
-			<div class="switch">
-				<span>Reuse</span>
-				<div>
-					<a data-to="jsonyaml" data-value-from="jsonInput" data-value-as="json">Convert it to YAML</a>
-					<a data-to="base64" data-value-from="jsonInput" data-value-as="ascii">Base64-encode it</a>
+			<div class="undercontrols">
+				<div class="menu switch">
+					<span>Reuse<i class="fas fa-recycle"></i></span>
+					<div>
+						<a data-to="jsonyaml" data-value-from="jsonInput" data-value-as="json">Convert it to YAML</a>
+						<a data-to="base64" data-value-from="jsonInput" data-value-as="ascii">Base64-encode it</a>
+					</div>
 				</div>
 			</div>
 		</section>
 		
 		<section>
 			<label for="json-1liner">One-liner JSON</label>
-			<div class="subcontrols" data-for="json-1liner">
+			<div class="overcontrols" data-for="json-1liner">
 				<label for="json-1liner-quote-identifiers">
 					<input type="checkbox" name="json-1liner-quote-identifiers" id="json-1liner-quote-identifiers">
 					Quote names
@@ -25,34 +27,38 @@
 					<input type="checkbox" name="json-1liner-escape-quotes" id="json-1liner-escape-quotes">
 					Escape the quotes
 				</label>
-				<a class="copy" data-from="json-1liner"><span>COPY</span><i class="far fa-copy"></i></a>
 			</div>
 			<input type="text" id="json-1liner" spellcheck="false" disabled>
-			<div class="switch">
-				<span>Reuse</span>
-				<div>
-					<a data-to="jsonyaml" data-value-from="1liner" data-value-as="json">Convert it to YAML</a>
-					<a data-to="base64" data-value-from="1liner" data-value-as="ascii">Base64-encode it</a>
+			<div class="undercontrols">
+				<div class="menu switch">
+					<span>Reuse<i class="fas fa-recycle"></i></span>
+					<div>
+						<a data-to="jsonyaml" data-value-from="1liner" data-value-as="json">Convert it to YAML</a>
+						<a data-to="base64" data-value-from="1liner" data-value-as="ascii">Base64-encode it</a>
+					</div>
 				</div>
+				<a class="copy" data-from="json-1liner"><span>Copy</span><i class="far fa-copy"></i></a>
 			</div>
 		</section>
 		
 		<section>
 			<label for="json-pretty">Pretty JSON</label>
-			<div class="subcontrols" data-for="json-pretty">
+			<div class="overcontrols" data-for="json-pretty">
 				<label for="">Indent with</label>
 				<label for="json-pretty-indent-tabs"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-tabs" value="	" checked>tabs</label>
 				<label for="json-pretty-indent-4spaces"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-4spaces" value="    ">4 spaces</label>
 				<label for="json-pretty-indent-2spaces"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-2spaces" value="  ">2 spaces</label>
-				<a class="copy" data-from="json-pretty"><span>COPY</span><i class="far fa-copy"></i></a>
 			</div>
 			<textarea id="json-pretty" rows="8" spellcheck="false" disabled></textarea>
-			<div class="switch">
-				<span>Reuse</span>
-				<div>
-					<a data-to="jsonyaml" data-value-from="pretty" data-value-as="json">Convert it to YAML</a>
-					<a data-to="base64" data-value-from="pretty" data-value-as="ascii">Base64-encode it</a>
+			<div class="undercontrols">
+				<div class="menu switch">
+					<span>Reuse<i class="fas fa-recycle"></i></span>
+					<div>
+						<a data-to="jsonyaml" data-value-from="pretty" data-value-as="json">Convert it to YAML</a>
+						<a data-to="base64" data-value-from="pretty" data-value-as="ascii">Base64-encode it</a>
+					</div>
 				</div>
+				<a class="copy" data-from="json-pretty"><span>Copy</span><i class="far fa-copy"></i></a>
 			</div>
 		</section>
 	</div>
