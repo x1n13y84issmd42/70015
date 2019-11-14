@@ -106,6 +106,8 @@
 .tool > .controls textarea,
 .tool > .controls input[type=text] {
 	width: 100%;
+	min-width: 100%;
+	max-width: 100%;
     display: block;
     font-size: 16pt;
     padding: 12px;
