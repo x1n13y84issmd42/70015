@@ -1,12 +1,14 @@
 #!/bin/bash
 
-OUTFILE="index.html"
-
 function log {
 	_IFS=$IFS && IFS='' && echo -e "\e[33mbuild\e[0m" $@ >&2 && IFS=$_IFS
 }
 
 
+# Concatenates multiple files into single onr.
+# Arguments:
+#	$1 output file name
+#	$@ file paths & masks to combine into $1
 function build {
 	local OUTFILE=$1
 	shift;
