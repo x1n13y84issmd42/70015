@@ -1,0 +1,276 @@
+<div class="tool unfocused col1" id="xml" data-tag="xml xpath">
+	<div class="preview"><h1>XML & Xpath</h1></div>
+	<div class="controls smaller">
+		<section>
+			<label for="xml-xml">XML input</label>
+			<textarea id="xml-xml" autofocus spellcheck="false" style="margin-bottom:0;"></textarea>
+			<p class="xmlErr error inset"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
+			<div class="undercontrols">
+				<div class="menu switch">
+					<span>Reuse<i class="fas fa-recycle"></i></span>
+					<div>
+						<a data-to="base64" data-value-from="xml" data-value-as="ascii">Base64-encode it</a>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section>
+			<label for="xml-xpath">XPath query</label>
+			<input type="text" id="xml-xpath" spellcheck="false" style="margin-bottom:0;" value="//person/@last-name" />
+			<div class="undercontrols">
+				<a class="copy" data-from="json-1liner"><span>Copy</span><i class="far fa-copy"></i></a>
+			</div>
+		</section>
+		
+		<section>
+			<label for="xml-xpath">XML structure</label>
+			<div id="xml-xmlNice"></div>
+		</section>
+	</div>
+
+	<script>
+		class TXML extends Tool {
+			constructor(id) {
+				super(id)
+
+				this.xml = this.$$('xml');
+				this.xpath = this.$$('xpath');
+				this.xmlNice = this.$$('xmlNice');
+
+				this.xml.oninput = () => this.update();
+				this.xpath.oninput = () => this.update();
+			}
+
+			update() {
+				let parser = new DOMParser();
+				let xml = parser.parseFromString(this.xml.value, "text/xml");
+				console.log("XML is", xml);
+
+				while(this.xmlNice.firstChild) {
+					this.xmlNice.removeChild(this.xmlNice.firstChild)
+				}
+
+				let found = this.evaluateXPath(this.xpath.value, xml);
+				this.renderXML(xml, this.xmlNice, found);
+			}
+
+			evaluateXPath(xpath, doc) {
+				var xpe = new XPathEvaluator();
+				var result = xpe.evaluate(xpath, doc);
+				var found = [];
+				var res;
+
+				while (res = result.iterateNext()) {
+					found.push(res);
+				}
+
+				console.log("Found XML nodes: ", found);
+
+				return found;
+			}
+
+			nodeStr(node) {
+				let str = node.nodeName;
+				let attributes = '';
+				let position = 0;
+
+				if (node.attributes) {
+					let attrs = [];
+					for (let aI = 0; aI < node.attributes.length; aI++) {
+						let a = node.attributes[aI];
+						attrs.push(`${a.name}=${a.nodeValue}`);
+					}
+
+					attributes = `(${attrs.join(',')})`;
+				}
+
+				let n = node;
+				while (n.previousSibling) {
+					n = n.previousSibling;
+					position++;
+				}
+
+				return `${str}#${position}${attributes}`;
+			}
+
+			isFound(node, foundNodes) {
+				let nodePath = this.getNodePath(node);
+
+				for (let fn of foundNodes) {
+					let fnPath = this.getNodePath(fn);
+
+					if (nodePath === fnPath) {
+						return true;
+					}
+				}
+
+				return false;
+			}
+
+			getNodePath(xmlNode) {
+				let p = [];
+				let n = xmlNode;
+				while (n) {
+					p.push(this.nodeStr(n));
+					n = n.parentNode || n.ownerElement;
+				}
+				return p.join(',');
+			}
+
+			createXMLNode(classes, value) {
+				let n = document.createElement('div');
+				classes && (n.className = classes.join(' '));
+				value && (n.innerHTML = value);
+				return n;
+			}
+
+			renderXML(xml, E, foundXML) {
+				let xmlE = document.createElement('div');
+				xmlE.classList.add("xml-node");
+
+				switch (xml.nodeType) {
+					case Node.ELEMENT_NODE:
+						let xattrs = [];
+
+						let xt = this.createXMLNode(['tag']);
+						let xto = this.createXMLNode(['opening']);
+						let xtn = this.createXMLNode(['name'], xml.nodeName);
+
+						xt.appendChild(xto);
+						xt.appendChild(xtn);
+
+						for (let attrI = 0; attrI < xml.attributes.length; attrI++) {
+							let attr = xml.attributes[attrI];
+
+							let xattrName = this.createXMLNode(['name'], attr.name);
+							let xattrEq = this.createXMLNode(['eq']);
+							let xattrValue = this.createXMLNode(['value'], `"${attr.nodeValue}"`);
+							let xattr = this.createXMLNode(['attr']);
+							xattr.appendChild(xattrName);
+							xattr.appendChild(xattrEq);
+							xattr.appendChild(xattrValue);
+
+							if (this.isFound(attr, foundXML)) {
+								// console.log("Found an attribute!", attr);
+								xattr.classList.add('found');
+							}
+
+							xt.appendChild(xattr);
+						}
+
+						if (xml.childNodes.length) {
+							xt.appendChild(this.createXMLNode(['closing']))
+						} else {
+							xt.appendChild(this.createXMLNode(['closing-short']))
+						}
+
+						xmlE.appendChild(xt);
+						xmlE.dataset.xmlName = xml.nodeName;
+					break;
+
+					case Node.TEXT_NODE:
+						xmlE.classList.add('text');
+						xmlE.innerHTML = xml.nodeValue;
+					break;
+					
+					case Node.CDATA_SECTION_NODE:
+					break;
+				}
+
+				if (this.isFound(xml, foundXML)) {
+					// console.log("Found the node!", xml)
+					xmlE.classList.add('found');
+				}
+				
+				E.appendChild(xmlE);
+				
+				for (let xmlCN of xml.childNodes) {
+					this.renderXML(xmlCN, xmlE, foundXML);
+				}
+				
+				if (xml.nodeType === 1 && xml.childNodes.length) {
+					
+					let xt = this.createXMLNode(['tag']);
+					xt.appendChild(this.createXMLNode(['opening-closing']));
+					xt.appendChild(this.createXMLNode(['name'], xml.nodeName));
+					xt.appendChild(this.createXMLNode(['closing']));
+					xmlE.appendChild(xt)
+				}
+			}
+		}
+
+		bench.add(new TXML("xml"));
+
+	</script>
+
+	<style>
+		#xml-xmlNice .found,
+		#xml-xmlNice .found * {
+			color: white !important;
+			background: #00BBFF !important;
+		}
+
+		.xml-node {
+			position: relative;
+			left: 20px;
+			float: left;
+			clear: left;
+		}
+		
+		.xml-node.text {
+			font-style: italic;
+		}
+
+		.xml-node > .tag {
+			clear: both;
+		}
+
+		.xml-node > .tag > * {
+			display: inline-block;
+		}
+		
+		.xml-node > .tag > .name {
+			color: #062873;
+    		font-weight: bold;
+		}
+		
+		.xml-node > .tag > .opening::after {
+			content: "<";
+		}
+		
+		.xml-node > .tag > .opening-closing::after {
+			content: "</";
+		}
+		
+		.xml-node > .tag > .closing::after {
+			content: ">";
+		}
+		
+		.xml-node > .tag > .closing-short::after {
+			content: " />";
+		}
+		
+		.xml-node > .tag > .attr {
+			margin-left: 10px;
+		}
+		
+		.xml-node > .tag > .attr > * {
+			display: inline-block;
+		}
+		
+		.xml-node > .tag > .attr > .name {
+			color: #062873;
+		}
+
+		.xml-node > .tag > .attr > .eq:after {
+			content: "="
+		}
+
+		.xml-node > .tag > .attr > .value {
+			font-weight: bold;
+			color: #444;
+			font-style: italic;
+		}
+	</style>
+</div>

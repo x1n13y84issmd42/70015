@@ -19,7 +19,8 @@
 		</div>
 
 		<script>
-			let tools = new Tools()
+			let config = new LSConfig();
+			let bench = new Workbench(config);
 		</script>
 
 		<div id="tools">
@@ -28,11 +29,35 @@
 <div class="tool unfocused col2" id="base64" data-tag="base64">
 	<div class="preview"><h1>Base64</h1></div>
 	<div class="controls smaller">
-		<label for="base64Input">Base64-encoded string</label>
-		<textarea class="base64Input" id="base64Input" autofocus tabindex="21"></textarea>
+		<section>
+			<label for="base64-base64">Base64-encoded string</label>
+			<textarea id="base64-base64" autofocus tabindex="21" rows="5"></textarea>
+			<div class="undercontrols">
+				<div class="menu switch">
+					<span>Reuse<i class="fas fa-recycle"></i></span>
+					<div>
+						<a data-to="hasher" data-value-from="base64" data-value-as="input">Hash it</a>
+					</div>
+				</div>
+				<a class="copy" data-from="base64-base64"><span>Copy</span><i class="far fa-copy"></i></a>
+			</div>
+		</section>
+		
 		<div class="bothways">It works ⇃both↾ ways.</div>
-		<label for="asciiInput">ASCII string</label>
-		<textarea class="asciiInput" tabindex="22" onFocus="this.tabIndex=20;" onBlur="this.tabIndex=22;"></textarea>
+		
+		<section>
+			<label for="base64-asciiInput">ASCII string</label>
+			<textarea id="base64-asciiInput" tabindex="22" onFocus="this.tabIndex=20;" onBlur="this.tabIndex=22;" rows="10"></textarea>
+			<div class="undercontrols">
+				<div class="menu switch">
+					<span>Reuse<i class="fas fa-recycle"></i></span>
+					<div>
+						<a data-to="hasher" data-value-from="asciiInput" data-value-as="input">Hash it</a>
+					</div>
+				</div>
+				<a class="copy" data-from="base64-asciiInput"><span>Copy</span><i class="far fa-copy"></i></a>
+			</div>
+		</section>
 	</div>
 
 	<script>
@@ -40,8 +65,8 @@
 			constructor(id) {
 				super(id);
 
-				this.inBase64 = this.$('.base64Input')[0];
-				this.inAscii = this.$('.asciiInput')[0];
+				this.inBase64 = this.$$('base64');
+				this.inAscii = this.$$('asciiInput');
 
 				this.inBase64.oninput = () => this.decode();
 				this.inAscii.oninput = () => this.encode();
@@ -54,9 +79,21 @@
 			encode() {
 				this.inBase64.value = btoa(this.inAscii.value);
 			};
+
+			import(data) {
+				if (data.ascii) {
+					this.T([this.$$('asciiInput')], data.ascii);
+					this.encode();
+				}
+				
+				if (data.base64) {
+					this.T([this.$$('base64')], data.base64);
+					this.decode();
+				}
+			}
 		}
 
-		tools.add(new TBase64("base64"));
+		bench.add(new TBase64("base64"));
 	</script>
 </div>
 
@@ -64,8 +101,8 @@
 <div class="tool unfocused col2" id="hasher" data-tag="hash md5 sha des">
 	<div class="preview"><h1>Hasher</h1></div>
 	<div class="controls smaller">
-		<label for="hasherInput">Input</label>
-		<input type="text" class="hasherInput" id="hasherInput" autofocus tabindex="21" />
+		<label for="hasher-input">Input</label>
+		<input type="text" id="hasher-input" autofocus tabindex="21" />
 
 		<div class="checksums subsection"></div>
 		
@@ -84,7 +121,7 @@
 			constructor(id) {
 				super(id);
 
-				this.input = this.$('.hasherInput')[0];
+				this.input = this.$$('input');
 				this.keyInput = this.$('.hasherKeyInput')[0];
 
 				this.keyInput.oninput = this.input.oninput = () => this.hash();
@@ -122,9 +159,16 @@
 				ciphers.appendChild(this.Component('hash', "AES", aes.ciphertext.toString()));
 				ciphers.appendChild(this.Component('hash', "DES", des.ciphertext.toString()));
 			};
+
+			import(data) {
+				if (data.input) {
+					this.T([this.$$('input')], data.input);
+					this.hash();
+				}
+			}
 		}
 
-		tools.add(new THasher("hasher"));
+		bench.add(new THasher("hasher"));
 	</script>
 
 	<div class="components">
@@ -143,33 +187,64 @@
 	<div class="controls">
 		<section>
 			<label for="json-jsonInput">JSON input</label>
-			<textarea class="jsonInput" id="json-jsonInput" autofocus spellcheck="false" style="margin-bottom:0.5em;"></textarea>
+			<textarea id="json-jsonInput" autofocus spellcheck="false" style="margin-bottom:0;"></textarea>
 			<p class="jsonErr error inset"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
+			<div class="undercontrols">
+				<div class="menu switch">
+					<span>Reuse<i class="fas fa-recycle"></i></span>
+					<div>
+						<a data-to="jsonyaml" data-value-from="jsonInput" data-value-as="json">Convert it to YAML</a>
+						<a data-to="base64" data-value-from="jsonInput" data-value-as="ascii">Base64-encode it</a>
+					</div>
+				</div>
+			</div>
 		</section>
 		
-		<label for="json-1liner">One-liner JSON</label>
-		<div class="subcontrols" data-for="json-1liner">
-			<label for="json-1liner-quote-identifiers">
-				<input type="checkbox" name="json-1liner-quote-identifiers" id="json-1liner-quote-identifiers">
-				Quote names
-			</label>
-			<label for="json-1liner-escape-quotes">
-				<input type="checkbox" name="json-1liner-escape-quotes" id="json-1liner-escape-quotes">
-				Escape the quotes
-			</label>
-			<a class="copy" data-from="json-1liner"><span>COPY</span><i class="far fa-copy"></i></a>
-		</div>
-		<input type="text" name="json-1liner" id="json-1liner" spellcheck="false" disabled>
+		<section>
+			<label for="json-1liner">One-liner JSON</label>
+			<div class="overcontrols" data-for="json-1liner">
+				<label for="json-1liner-quote-identifiers">
+					<input type="checkbox" name="json-1liner-quote-identifiers" id="json-1liner-quote-identifiers">
+					Quote names
+				</label>
+				<label for="json-1liner-escape-quotes">
+					<input type="checkbox" name="json-1liner-escape-quotes" id="json-1liner-escape-quotes">
+					Escape the quotes
+				</label>
+			</div>
+			<input type="text" id="json-1liner" spellcheck="false" disabled>
+			<div class="undercontrols">
+				<div class="menu switch">
+					<span>Reuse<i class="fas fa-recycle"></i></span>
+					<div>
+						<a data-to="jsonyaml" data-value-from="1liner" data-value-as="json">Convert it to YAML</a>
+						<a data-to="base64" data-value-from="1liner" data-value-as="ascii">Base64-encode it</a>
+					</div>
+				</div>
+				<a class="copy" data-from="json-1liner"><span>Copy</span><i class="far fa-copy"></i></a>
+			</div>
+		</section>
 		
-		<label for="json-pretty">Pretty JSON</label>
-		<div class="subcontrols" data-for="json-pretty">
-			<label for="">Indent with</label>
-			<label for="json-pretty-indent-tabs"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-tabs" value="	" checked>tabs</label>
-			<label for="json-pretty-indent-4spaces"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-4spaces" value="    ">4 spaces</label>
-			<label for="json-pretty-indent-2spaces"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-2spaces" value="  ">2 spaces</label>
-			<a class="copy" data-from="json-pretty"><span>COPY</span><i class="far fa-copy"></i></a>
-		</div>
-		<textarea id="json-pretty" rows="8" spellcheck="false" disabled></textarea>
+		<section>
+			<label for="json-pretty">Pretty JSON</label>
+			<div class="overcontrols" data-for="json-pretty">
+				<label for="">Indent with</label>
+				<label for="json-pretty-indent-tabs"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-tabs" value="	" checked>tabs</label>
+				<label for="json-pretty-indent-4spaces"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-4spaces" value="    ">4 spaces</label>
+				<label for="json-pretty-indent-2spaces"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-2spaces" value="  ">2 spaces</label>
+			</div>
+			<textarea id="json-pretty" rows="8" spellcheck="false" disabled></textarea>
+			<div class="undercontrols">
+				<div class="menu switch">
+					<span>Reuse<i class="fas fa-recycle"></i></span>
+					<div>
+						<a data-to="jsonyaml" data-value-from="pretty" data-value-as="json">Convert it to YAML</a>
+						<a data-to="base64" data-value-from="pretty" data-value-as="ascii">Base64-encode it</a>
+					</div>
+				</div>
+				<a class="copy" data-from="json-pretty"><span>Copy</span><i class="far fa-copy"></i></a>
+			</div>
+		</section>
 	</div>
 	
 	<script>
@@ -177,9 +252,9 @@
 			constructor(id) {
 				super(id);
 
-				this.inJSON = this.$('.jsonInput')[0];
-				this.outPretty = this.$('#json-pretty')[0];
-				this.out1liner = this.$('#json-1liner')[0];
+				this.inJSON = this.$$('jsonInput');
+				this.outPretty = this.$$('pretty');
+				this.out1liner = this.$$('1liner');
 				this.indentRadios = this.$('input[name=json-pretty-indent]');
 				this.quoteCheck = document.getElementById('json-1liner-quote-identifiers');
 				this.escapeQuotesCheck = document.getElementById('json-1liner-escape-quotes');
@@ -194,6 +269,10 @@
 				}
 
 				this.inJSON.oninput = update;
+			}
+
+			import(data) {
+				data.json && (this.$$('json', data.json));
 			}
 
 			update() {
@@ -226,6 +305,13 @@
 					this.out1liner.value = JSON1Liner(undefined, v, this.quoteCheck.checked, this.escapeQuotesCheck.checked);
 				}
 			}
+
+			import(data) {
+				if (data.input) {
+					this.T([this.$$('jsonInput')], data.input)
+					this.update();
+				}
+			}
 		}
 
 		function JSON1Liner(name, v, quoteNames, escapeQuotes) {
@@ -251,7 +337,7 @@
 			}
 		}
 
-		tools.add(new TJSON('json'));
+		bench.add(new TJSON('json'));
 	</script>
 
 	<style>
@@ -269,26 +355,38 @@
 	<div class="controls smaller">
 		<section>
 			<label for="jsonyaml-json">JSON</label>
-			<div class="subcontrols">
+
+			<div class="overcontrols">
 				<label for="">Indent with</label>
 				<label for="json-prettyIndentTabs"><input type="radio" name="json-pretty-indent" id="json-prettyIndentTabs" value="	" checked>tabs</label>
 				<label for="json-prettyIndent4spaces"><input type="radio" name="json-pretty-indent" id="json-prettyIndent4spaces" value="    ">4 spaces</label>
 				<label for="json-prettyIndent2spaces"><input type="radio" name="json-pretty-indent" id="json-prettyIndent2spaces" value="  ">2 spaces</label>
 				<a class="copy" data-from="jsonyaml-json"><span>COPY</span><i class="far fa-copy"></i></a>
 			</div>
+
 			<textarea id="jsonyaml-json" cols="30" rows="9"></textarea>
 			<p class="jsonErr error inset"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
+
+			<div class="undercontrols">
+				<div class="menu switch">
+					<span>Reuse<i class="fas fa-recycle"></i></span>
+					<div>
+						<a data-to="json" data-value-from="json" data-value-as="input">Format it</a>
+					</div>
+				</div>
+			</div>
 		</section>
 		
 		<div class="bothways">It works ⇃both↾ ways.</div>
 		
 		<section>
 			<label for="jsonyaml-yaml">YAML</label>
-			<div class="subcontrols">
-				<a class="copy" data-from="jsonyaml-yaml"><span>COPY</span><i class="far fa-copy"></i></a>
-			</div>
 			<textarea id="jsonyaml-yaml" cols="30" rows="9"></textarea>
 			<p class="yamlErr error inset"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
+
+			<div class="undercontrols">
+				<a class="copy" data-from="jsonyaml-yaml"><span>Copy</span><i class="far fa-copy"></i></a>
+			</div>
 		</section>
 	</div>
 
@@ -340,9 +438,21 @@
 					this.json.value = '¯\\_(ツ)_/¯';
 				}
 			}
+
+			import(data) {
+				if (data.json) {
+					this.T([this.$$('json')], data.json);
+					this.toYAML();
+				}
+				
+				if (data.yaml) {
+					this.T([this.$$('yaml')], data.yaml);
+					this.toJSON();
+				}
+			}
 		}
 
-		tools.add(new TJSONYAML('jsonyaml'));
+		bench.add(new TJSONYAML('jsonyaml'));
 	</script>
 
 	<style>
@@ -441,7 +551,7 @@
 			}
 		}
 
-		tools.add(new TUnixtime("unixtime"));
+		bench.add(new TUnixtime("unixtime"));
 
 	</script>
 
@@ -554,17 +664,23 @@
 <div class="tool unfocused col1" id="urldecode" data-tag="url trans encode decode">
 	<div class="preview"><h1>URL Transcode</h1></div>
 	<div class="controls smaller">
-		<label for="urldecode-encinput">URL-encoded string</label>
-		<div class="subcontrols">
-			<a class="copy" data-from="urldecode-encinput"><span>COPY</span><i class="far fa-copy"></i></a>
-		</div>
-		<input type="text" class="encinput" id="urldecode-encinput" autofocus tabindex="11">
+		<section>
+			<label for="urldecode-encinput">URL-encoded string</label>
+			<input type="text" class="encinput" id="urldecode-encinput" autofocus tabindex="11">
+			<div class="undercontrols">
+				<a class="copy" data-from="urldecode-encinput"><span>COPY</span><i class="far fa-copy"></i></a>
+			</div>
+		</section>
+
 		<div class="bothways">It works ⇃both↾ ways.</div>
-		<label for="urldecode-encinput">ASCII string</label>
-		<div class="subcontrols">
-			<a class="copy" data-from="urldecode-decinput"><span>COPY</span><i class="far fa-copy"></i></a>
-		</div>
-		<input type="text" class="decinput" id="urldecode-decinput" tabindex="12" onFocus="this.tabIndex=10;" onBlur="this.tabIndex=12;">
+
+		<section>
+			<label for="urldecode-encinput">ASCII string</label>		
+			<input type="text" class="decinput" id="urldecode-decinput" tabindex="12" onFocus="this.tabIndex=10;" onBlur="this.tabIndex=12;">
+			<div class="undercontrols">
+				<a class="copy" data-from="urldecode-decinput"><span>COPY</span><i class="far fa-copy"></i></a>
+			</div>
+		</section>
 	</div>
 
 	<script>
@@ -588,7 +704,7 @@
 
 		}
 
-		tools.add(new TURLTranscoder("urldecode"));
+		bench.add(new TURLTranscoder("urldecode"));
 
 	</script>
 </div>
@@ -661,7 +777,7 @@
 			}
 		}
 
-		tools.add(new TURLParser("urlparse"));
+		bench.add(new TURLParser("urlparse"));
 		
 	</script>
 
@@ -684,15 +800,293 @@
 </div>
 
 
+<div class="tool unfocused col1" id="xml" data-tag="xml xpath">
+	<div class="preview"><h1>XML & Xpath</h1></div>
+	<div class="controls smaller">
+		<section>
+			<label for="xml-xml">XML input</label>
+			<textarea id="xml-xml" autofocus spellcheck="false" style="margin-bottom:0;"></textarea>
+			<p class="xmlErr error inset"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
+			<div class="undercontrols">
+				<div class="menu switch">
+					<span>Reuse<i class="fas fa-recycle"></i></span>
+					<div>
+						<a data-to="base64" data-value-from="xml" data-value-as="ascii">Base64-encode it</a>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section>
+			<label for="xml-xpath">XPath query</label>
+			<input type="text" id="xml-xpath" spellcheck="false" style="margin-bottom:0;" value="//person/@last-name" />
+			<div class="undercontrols">
+				<a class="copy" data-from="json-1liner"><span>Copy</span><i class="far fa-copy"></i></a>
+			</div>
+		</section>
+		
+		<section>
+			<label for="xml-xpath">XML structure</label>
+			<div id="xml-xmlNice"></div>
+		</section>
+	</div>
+
+	<script>
+		class TXML extends Tool {
+			constructor(id) {
+				super(id)
+
+				this.xml = this.$$('xml');
+				this.xpath = this.$$('xpath');
+				this.xmlNice = this.$$('xmlNice');
+
+				this.xml.oninput = () => this.update();
+				this.xpath.oninput = () => this.update();
+			}
+
+			update() {
+				let parser = new DOMParser();
+				let xml = parser.parseFromString(this.xml.value, "text/xml");
+				console.log("XML is", xml);
+
+				while(this.xmlNice.firstChild) {
+					this.xmlNice.removeChild(this.xmlNice.firstChild)
+				}
+
+				let found = this.evaluateXPath(this.xpath.value, xml);
+				this.renderXML(xml, this.xmlNice, found);
+			}
+
+			evaluateXPath(xpath, doc) {
+				var xpe = new XPathEvaluator();
+				var result = xpe.evaluate(xpath, doc);
+				var found = [];
+				var res;
+
+				while (res = result.iterateNext()) {
+					found.push(res);
+				}
+
+				console.log("Found XML nodes: ", found);
+
+				return found;
+			}
+
+			nodeStr(node) {
+				let str = node.nodeName;
+				let attributes = '';
+				let position = 0;
+
+				if (node.attributes) {
+					let attrs = [];
+					for (let aI = 0; aI < node.attributes.length; aI++) {
+						let a = node.attributes[aI];
+						attrs.push(`${a.name}=${a.nodeValue}`);
+					}
+
+					attributes = `(${attrs.join(',')})`;
+				}
+
+				let n = node;
+				while (n.previousSibling) {
+					n = n.previousSibling;
+					position++;
+				}
+
+				return `${str}#${position}${attributes}`;
+			}
+
+			isFound(node, foundNodes) {
+				let nodePath = this.getNodePath(node);
+
+				for (let fn of foundNodes) {
+					let fnPath = this.getNodePath(fn);
+
+					if (nodePath === fnPath) {
+						return true;
+					}
+				}
+
+				return false;
+			}
+
+			getNodePath(xmlNode) {
+				let p = [];
+				let n = xmlNode;
+				while (n) {
+					p.push(this.nodeStr(n));
+					n = n.parentNode || n.ownerElement;
+				}
+				return p.join(',');
+			}
+
+			createXMLNode(classes, value) {
+				let n = document.createElement('div');
+				classes && (n.className = classes.join(' '));
+				value && (n.innerHTML = value);
+				return n;
+			}
+
+			renderXML(xml, E, foundXML) {
+				let xmlE = document.createElement('div');
+				xmlE.classList.add("xml-node");
+
+				switch (xml.nodeType) {
+					case Node.ELEMENT_NODE:
+						let xattrs = [];
+
+						let xt = this.createXMLNode(['tag']);
+						let xto = this.createXMLNode(['opening']);
+						let xtn = this.createXMLNode(['name'], xml.nodeName);
+
+						xt.appendChild(xto);
+						xt.appendChild(xtn);
+
+						for (let attrI = 0; attrI < xml.attributes.length; attrI++) {
+							let attr = xml.attributes[attrI];
+
+							let xattrName = this.createXMLNode(['name'], attr.name);
+							let xattrEq = this.createXMLNode(['eq']);
+							let xattrValue = this.createXMLNode(['value'], `"${attr.nodeValue}"`);
+							let xattr = this.createXMLNode(['attr']);
+							xattr.appendChild(xattrName);
+							xattr.appendChild(xattrEq);
+							xattr.appendChild(xattrValue);
+
+							if (this.isFound(attr, foundXML)) {
+								// console.log("Found an attribute!", attr);
+								xattr.classList.add('found');
+							}
+
+							xt.appendChild(xattr);
+						}
+
+						if (xml.childNodes.length) {
+							xt.appendChild(this.createXMLNode(['closing']))
+						} else {
+							xt.appendChild(this.createXMLNode(['closing-short']))
+						}
+
+						xmlE.appendChild(xt);
+						xmlE.dataset.xmlName = xml.nodeName;
+					break;
+
+					case Node.TEXT_NODE:
+						xmlE.classList.add('text');
+						xmlE.innerHTML = xml.nodeValue;
+					break;
+					
+					case Node.CDATA_SECTION_NODE:
+					break;
+				}
+
+				if (this.isFound(xml, foundXML)) {
+					// console.log("Found the node!", xml)
+					xmlE.classList.add('found');
+				}
+				
+				E.appendChild(xmlE);
+				
+				for (let xmlCN of xml.childNodes) {
+					this.renderXML(xmlCN, xmlE, foundXML);
+				}
+				
+				if (xml.nodeType === 1 && xml.childNodes.length) {
+					
+					let xt = this.createXMLNode(['tag']);
+					xt.appendChild(this.createXMLNode(['opening-closing']));
+					xt.appendChild(this.createXMLNode(['name'], xml.nodeName));
+					xt.appendChild(this.createXMLNode(['closing']));
+					xmlE.appendChild(xt)
+				}
+			}
+		}
+
+		bench.add(new TXML("xml"));
+
+	</script>
+
+	<style>
+		#xml-xmlNice .found,
+		#xml-xmlNice .found * {
+			color: white !important;
+			background: #00BBFF !important;
+		}
+
+		.xml-node {
+			position: relative;
+			left: 20px;
+			float: left;
+			clear: left;
+		}
+		
+		.xml-node.text {
+			font-style: italic;
+		}
+
+		.xml-node > .tag {
+			clear: both;
+		}
+
+		.xml-node > .tag > * {
+			display: inline-block;
+		}
+		
+		.xml-node > .tag > .name {
+			color: #062873;
+    		font-weight: bold;
+		}
+		
+		.xml-node > .tag > .opening::after {
+			content: "<";
+		}
+		
+		.xml-node > .tag > .opening-closing::after {
+			content: "</";
+		}
+		
+		.xml-node > .tag > .closing::after {
+			content: ">";
+		}
+		
+		.xml-node > .tag > .closing-short::after {
+			content: " />";
+		}
+		
+		.xml-node > .tag > .attr {
+			margin-left: 10px;
+		}
+		
+		.xml-node > .tag > .attr > * {
+			display: inline-block;
+		}
+		
+		.xml-node > .tag > .attr > .name {
+			color: #062873;
+		}
+
+		.xml-node > .tag > .attr > .eq:after {
+			content: "="
+		}
+
+		.xml-node > .tag > .attr > .value {
+			font-weight: bold;
+			color: #444;
+			font-style: italic;
+		}
+	</style>
+</div>
+
+
 		</div>
 
 		<script>
 			function focus(id) {
-				tools.focus(id);
+				bench.focus(id);
 			}
 
 			function unfocus(id) {
-				tools.unfocus(id);
+				bench.unfocus(id);
 				window.location.hash = '';
 				filter.focus();
 			}
@@ -761,7 +1155,7 @@
 			document.body.onload = () => {
 				let filter = document.getElementById("filter");
 				filter.oninput = () => {
-					tools.filter(filter.value);
+					bench.filter(filter.value);
 				}
 				
 				filter.onkeydown = (e) => {
@@ -774,17 +1168,17 @@
 						}
 					} else if (e.key == 'Escape') {
 						filter.value = "";
-						tools.filter("");
+						bench.filter("");
 					}
 				}
 
 				document.querySelectorAll('.copy').forEach((v, k, p) => {v.onclick = onclickCopyToClipboard});
 
 				if (window.location.hash) {
-					tools.focus(window.location.hash.substr(1));
+					bench.focus(window.location.hash.substr(1));
 				}
 
-				tools.render();
+				bench.render();
 			}
 		</script>
 	</body>

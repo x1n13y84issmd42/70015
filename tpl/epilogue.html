@@ -2,11 +2,11 @@
 
 		<script>
 			function focus(id) {
-				tools.focus(id);
+				bench.focus(id);
 			}
 
 			function unfocus(id) {
-				tools.unfocus(id);
+				bench.unfocus(id);
 				window.location.hash = '';
 				filter.focus();
 			}
@@ -75,7 +75,7 @@
 			document.body.onload = () => {
 				let filter = document.getElementById("filter");
 				filter.oninput = () => {
-					tools.filter(filter.value);
+					bench.filter(filter.value);
 				}
 				
 				filter.onkeydown = (e) => {
@@ -88,17 +88,17 @@
 						}
 					} else if (e.key == 'Escape') {
 						filter.value = "";
-						tools.filter("");
+						bench.filter("");
 					}
 				}
 
 				document.querySelectorAll('.copy').forEach((v, k, p) => {v.onclick = onclickCopyToClipboard});
 
 				if (window.location.hash) {
-					tools.focus(window.location.hash.substr(1));
+					bench.focus(window.location.hash.substr(1));
 				}
 
-				tools.render();
+				bench.render();
 			}
 		</script>
 	</body>

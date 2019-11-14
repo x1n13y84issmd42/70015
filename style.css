@@ -121,7 +121,7 @@ input[type=radio]:checked {
 
 .tool > .controls > section {
 	position: relative;
-	margin-bottom: 2em;
+	margin-bottom: 3em;
 }
 
 .tool > .controls .left {
@@ -182,12 +182,15 @@ input[type=radio]:checked {
 .tool > .controls textarea,
 .tool > .controls input[type=text] {
 	width: 100%;
+	min-width: 100%;
+	max-width: 100%;
     display: block;
     font-size: 16pt;
     padding: 12px;
 	letter-spacing: 1pt;
 	margin-bottom: 2em;
-	border: 2px #99DDFF solid;
+	/* border: 2px #99DDFF solid; */
+	border: 2px #00BBFF solid;
 }
 
 .tool > .controls textarea[disabled],
@@ -196,13 +199,18 @@ input[type=radio]:checked {
     background: #F3F3F3;
 }
 
-.tool .subcontrols {
+.tool > .controls section > input[type=text],
+.tool > .controls section > textarea {
+	margin-bottom: 0;
+}
+
+.tool .overcontrols {
 	float: right;
 	width: auto;
 	padding-top: 10px;
 }
 
-.tool .subcontrols a.copy {
+.tool .overcontrols a.copy {
 	margin-left: 20px;
     color: #00BBFF;
     text-decoration: none;
@@ -211,7 +219,7 @@ input[type=radio]:checked {
 	cursor: pointer;
 }
 
-.tool .subcontrols a.copy > span {
+.tool .overcontrols a.copy > span {
     margin-right: 10px;
     opacity: 0;
     transition: all 100ms ease-in-out;
@@ -223,7 +231,7 @@ input[type=radio]:checked {
     vertical-align: middle;
 }
 
-.tool .subcontrols a.copy:hover > span {
+.tool .overcontrols a.copy:hover > span {
 	opacity: 1;
 	transition: all 100ms ease-in-out;
 	-webkit-transition: all 100ms ease-in-out;
@@ -231,7 +239,7 @@ input[type=radio]:checked {
 	-o-transition: all 100ms ease-in-out;
 }
 
-.tool > .controls .subcontrols > label {
+.tool > .controls .overcontrols > label {
 	font-size: 12pt;
 	font-family: Quicksand;
 	margin-right: 20px;
@@ -359,9 +367,6 @@ input[type=radio]:checked {
 	transition: all 600ms ease-in-out;
 }
 
-
-
-
 .tool {
 	display: block;
 	margin: 0 0 1pt 0;
@@ -423,6 +428,93 @@ input[type=radio]:checked {
 	position: absolute;
 	left: 0;
 	top: 0;
+}
+
+.switch > div {
+	overflow: hidden;
+	margin-top: 0;
+	transition: margin-top 200ms linear;
+}
+
+.switch > div > a {
+	cursor: pointer;
+	color: white;
+	margin-top: -3em;
+	transition: margin-top 200ms linear;
+}
+
+.switch:hover {
+	/* background: #00bbff; */
+	/* color: white; */
+	/* transition: background, color 200ms linear; */
+}
+
+.switch:hover > div {
+}
+
+.switch:hover > div > a {
+	margin-top: 0;
+	transition: margin-top 200ms linear;
+}
+
+.switch > div > a,
+.switch > span {
+	padding: 7px 15px;
+	display: block;
+}
+
+.switch > span > i {
+	margin-left: 10px;
+    float: right;
+    top: 2px;
+    position: relative;
+}
+
+.switch:hover > div > a:hover {
+	background-image: url("./assets/stripes.png");
+}
+
+.switch:hover > div > a:last-child {
+	border-radius: 0 0 10px 10px;
+}
+
+.tool .undercontrols {
+	float: right;
+    width: auto;
+    /* padding-top: 10px; */
+    height: 35px;
+    z-index: 999;
+	position: relative;
+}
+
+.tool .undercontrols > * {
+    background: #00BBFF;
+    padding: 7px 15px;
+    border-radius: 0 0 10px 10px;
+    cursor: pointer;
+    transition: all 200ms linear;
+    font-size: 12pt;
+    color: white;
+    z-index: 99;
+    float: right;
+    margin-left: 20px;
+}
+
+.tool .undercontrols > a > i.far {
+	margin-left: 10px;
+}
+
+.tool .undercontrols > .menu {
+	padding: 0;
+}
+
+.tool.switching.slide-left-r {
+	left: 100%;
+}
+
+.tool.switching.slide-left-transit {
+	margin-left: -100%;
+	transition: margin-left 400ms ease-in-out;
 }
 
 

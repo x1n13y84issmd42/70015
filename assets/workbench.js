@@ -1,11 +1,14 @@
-class Tools {
-	constructor(container) {
-		this.container = container;
+class Workbench {
+	constructor(config) {
+		this.config = config;
 		this.tools = {};
+		this.currentlyFocusedID = undefined;
 	}
 
 	add(tool) {
 		this.tools[tool.ID] = tool;
+		tool.setBench(this);
+		tool.reconfigure(this.config.get(tool.ID));
 	}
 	
 	focus(id) {
@@ -18,6 +21,8 @@ class Tools {
 			if (af) {
 				af.focus();
 			}
+
+			this.currentlyFocusedID = id;
 		}
 
 		document.body.onkeydown = (e) => {
@@ -57,5 +62,30 @@ class Tools {
 
 	render() {
 		document.body.style.display = 'block';
+	}
+
+	switch(toID, data) {
+		console.log(`Switching to ${toID}.`, data);
+		// this.unfocus(this.currentlyFocusedID);
+		let t1 = this.tools[this.currentlyFocusedID];
+		let t2 = this.tools[toID];
+		let cfid = this.currentlyFocusedID;
+		this.tools[toID].import(data);
+		this.focus(toID);
+
+		if (t1 && t2) {
+			t1.E.classList.add('switching');
+			t2.E.classList.add('switching', 'slide-left-r');
+			t1.E.classList.add('slide-left-transit');
+			t2.E.classList.add('slide-left-transit');
+			
+			setTimeout((id, _t1, _t2) => {
+				_t1.E.classList.remove('switching', 'slide-left-transit');
+				_t2.E.classList.remove('switching', 'slide-left-r', 'slide-left-transit');
+				this.unfocus(id);
+			}, 400, cfid, t1, t2);
+		} else {
+			throw new Error(`One of the tools not found while switching.`);
+		}
 	}
 }

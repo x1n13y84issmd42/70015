@@ -8,23 +8,58 @@ class Tool {
 
 		this.ID = id;
 		this._autoinput = false;
+		this.configuration = {};
 	
 		let ctrls = E.querySelector(".controls");
+
 		let eClose = document.createElement("a");
 		eClose.innerHTML = "<i>&#x1F860</i><span>CLOSE</span>";
 		eClose.classList.add("close");
-		eClose.onclick = (e) => {unfocus(id); e.preventDefault();e.cancelBubble=true;}
+		eClose.onclick = (e) => {
+			unfocus(id);
+			e.preventDefault();
+			e.cancelBubble=true;
+		};
+
 		ctrls.append(eClose);
 
 		this.switches = this.$('input[type=radio],input[type=checkbox]');
+
+		let eSwitches = this.$('.switch');
+		for (let eSw of eSwitches) {
+			let as = eSw.querySelectorAll('a');
+			for (let a of as) {
+				a.onclick = () => {
+					let data = {};
+					data[a.dataset.valueAs] = this.$$(a.dataset.valueFrom).value;
+					this.bench.switch(a.dataset.to, data)
+				};
+			}
+		}
+	}
+
+	config(k, v) {
+		this.configuration[k] = v;
+	}
+
+	reconfigure(config) {
+		this.configuration = config || {};
+	}
+
+	setBench(b) {
+		this.bench = b;
 	}
 
 	$(s) {
 		return this.E.querySelectorAll(s);
 	}
 
-	$$(id) {
-		return document.getElementById(`${this.ID}-${id}`);
+	$$(id, v) {
+		if (v) {
+			this.T([document.getElementById(`${this.ID}-${id}`)], v);
+		} else {
+			return document.getElementById(`${this.ID}-${id}`);
+		}
 	}
 
 	autoinput(ai) {
@@ -35,16 +70,12 @@ class Tool {
 		}
 	}
 
-	T(s, v) {
-		this.tplNodes(this.$(s));				
-	}
-
 	removeChildren(e) {
 		while (e.firstChild)
 			e.removeChild(e.firstChild);
 	}
 
-	tplNodes(nodes, v) {
+	T(nodes, v) {
 		for (let e of nodes) {
 			switch (e.tagName) {
 				case "INPUT":
@@ -69,11 +100,11 @@ class Tool {
 	
 			for (let aI in args) {
 				if (compE.dataset.arg == aI) {
-					this.tplNodes([compE], args[aI])
+					this.T([compE], args[aI])
 				}
 
 				let nodes = compE.querySelectorAll(`[data-arg="${aI}"]`);
-				this.tplNodes(nodes, args[aI])
+				this.T(nodes, args[aI])
 			}
 
 			compE.querySelectorAll('.copy').forEach((v, k, p) => {v.onclick = onclickCopyToClipboard});
@@ -93,5 +124,13 @@ class Tool {
 				errE.firstChild.nextSibling.innerHTML = '&nbsp;';
 			}
 		}
+	}
+
+	importSchema() {
+		throw new Error('importSchema() is not implemented.')
+	}
+	
+	import(data) {
+		throw new Error('import() is not implemented.')
 	}
 }

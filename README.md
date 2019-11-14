@@ -5,9 +5,9 @@ A small set of utility functions often useful in development, with clean interfa
 * [x] Update address bar with tools' paths & autofocus them on page load.
 * [x] A separate tool manager.
 * [ ] Count tool usage and rearrange them accordingly on the start screen.
-* [ ] Feature: copy to clipboard on input fields.
-* [ ] Feature: copy to clipboard on click event for lines.
-* [ ] Feature: switch tools / move to another tool function.
+* [x] Feature: copy to clipboard on input fields.
+* [x] Feature: copy to clipboard on click event for lines.
+* [x] Feature: switch tools / move to another tool function.
 * [ ] Feature: locale / UI language selection.
 * [ ] Feature: remember last input for tools and use it as default on first focus.
 * [ ] Unixtime: time zone selection.
@@ -16,5 +16,6 @@ A small set of utility functions often useful in development, with clean interfa
 * [ ] Tool: CSS colors (RGB-HSL-HEX conversion).
 * [x] Tool: Hasher (MD5/SHA*/etc hashes).
 * [ ] Tool: Object converter (JSON <-> YAML <-> XML?).
+* [ ] Tool: XML/XPath.
 * [ ] JSON mapper.
 * [ ] Feature: sharing (base64 encode some JSON and read it from `#`).
