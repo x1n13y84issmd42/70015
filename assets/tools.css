@@ -34,13 +34,17 @@
     /* min-height: 80%; */
 }
 
-.tool > .controls > section .error.inset {
+/* .tool > .controls > section .error.inset {
 	position: absolute;
 	bottom: 0;
 	background: red;
 	color: white;
 	padding: 3px 15px;
 	border-top-right-radius: 9px;
+} */
+
+.tool > .controls > section.hidden {
+	display: none;
 }
 
 .tool > .controls > section {
@@ -54,9 +58,11 @@
 }
 
 .tool > .controls .left.l40 {width: 40%;}
+.tool > .controls .left.l35 {width: 35%;}
 .tool > .controls .left.l30 {width: 30%;}
 
 .tool > .controls .right.r60 {width: 60%;}
+.tool > .controls .right.r65 {width: 65%;}
 .tool > .controls .right.r70 {width: 70%;}
 
 .tool > .controls .right {
@@ -67,6 +73,7 @@
 .tool > .controls .subsection {
 	padding: 0;
 	margin-bottom: 2em;
+	display: block;
 }
 
 .tool > .controls h1 {
@@ -85,7 +92,7 @@
 
 .tool > .controls .error {
 	color: red;
-	font-size: 16pt;
+	/* font-size: 16pt; */
 	font-family: Quicksand;
 	visibility: hidden;
 }
@@ -101,6 +108,11 @@
 .tool > .controls label {
 	font-size: 22pt;
 	font-family: Quicksand;
+	transition: color 200ms ease-in-out;
+}
+
+.tool > .controls textarea {
+	padding-bottom: 35px;
 }
 
 .tool > .controls textarea,
@@ -217,7 +229,15 @@
 	display: table-row;
 }
 
-.kvpair-sub {
+.kvpair.section {
+	font-size: 22px;
+}
+
+.kvpair.section > .label{
+	padding-top: 20px;
+}
+
+.kvpair.sub {
 	margin-left: 50px;
 }
 
@@ -404,7 +424,7 @@
 
 .tool .undercontrols {
 	float: right;
-    width: auto;
+    width: 100%;
     /* padding-top: 10px; */
     height: 35px;
     z-index: 999;
@@ -416,12 +436,20 @@
     padding: 7px 15px;
     border-radius: 0 0 10px 10px;
     cursor: pointer;
-    transition: all 200ms linear;
+    transition: background 200ms linear;
     font-size: 12pt;
     color: white;
     z-index: 99;
     float: right;
     margin-left: 20px;
+}
+
+.tool .undercontrols > .error {
+	background-color: red;
+    float: left;
+    margin-left: 0;
+	color: white;
+	cursor: default;
 }
 
 .tool .undercontrols > a > i.far {
@@ -439,4 +467,28 @@
 .tool.switching.slide-left-transit {
 	margin-left: -100%;
 	transition: margin-left 400ms ease-in-out;
+}
+
+.disabled input[type=radio],
+.disabled input[type=checkbox] {
+    border-color: #d0d0d0;
+}
+
+.disabled input[type=radio]:checked,
+.disabled input[type=radio]:active,
+.disabled input[type=checkbox]:checked,
+.disabled input[type=checkbox]:active {
+    background: #d0d0d0;
+}
+
+.disabled label {
+	color: #d0d0d0;
+}
+
+.disabled .undercontrols > * {
+    background: #d0d0d0;
+}
+
+.disabled .switch:hover > div > a {
+	margin-top: -3em;
 }

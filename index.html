@@ -29,9 +29,9 @@
 <div class="tool unfocused col2" id="base64" data-tag="base64">
 	<div class="preview"><h1>Base64</h1></div>
 	<div class="controls smaller">
-		<section>
-			<label for="base64-base64">Base64-encoded string</label>
-			<textarea id="base64-base64" autofocus tabindex="21" rows="5"></textarea>
+		<section id="base64-base64">
+			<label for="base64-base64-in">Base64-encoded string</label>
+			<textarea id="base64-base64-in" autofocus tabindex="21" rows="5"></textarea>
 			<div class="undercontrols">
 				<div class="menu switch">
 					<span>Reuse<i class="fas fa-recycle"></i></span>
@@ -39,23 +39,23 @@
 						<a data-to="hasher" data-value-from="base64" data-value-as="input">Hash it</a>
 					</div>
 				</div>
-				<a class="copy" data-from="base64-base64"><span>Copy</span><i class="far fa-copy"></i></a>
+				<a class="copy" data-from="base64-base64-in"><span>Copy</span><i class="far fa-copy"></i></a>
 			</div>
 		</section>
 		
 		<div class="bothways">It works ⇃both↾ ways.</div>
 		
-		<section>
-			<label for="base64-asciiInput">ASCII string</label>
-			<textarea id="base64-asciiInput" tabindex="22" onFocus="this.tabIndex=20;" onBlur="this.tabIndex=22;" rows="10"></textarea>
+		<section id="base64-ascii">
+			<label for="base64-ascii-in">ASCII string</label>
+			<textarea id="base64-ascii-in" tabindex="22" onFocus="this.tabIndex=20;" onBlur="this.tabIndex=22;" rows="10"></textarea>
 			<div class="undercontrols">
 				<div class="menu switch">
 					<span>Reuse<i class="fas fa-recycle"></i></span>
 					<div>
-						<a data-to="hasher" data-value-from="asciiInput" data-value-as="input">Hash it</a>
+						<a data-to="hasher" data-value-from="ascii" data-value-as="input">Hash it</a>
 					</div>
 				</div>
-				<a class="copy" data-from="base64-asciiInput"><span>Copy</span><i class="far fa-copy"></i></a>
+				<a class="copy" data-from="base64-ascii-in"><span>Copy</span><i class="far fa-copy"></i></a>
 			</div>
 		</section>
 	</div>
@@ -65,8 +65,8 @@
 			constructor(id) {
 				super(id);
 
-				this.inBase64 = this.$$('base64');
-				this.inAscii = this.$$('asciiInput');
+				this.inBase64 = this.Section('base64').Input();
+				this.inAscii = this.Section('ascii').Input();
 
 				this.inBase64.oninput = () => this.decode();
 				this.inAscii.oninput = () => this.encode();
@@ -82,12 +82,12 @@
 
 			import(data) {
 				if (data.ascii) {
-					this.T([this.$$('asciiInput')], data.ascii);
+					this.inAscii.value = data.ascii;
 					this.encode();
 				}
 				
 				if (data.base64) {
-					this.T([this.$$('base64')], data.base64);
+					this.base64.value = data.base64;
 					this.decode();
 				}
 			}
@@ -184,27 +184,27 @@
 
 <div class="tool unfocused col3" id="json" data-tag="json format">
 	<div class="preview"><h1>JSON Format</h1></div>
-	<div class="controls">
-		<section>
-			<label for="json-jsonInput">JSON input</label>
-			<textarea id="json-jsonInput" autofocus spellcheck="false" style="margin-bottom:0;"></textarea>
-			<p class="jsonErr error inset"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
+	<div class="controls smaller">
+		<section id="json-input">
+			<label for="json-input-in">JSON input</label>
+			<textarea id="json-input-in" autofocus spellcheck="false" style="margin-bottom:0;"></textarea>
 			<div class="undercontrols">
+				<p class="jsonErr error inset"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
 				<div class="menu switch">
 					<span>Reuse<i class="fas fa-recycle"></i></span>
 					<div>
-						<a data-to="jsonyaml" data-value-from="jsonInput" data-value-as="json">Convert it to YAML</a>
-						<a data-to="base64" data-value-from="jsonInput" data-value-as="ascii">Base64-encode it</a>
+						<a data-to="jsonyaml" data-value-from="input" data-value-as="json">Convert it to YAML</a>
+						<a data-to="base64" data-value-from="input" data-value-as="ascii">Base64-encode it</a>
 					</div>
 				</div>
 			</div>
 		</section>
 		
-		<section>
-			<label for="json-1liner">One-liner JSON</label>
-			<div class="overcontrols" data-for="json-1liner">
+		<section id="json-1liner" class="disabled">
+			<label for="json-1liner-in">One-liner JSON</label>
+			<div class="overcontrols">
 				<label for="json-1liner-quote-identifiers">
-					<input type="checkbox" name="json-1liner-quote-identifiers" id="json-1liner-quote-identifiers">
+					<input type="checkbox" name="json-1liner-quote-identifiers" id="json-1liner-quote-identifiers" checked>
 					Quote names
 				</label>
 				<label for="json-1liner-escape-quotes">
@@ -212,7 +212,7 @@
 					Escape the quotes
 				</label>
 			</div>
-			<input type="text" id="json-1liner" spellcheck="false" disabled>
+			<input type="text" id="json-1liner-in" spellcheck="false" disabled>
 			<div class="undercontrols">
 				<div class="menu switch">
 					<span>Reuse<i class="fas fa-recycle"></i></span>
@@ -225,15 +225,15 @@
 			</div>
 		</section>
 		
-		<section>
-			<label for="json-pretty">Pretty JSON</label>
-			<div class="overcontrols" data-for="json-pretty">
+		<section id="json-pretty" class="disabled">
+			<label for="json-pretty-in">Pretty JSON</label>
+			<div class="overcontrols">
 				<label for="">Indent with</label>
 				<label for="json-pretty-indent-tabs"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-tabs" value="	" checked>tabs</label>
 				<label for="json-pretty-indent-4spaces"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-4spaces" value="    ">4 spaces</label>
 				<label for="json-pretty-indent-2spaces"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-2spaces" value="  ">2 spaces</label>
 			</div>
-			<textarea id="json-pretty" rows="8" spellcheck="false" disabled></textarea>
+			<textarea id="json-pretty-in" rows="8" spellcheck="false" disabled></textarea>
 			<div class="undercontrols">
 				<div class="menu switch">
 					<span>Reuse<i class="fas fa-recycle"></i></span>
@@ -242,7 +242,7 @@
 						<a data-to="base64" data-value-from="pretty" data-value-as="ascii">Base64-encode it</a>
 					</div>
 				</div>
-				<a class="copy" data-from="json-pretty"><span>Copy</span><i class="far fa-copy"></i></a>
+				<a class="copy" data-from="json-pretty-in"><span>Copy</span><i class="far fa-copy"></i></a>
 			</div>
 		</section>
 	</div>
@@ -252,12 +252,13 @@
 			constructor(id) {
 				super(id);
 
-				this.inJSON = this.$$('jsonInput');
-				this.outPretty = this.$$('pretty');
-				this.out1liner = this.$$('1liner');
+				this.inJSON = this.Section('input').Input();
+				this.outPretty = this.Section('pretty').Input();
+				this.out1liner = this.Section('1liner').Input();
+
 				this.indentRadios = this.$('input[name=json-pretty-indent]');
-				this.quoteCheck = document.getElementById('json-1liner-quote-identifiers');
-				this.escapeQuotesCheck = document.getElementById('json-1liner-escape-quotes');
+				this.quoteCheck = this.Section('1liner').$$('quote-identifiers');
+				this.escapeQuotesCheck = this.Section('1liner').$$('escape-quotes');
 
 				let update = () => {
 					this.update();
@@ -278,12 +279,16 @@
 			update() {
 				try {
 					let v = JSON.parse(this.inJSON.value);
-					this.Error('jsonErr', '');
+					this.Section('input').Error(undefined);
 					this.prettyPrint(v);
 					this.oneliner(v);
+					this.Section('1liner').Enable();
+					this.Section('pretty').Enable();
 				} catch (e) {
-					this.Error('jsonErr', e.message);
+					this.Section('input').Error(e.message);
 					this.outPretty.value = this.out1liner.value = '¯\\_(ツ)_/¯';
+					this.Section('1liner').Disable();
+					this.Section('pretty').Disable();
 				}
 			}
 
@@ -308,7 +313,7 @@
 
 			import(data) {
 				if (data.input) {
-					this.T([this.$$('jsonInput')], data.input)
+					this.inJSON.value = data.input;
 					this.update();
 				}
 			}
@@ -353,39 +358,40 @@
 		<h1>JSON&mdash;YAML Conversion</h1>
 	</div>
 	<div class="controls smaller">
-		<section>
-			<label for="jsonyaml-json">JSON</label>
+		<section id="jsonyaml-json">
+			<label for="jsonyaml-json-in">JSON</label>
 
 			<div class="overcontrols">
 				<label for="">Indent with</label>
-				<label for="json-prettyIndentTabs"><input type="radio" name="json-pretty-indent" id="json-prettyIndentTabs" value="	" checked>tabs</label>
-				<label for="json-prettyIndent4spaces"><input type="radio" name="json-pretty-indent" id="json-prettyIndent4spaces" value="    ">4 spaces</label>
-				<label for="json-prettyIndent2spaces"><input type="radio" name="json-pretty-indent" id="json-prettyIndent2spaces" value="  ">2 spaces</label>
-				<a class="copy" data-from="jsonyaml-json"><span>COPY</span><i class="far fa-copy"></i></a>
+				<label for="json-pretty-indent-tabs"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-tabs" value="	" checked>tabs</label>
+				<label for="json-pretty-indent-4spaces"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-4spaces" value="    ">4 spaces</label>
+				<label for="json-pretty-indent-2spaces"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-2spaces" value="  ">2 spaces</label>
 			</div>
-
-			<textarea id="jsonyaml-json" cols="30" rows="9"></textarea>
-			<p class="jsonErr error inset"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
-
+			
+			<textarea id="jsonyaml-json-in" cols="30" rows="9"></textarea>
+			
 			<div class="undercontrols">
+				<p class="error"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
 				<div class="menu switch">
 					<span>Reuse<i class="fas fa-recycle"></i></span>
 					<div>
 						<a data-to="json" data-value-from="json" data-value-as="input">Format it</a>
 					</div>
 				</div>
+				<a class="copy" data-from="jsonyaml-json-in"><span>Copy</span><i class="far fa-copy"></i></a>
 			</div>
 		</section>
 		
 		<div class="bothways">It works ⇃both↾ ways.</div>
 		
-		<section>
-			<label for="jsonyaml-yaml">YAML</label>
-			<textarea id="jsonyaml-yaml" cols="30" rows="9"></textarea>
-			<p class="yamlErr error inset"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
+		<section id="jsonyaml-yaml">
+			<label for="jsonyaml-yaml-in">YAML</label>
+
+			<textarea id="jsonyaml-yaml-in" cols="30" rows="9"></textarea>
 
 			<div class="undercontrols">
-				<a class="copy" data-from="jsonyaml-yaml"><span>Copy</span><i class="far fa-copy"></i></a>
+				<p class="error inset"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
+				<a class="copy" data-from="jsonyaml-yaml-in"><span>Copy</span><i class="far fa-copy"></i></a>
 			</div>
 		</section>
 	</div>
@@ -397,8 +403,8 @@
 			constructor(id) {
 				super(id);
 
-				this.json = this.$$('json');
-				this.yaml = this.$$('yaml');
+				this.json = this.Section('json').Input();
+				this.yaml = this.Section('yaml').Input();
 
 				this.json.oninput = () => this.toYAML();
 				this.yaml.oninput = () => this.toJSON();
@@ -413,14 +419,15 @@
 			toYAML() {
 				try {
 					this.yaml.value = jsyaml.safeDump(JSON.parse(this.json.value));
-					this.Error('jsonErr', '');
-					this.Error('yamlErr', '');
+					this.Section('json').Error(undefined).Enable();
+					this.Section('yaml').Error(undefined).Enable();
 				} catch (e) {
-					this.Error('jsonErr', e.message);
+					this.Section('json').Error(e.message);
 					this.yaml.value = '¯\\_(ツ)_/¯';
+					this.Section('yaml').Disable();
 				}
 			}
-
+			
 			toJSON() {
 				let indent = "\t";
 				for (let r of this.indentRadios) {
@@ -428,25 +435,26 @@
 						indent = r.value;
 					}
 				}
-
+				
 				try {
 					this.json.value = JSON.stringify(jsyaml.safeLoad(this.yaml.value), undefined, indent);
-					this.Error('yamlErr', '');
-					this.Error('jsonErr', '');
+					this.Section('json').Error(undefined).Enable();
+					this.Section('yaml').Error(undefined).Enable();
 				} catch (e) {
-					this.Error('yamlErr', e.message);
+					this.Section('yaml').Error(e.message);
 					this.json.value = '¯\\_(ツ)_/¯';
+					this.Section('json').Disable();
 				}
 			}
 
 			import(data) {
 				if (data.json) {
-					this.T([this.$$('json')], data.json);
+					this.json.value = data.json;
 					this.toYAML();
 				}
 				
 				if (data.yaml) {
-					this.T([this.$$('yaml')], data.yaml);
+					this.yaml.value = data.yaml;
 					this.toJSON();
 				}
 			}
@@ -466,17 +474,25 @@
 <div class="tool unfocused col3" id="unixtime" data-tag="unixtime">
 	<div class="preview"><h1>Unixtime</h1></div>
 	<div class="controls smaller">
-		<label for="unixtime-inTimestamp">Unixtime</label>
-		<input type="text" class="inTimestamp" id="unixtime-inTimestamp" autofocus>
-		<div class="left l40">
-			<div class="typographyDate copy">
-				<p class="l10">&nbsp;</p>
+		<section id="unixtime-ts">
+			<label for="unixtime-ts-in">Unixtime</label>
+			<input type="text" class="inTimestamp" id="unixtime-ts-in" autofocus>
+			<div class="undercontrols">
+				<p class="error"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
 			</div>
-		</div>
+		</section>
 
-		<div class="right r60">
-			<div class="dates"></div>
-		</div>
+		<section id="unixtime-formatted">
+			<div class="left l35">
+				<div class="typographyDate copy">
+					<p class="l10">&nbsp;</p>
+				</div>
+			</div>
+			
+			<div class="right r65">
+				<div class="dates"></div>
+			</div>
+		</section>
 	</div>
 
 	<script>
@@ -484,7 +500,7 @@
 			constructor(id) {
 				super(id);
 
-				this.inTS = this.$('.inTimestamp')[0];
+				this.inTS = this.Section('ts').Input();
 				this.dates = this.$('.dates')[0];
 
 				this.inTS.oninput = () => this.convert();
@@ -493,13 +509,20 @@
 			convert() {
 				this.removeChildren(this.dates);
 
-				let d = new Date();
-				d.setTime(this.inTS.value + "000")
+				try {
+					let d = new Date();
+					d.setTime(this.inTS.value.trim() + "000")
 
-				this.dates.appendChild(this.Component("kvpair", "Formatted", d.toString()))
-				this.dates.appendChild(this.Component("kvpair", "ISO 8601", d.toISOString()))
-
-				this.typographyDate(d);
+					this.typographyDate(d);
+					this.dates.appendChild(this.Component("sectionLabel", "Formatted"))
+					this.dates.appendChild(this.Component("kvpair", "ISO 8601", d.toISOString()))
+					this.dates.appendChild(this.Component("kvpair", "Date.toString()", d.toString()))
+					this.Section('ts').Error(undefined);
+					this.Section('formatted').Show();
+				} catch (err) {
+					this.Section('ts').Error(err.message);
+					this.Section('formatted').Hide();
+				}
 			}
 
 			typographyDate(d) {
@@ -526,7 +549,7 @@
 				let year = d.toLocaleDateString(locale, {timezone, year: "numeric"});
 				let yearClass = "l" + year.length;
 				let yearE = document.createElement("p");
-				let time = d.toLocaleDateString(locale, {timezone, hour: "numeric", minute: "numeric", second: "numeric"}).split(', ')[1];
+				let time = d.toLocaleDateString(locale, {timezone, hour: "numeric", minute: "numeric", second: "numeric"}).split(', ')[1] || "00";
 				let timeClass = "l" + time.length;
 				let timeE = document.createElement("p");
 
@@ -653,9 +676,11 @@
 	</style>
 
 	<div class="components">
-		<div class="kvpair subsection">
-			<h1 data-arg="0"></h1>
-			<a class="value copy" data-arg="1"></a>
+		<h1 class="sectionLabel" data-arg="0"></h1>
+
+		<div class="kvpair">
+			<span class="label" data-arg="0"></span>
+			<a class="value copy" data-arg="1" style="padding-bottom:2em;"></a>
 		</div>
 	</div>
 </div>
@@ -668,7 +693,7 @@
 			<label for="urldecode-encinput">URL-encoded string</label>
 			<input type="text" class="encinput" id="urldecode-encinput" autofocus tabindex="11">
 			<div class="undercontrols">
-				<a class="copy" data-from="urldecode-encinput"><span>COPY</span><i class="far fa-copy"></i></a>
+				<a class="copy" data-from="urldecode-encinput"><span>Copy</span><i class="far fa-copy"></i></a>
 			</div>
 		</section>
 
@@ -678,7 +703,7 @@
 			<label for="urldecode-encinput">ASCII string</label>		
 			<input type="text" class="decinput" id="urldecode-decinput" tabindex="12" onFocus="this.tabIndex=10;" onBlur="this.tabIndex=12;">
 			<div class="undercontrols">
-				<a class="copy" data-from="urldecode-decinput"><span>COPY</span><i class="far fa-copy"></i></a>
+				<a class="copy" data-from="urldecode-decinput"><span>Copy</span><i class="far fa-copy"></i></a>
 			</div>
 		</section>
 	</div>
@@ -713,25 +738,42 @@
 <div class="tool unfocused" id="urlparse" data-tag="urlparse">
 	<div class="preview"><h1>URL Parser</h1></div>
 	<div class="controls smaller">
-		<label for="urlparse-url">URL</label>
-		<input type="text" name="urlparse-url" id="urlparse-url" spellcheck="false" autofocus>
+		<section id="urlparse-url">
+			<label for="urlparse-url-in">URL</label>
+			<input type="text" id="urlparse-url-in" spellcheck="false" autofocus>
+			<div class="undercontrols">
+				<p class="error"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
+			</div>
+		</section>
 
-		<div class="fields">
-		</div>
+		<section id="urlparse-fields">
+			<div class="fields">
+			</div>
+		</section>
 	</div>
 
 	<script>
 		class TURLParser extends Tool {
 			constructor(id) {
 				super(id);
-				this.URL = document.getElementById("urlparse-url");
+				this.URL = this.Section("url").Input();
 
 				this.URL.oninput = () => {
 					let fields = this.$(".fields")[0];
 					while (fields.firstChild)
 						fields.removeChild(fields.firstChild);
 
-					let url = new URL(this.URL.value);
+					let url;
+
+					try {
+						url = new URL(this.URL.value);
+						this.Section("url").Error(undefined);
+						this.Section('fields').Show();
+					} catch (err) {
+						this.Section("url").Error(err.message);
+						this.Section('fields').Hide();
+						return;
+					}
 					
 					if (url.protocol) {
 						fields.appendChild(this.Component("urlprop", "Protocol", url.protocol));
@@ -768,7 +810,7 @@
 					} */
 					
 					if (url.search && url.searchParams) {
-						fields.appendChild(this.Component("urlprop-section", "Query"));
+						fields.appendChild(this.Component("section", "Query"));
 						for (let e of url.searchParams.entries()) {
 							fields.appendChild(this.Component("urlprop-sub", e[0], e[1]));
 						}
@@ -787,12 +829,12 @@
 			<span class="value copy" data-arg="1"></span>
 		</div>
 		
-		<div class="urlprop kvpair urlprop-section">
+		<div class="kvpair section">
 			<span class="label" data-arg="0"></span>
 			<span class="value">&nbsp;</span>
 		</div>
 		
-		<div class="urlprop kvpair urlprop-sub">
+		<div class="urlprop-sub kvpair sub">
 			<span class="label" data-arg="0"></span>
 			<span class="value copy" data-arg="1"></span>
 		</div>
@@ -803,11 +845,11 @@
 <div class="tool unfocused col1" id="xml" data-tag="xml xpath">
 	<div class="preview"><h1>XML & Xpath</h1></div>
 	<div class="controls smaller">
-		<section>
-			<label for="xml-xml">XML input</label>
-			<textarea id="xml-xml" autofocus spellcheck="false" style="margin-bottom:0;"></textarea>
-			<p class="xmlErr error inset"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
+		<section id="xml-xml">
+			<label for="xml-xml-in">XML input</label>
+			<textarea id="xml-xml-in" autofocus spellcheck="false" style="margin-bottom:0;"></textarea>
 			<div class="undercontrols">
+				<p class="error"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
 				<div class="menu switch">
 					<span>Reuse<i class="fas fa-recycle"></i></span>
 					<div>
@@ -817,17 +859,18 @@
 			</div>
 		</section>
 
-		<section>
-			<label for="xml-xpath">XPath query</label>
-			<input type="text" id="xml-xpath" spellcheck="false" style="margin-bottom:0;" value="//person/@last-name" />
+		<section id="xml-xpath">
+			<label for="xml-xpath-in">XPath query</label>
+			<input type="text" id="xml-xpath-in" spellcheck="false" style="margin-bottom:0;" value="//person/@last-name" />
 			<div class="undercontrols">
-				<a class="copy" data-from="json-1liner"><span>Copy</span><i class="far fa-copy"></i></a>
+				<p class="error"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
+				<a class="copy" data-from="xml-xpath-in"><span>Copy</span><i class="far fa-copy"></i></a>
 			</div>
 		</section>
 		
-		<section>
-			<label for="xml-xpath">XML structure</label>
-			<div id="xml-xmlNice"></div>
+		<section id="xml-nice">
+			<label>XML structure</label>
+			<div id="xml-nice-root"></div>
 		</section>
 	</div>
 
@@ -836,38 +879,81 @@
 			constructor(id) {
 				super(id)
 
-				this.xml = this.$$('xml');
-				this.xpath = this.$$('xpath');
-				this.xmlNice = this.$$('xmlNice');
+				this.xml = this.Section('xml').Input();
+				this.xpath = this.Section('xpath').Input();
+				this.xmlNice = this.Section('nice').$$('root');
 
 				this.xml.oninput = () => this.update();
 				this.xpath.oninput = () => this.update();
 			}
 
-			update() {
+			parseXML(s) {
 				let parser = new DOMParser();
-				let xml = parser.parseFromString(this.xml.value, "text/xml");
-				console.log("XML is", xml);
+				let xml = parser.parseFromString(s, "text/xml");
+
+				this.checkXMLParserErrors(xml);
+
+				return xml;
+			}
+
+			//	DOMParser.parseFromString() won't throw or report errorss in any other way.
+			//	Instead it creates a document with a markup in it, where an information about error is stored.
+			//	Wat.
+			checkXMLParserErrors(xml) {
+				let parserError = xml.getElementsByTagName("parsererror")[0];
+
+				if (parserError) {
+					let errors = parserError.getElementsByTagName("div");
+					if (errors.length) {
+						throw Array.from(errors).map(en => en.innerText).join('<br/>');
+					}
+				}
+			}
+
+			update() {
+				let xml;
+				let found = [];
+
+				try {
+					xml = this.parseXML(this.xml.value);
+					this.Section('xml').Error();
+					this.Section('xpath').Enable();
+					this.Section('nice').Show();
+				} catch(err) {
+					this.Section('xml').Error(err);
+					this.Section('xpath').Disable();
+					this.Section('nice').Hide();
+				}
+				
+				try {
+					found = this.queryXPath(xml, this.xpath.value);
+					this.Section('xpath').Error();
+					this.Section('nice').Show();
+				} catch(err) {
+					this.Section('xpath').Error(err.message);
+					this.Section('nice').Hide();
+				}
 
 				while(this.xmlNice.firstChild) {
 					this.xmlNice.removeChild(this.xmlNice.firstChild)
 				}
 
-				let found = this.evaluateXPath(this.xpath.value, xml);
 				this.renderXML(xml, this.xmlNice, found);
 			}
 
-			evaluateXPath(xpath, doc) {
-				var xpe = new XPathEvaluator();
-				var result = xpe.evaluate(xpath, doc);
+			queryXPath(doc, xpath) {
 				var found = [];
-				var res;
 
-				while (res = result.iterateNext()) {
-					found.push(res);
+				if (doc && xpath) {
+					var xpe = new XPathEvaluator();
+					var result = xpe.evaluate(xpath, doc);
+					var res;
+					while (res = result.iterateNext()) {
+						found.push(res);
+					}
+					
+					console.log("Found XML nodes: ", found);
 				}
-
-				console.log("Found XML nodes: ", found);
 
 				return found;
 			}
@@ -928,6 +1014,10 @@
 			}
 
 			renderXML(xml, E, foundXML) {
+				if (! xml) {
+					return
+				}
+
 				let xmlE = document.createElement('div');
 				xmlE.classList.add("xml-node");
 
@@ -1007,8 +1097,8 @@
 	</script>
 
 	<style>
-		#xml-xmlNice .found,
-		#xml-xmlNice .found * {
+		#xml-nice .found,
+		#xml-nice .found * {
 			color: white !important;
 			background: #00BBFF !important;
 		}
@@ -1124,6 +1214,15 @@
 			function onclickCopyToClipboard(e) {
 				let from = e.currentTarget;
 
+				//	Looking for a disabled parent.
+				let pn = from.parentNode;
+				while (pn) {
+					if (pn.classList && pn.classList.contains('disabled')) {
+						return;
+					}
+					pn = pn.parentNode;
+				}
+
 				if (from.dataset.value) {
 					Clipboard.copy(from.dataset.value);
 					tmpStyle(from, 'copied', 200);
@@ -1160,6 +1259,7 @@
 				
 				filter.onkeydown = (e) => {
 					if (e.key == 'Enter') {
+						//	Focusing the only matched tool.
 						let matched = document.querySelectorAll(".matched");
 						if (matched.length == 1) {
 							focus(matched[0].id);
@@ -1167,13 +1267,16 @@
 							e.cancelBubble = true;
 						}
 					} else if (e.key == 'Escape') {
+						//	Clearing the filtering.
 						filter.value = "";
 						bench.filter("");
 					}
 				}
 
+				//	Copy buttons.
 				document.querySelectorAll('.copy').forEach((v, k, p) => {v.onclick = onclickCopyToClipboard});
 
+				//	Autofocusing tools upon page load.
 				if (window.location.hash) {
 					bench.focus(window.location.hash.substr(1));
 				}

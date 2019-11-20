@@ -31,7 +31,7 @@ class Tool {
 			for (let a of as) {
 				a.onclick = () => {
 					let data = {};
-					data[a.dataset.valueAs] = this.$$(a.dataset.valueFrom).value;
+					data[a.dataset.valueAs] = this.Section(a.dataset.valueFrom).Input().value;
 					this.bench.switch(a.dataset.to, data)
 				};
 			}
@@ -59,6 +59,15 @@ class Tool {
 			this.T([document.getElementById(`${this.ID}-${id}`)], v);
 		} else {
 			return document.getElementById(`${this.ID}-${id}`);
+		}
+	}
+
+	Section(sid) {
+		let n = this.$$(sid);
+		if (n) {
+			return new Section(n);
+		} else {
+			throw new Error(`Could not find a section ${this.sid}.`);
 		}
 	}
 
@@ -110,19 +119,6 @@ class Tool {
 			compE.querySelectorAll('.copy').forEach((v, k, p) => {v.onclick = onclickCopyToClipboard});
 	
 			return compE;
-		}
-	}
-
-	Error(id, err) {
-		let errEs = this.$(`.${id}`);
-		for (let errE of errEs) {
-			if (err) {
-				errE.classList.add('shown');
-				errE.firstChild.nextSibling.innerHTML = err;
-			} else {
-				errE.classList.remove('shown');
-				errE.firstChild.nextSibling.innerHTML = '&nbsp;';
-			}
 		}
 	}
 

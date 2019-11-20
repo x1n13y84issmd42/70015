@@ -1,25 +1,42 @@
 <div class="tool unfocused" id="urlparse" data-tag="urlparse">
 	<div class="preview"><h1>URL Parser</h1></div>
 	<div class="controls smaller">
-		<label for="urlparse-url">URL</label>
-		<input type="text" name="urlparse-url" id="urlparse-url" spellcheck="false" autofocus>
+		<section id="urlparse-url">
+			<label for="urlparse-url-in">URL</label>
+			<input type="text" id="urlparse-url-in" spellcheck="false" autofocus>
+			<div class="undercontrols">
+				<p class="error"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
+			</div>
+		</section>
 
-		<div class="fields">
-		</div>
+		<section id="urlparse-fields">
+			<div class="fields">
+			</div>
+		</section>
 	</div>
 
 	<script>
 		class TURLParser extends Tool {
 			constructor(id) {
 				super(id);
-				this.URL = document.getElementById("urlparse-url");
+				this.URL = this.Section("url").Input();
 
 				this.URL.oninput = () => {
 					let fields = this.$(".fields")[0];
 					while (fields.firstChild)
 						fields.removeChild(fields.firstChild);
 
-					let url = new URL(this.URL.value);
+					let url;
+
+					try {
+						url = new URL(this.URL.value);
+						this.Section("url").Error(undefined);
+						this.Section('fields').Show();
+					} catch (err) {
+						this.Section("url").Error(err.message);
+						this.Section('fields').Hide();
+						return;
+					}
 					
 					if (url.protocol) {
 						fields.appendChild(this.Component("urlprop", "Protocol", url.protocol));
@@ -56,7 +73,7 @@
 					} */
 					
 					if (url.search && url.searchParams) {
-						fields.appendChild(this.Component("urlprop-section", "Query"));
+						fields.appendChild(this.Component("section", "Query"));
 						for (let e of url.searchParams.entries()) {
 							fields.appendChild(this.Component("urlprop-sub", e[0], e[1]));
 						}
@@ -75,12 +92,12 @@
 			<span class="value copy" data-arg="1"></span>
 		</div>
 		
-		<div class="urlprop kvpair urlprop-section">
+		<div class="kvpair section">
 			<span class="label" data-arg="0"></span>
 			<span class="value">&nbsp;</span>
 		</div>
 		
-		<div class="urlprop kvpair urlprop-sub">
+		<div class="urlprop-sub kvpair sub">
 			<span class="label" data-arg="0"></span>
 			<span class="value copy" data-arg="1"></span>
 		</div>
