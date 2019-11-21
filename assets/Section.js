@@ -1,19 +1,6 @@
-class Section {
+class Section extends DOMOps {
 	constructor(node) {
-		this.E = node;
-		this.ID = node.id;
-	}
-
-	$(s) {
-		return this.E.querySelectorAll(s);
-	}
-
-	$$(id, v) {
-		if (v) {
-			this.T([document.getElementById(`${this.ID}-${id}`)], v);
-		} else {
-			return document.getElementById(`${this.ID}-${id}`);
-		}
+		super(node);
 	}
 
 	Show() {

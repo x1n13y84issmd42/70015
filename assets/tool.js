@@ -1,6 +1,8 @@
-class Tool {
+class Tool extends DOMOps {
 	constructor(id) {
-		let E = this.E = document.getElementById(id);
+		let E = document.getElementById(id);
+
+		super(E);
 	
 		E.querySelector('.preview').onclick = () => {
 			focus(id);
@@ -50,18 +52,6 @@ class Tool {
 		this.bench = b;
 	}
 
-	$(s) {
-		return this.E.querySelectorAll(s);
-	}
-
-	$$(id, v) {
-		if (v) {
-			this.T([document.getElementById(`${this.ID}-${id}`)], v);
-		} else {
-			return document.getElementById(`${this.ID}-${id}`);
-		}
-	}
-
 	Section(sid) {
 		let n = this.$$(sid);
 		if (n) {
@@ -76,26 +66,6 @@ class Tool {
 			this._autoinput = !!ai;
 		} else {
 			return this._autoinput;
-		}
-	}
-
-	removeChildren(e) {
-		while (e.firstChild)
-			e.removeChild(e.firstChild);
-	}
-
-	T(nodes, v) {
-		for (let e of nodes) {
-			switch (e.tagName) {
-				case "INPUT":
-				case "TEXTAREA":
-					e.value = v;
-				break;
-	
-				default:
-					e.innerHTML = v;
-				break;
-			}
 		}
 	}
 
