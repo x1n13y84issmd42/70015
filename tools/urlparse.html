@@ -74,11 +74,38 @@
 					
 					if (url.search && url.searchParams) {
 						fields.appendChild(this.Component("section", "Query"));
-						for (let e of url.searchParams.entries()) {
-							fields.appendChild(this.Component("urlprop-sub", e[0], e[1]));
+						let sp = this.improveSearchParams(url.searchParams);
+						for (let spn in sp) {
+							let spv = sp[spn];
+							if (spv instanceof Array) {
+								let t = true;
+								for (let spvv of spv) {
+									fields.appendChild(this.Component("urlprop-sub", t ? (t = false, spn) : "", spvv));
+								}
+							} else {
+								fields.appendChild(this.Component("urlprop-sub", spn, spv));
+							}
 						}
 					}
 				};
+			}
+			
+			improveSearchParams(urlsp) {
+				let res = {};
+				for (let e of urlsp.entries()) {
+					let qspn = e[0];
+					let qspv = e[1];
+
+					if (qspn.substr(-2) == '[]') {
+						qspn = qspn.substr(0, qspn.length - 2);
+						res[qspn] || (res[qspn] = []);
+						res[qspn].push(qspv);
+					} else {
+						res[qspn] = qspv;
+					}
+				}
+
+				return res;
 			}
 		}
 

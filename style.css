@@ -325,6 +325,7 @@ input[type=radio]:checked {
 	display: inline-block;
     min-width: 100px;
     padding-right: 20px;
+    padding-top: 5px;
     text-align: right;
 	display: table-cell;
 	vertical-align: top;
