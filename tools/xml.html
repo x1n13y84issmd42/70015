@@ -1,11 +1,11 @@
 <div class="tool unfocused col1" id="xml" data-tag="xml xpath">
-	<div class="preview"><h1>XML & Xpath</h1></div>
+	<div class="preview"><h1>XML &amp; Xpath</h1></div>
 	<div class="controls smaller">
-		<section>
-			<label for="xml-xml">XML input</label>
-			<textarea id="xml-xml" autofocus spellcheck="false" style="margin-bottom:0;"></textarea>
-			<p class="xmlErr error inset"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
+		<section id="xml-xml">
+			<label for="xml-xml-in">XML input</label>
+			<textarea id="xml-xml-in" autofocus spellcheck="false" style="margin-bottom:0;" rows="5"></textarea>
 			<div class="undercontrols">
+				<p class="error"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
 				<div class="menu switch">
 					<span>Reuse<i class="fas fa-recycle"></i></span>
 					<div>
@@ -15,17 +15,18 @@
 			</div>
 		</section>
 
-		<section>
-			<label for="xml-xpath">XPath query</label>
-			<input type="text" id="xml-xpath" spellcheck="false" style="margin-bottom:0;" value="//person/@last-name" />
+		<section id="xml-xpath">
+			<label for="xml-xpath-in">XPath query</label>
+			<input type="text" id="xml-xpath-in" spellcheck="false" style="margin-bottom:0;" />
 			<div class="undercontrols">
-				<a class="copy" data-from="json-1liner"><span>Copy</span><i class="far fa-copy"></i></a>
+				<p class="error"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
+				<a class="copy" data-from="xml-xpath-in"><span>Copy</span><i class="far fa-copy"></i></a>
 			</div>
 		</section>
 		
-		<section>
-			<label for="xml-xpath">XML structure</label>
-			<div id="xml-xmlNice"></div>
+		<section id="xml-nice" class="hidden">
+			<label>XML structure</label>
+			<div id="xml-nice-root"></div>
 		</section>
 	</div>
 
@@ -34,38 +35,81 @@
 			constructor(id) {
 				super(id)
 
-				this.xml = this.$$('xml');
-				this.xpath = this.$$('xpath');
-				this.xmlNice = this.$$('xmlNice');
+				this.xml = this.Section('xml').Input();
+				this.xpath = this.Section('xpath').Input();
+				this.xmlNice = this.Section('nice').$$('root');
 
 				this.xml.oninput = () => this.update();
 				this.xpath.oninput = () => this.update();
 			}
 
-			update() {
+			parseXML(s) {
 				let parser = new DOMParser();
-				let xml = parser.parseFromString(this.xml.value, "text/xml");
-				console.log("XML is", xml);
+				let xml = parser.parseFromString(s, "text/xml");
+
+				this.checkXMLParserErrors(xml);
+
+				return xml;
+			}
+
+			//	DOMParser.parseFromString() won't throw or report errorss in any other way.
+			//	Instead it creates a document with a markup in it, where an information about error is stored.
+			//	Wat.
+			checkXMLParserErrors(xml) {
+				let parserError = xml.getElementsByTagName("parsererror")[0];
+
+				if (parserError) {
+					let errors = parserError.getElementsByTagName("div");
+					if (errors.length) {
+						throw Array.from(errors).map(en => en.innerText).join('<br/>');
+					}
+				}
+			}
+
+			update() {
+				let xml;
+				let found = [];
+
+				try {
+					xml = this.parseXML(this.xml.value);
+					this.Section('xml').Error();
+					this.Section('xpath').Enable();
+					this.Section('nice').Show();
+				} catch(err) {
+					this.Section('xml').Error(err);
+					this.Section('xpath').Disable();
+					this.Section('nice').Hide();
+				}
+				
+				try {
+					found = this.queryXPath(xml, this.xpath.value);
+					this.Section('xpath').Error();
+					this.Section('nice').Show();
+				} catch(err) {
+					this.Section('xpath').Error(err.message);
+					this.Section('nice').Hide();
+				}
 
 				while(this.xmlNice.firstChild) {
 					this.xmlNice.removeChild(this.xmlNice.firstChild)
 				}
 
-				let found = this.evaluateXPath(this.xpath.value, xml);
 				this.renderXML(xml, this.xmlNice, found);
 			}
 
-			evaluateXPath(xpath, doc) {
-				var xpe = new XPathEvaluator();
-				var result = xpe.evaluate(xpath, doc);
+			queryXPath(doc, xpath) {
 				var found = [];
-				var res;
 
-				while (res = result.iterateNext()) {
-					found.push(res);
+				if (doc && xpath) {
+					var xpe = new XPathEvaluator();
+					var result = xpe.evaluate(xpath, doc);
+					var res;
+					while (res = result.iterateNext()) {
+						found.push(res);
+					}
+					
+					console.log("Found XML nodes: ", found);
 				}
-
-				console.log("Found XML nodes: ", found);
 
 				return found;
 			}
@@ -126,6 +170,10 @@
 			}
 
 			renderXML(xml, E, foundXML) {
+				if (! xml) {
+					return
+				}
+
 				let xmlE = document.createElement('div');
 				xmlE.classList.add("xml-node");
 
@@ -205,8 +253,8 @@
 	</script>
 
 	<style>
-		#xml-xmlNice .found,
-		#xml-xmlNice .found * {
+		#xml-nice .found,
+		#xml-nice .found * {
 			color: white !important;
 			background: #00BBFF !important;
 		}

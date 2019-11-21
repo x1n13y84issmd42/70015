@@ -1,17 +1,19 @@
-class Tool {
+class Tool extends DOMOps {
 	constructor(id) {
-		let E = this.E = document.getElementById(id);
+		let E = document.getElementById(id);
+
+		super(E);
 	
 		E.querySelector('.preview').onclick = () => {
 			focus(id);
 		}
 
 		this.ID = id;
-		this._autoinput = false;
 		this.configuration = {};
 	
 		let ctrls = E.querySelector(".controls");
 
+		//	Creating a "X Close" link.
 		let eClose = document.createElement("a");
 		eClose.innerHTML = "<i>&#x1F860</i><span>CLOSE</span>";
 		eClose.classList.add("close");
@@ -23,15 +25,17 @@ class Tool {
 
 		ctrls.append(eClose);
 
+		//	Selecting all the checkboxes & radio buttons.
 		this.switches = this.$('input[type=radio],input[type=checkbox]');
 
+		//	Wiring the "Reuse" menu.
 		let eSwitches = this.$('.switch');
 		for (let eSw of eSwitches) {
 			let as = eSw.querySelectorAll('a');
 			for (let a of as) {
 				a.onclick = () => {
 					let data = {};
-					data[a.dataset.valueAs] = this.$$(a.dataset.valueFrom).value;
+					data[a.dataset.valueAs] = this.Section(a.dataset.valueFrom).Input().value;
 					this.bench.switch(a.dataset.to, data)
 				};
 			}
@@ -50,47 +54,26 @@ class Tool {
 		this.bench = b;
 	}
 
-	$(s) {
-		return this.E.querySelectorAll(s);
-	}
-
-	$$(id, v) {
-		if (v) {
-			this.T([document.getElementById(`${this.ID}-${id}`)], v);
+	/**
+	 * Creates a Section object to control a UI section with the specified sid.
+	 * @param {string} sid Section ID.
+	 */
+	Section(sid) {
+		let n = this.$$(sid);
+		if (n) {
+			return new Section(n);
 		} else {
-			return document.getElementById(`${this.ID}-${id}`);
+			throw new Error(`Could not find a section ${this.sid}.`);
 		}
 	}
 
-	autoinput(ai) {
-		if (ai) {
-			this._autoinput = !!ai;
-		} else {
-			return this._autoinput;
-		}
-	}
-
-	removeChildren(e) {
-		while (e.firstChild)
-			e.removeChild(e.firstChild);
-	}
-
-	T(nodes, v) {
-		for (let e of nodes) {
-			switch (e.tagName) {
-				case "INPUT":
-				case "TEXTAREA":
-					e.value = v;
-				break;
-	
-				default:
-					e.innerHTML = v;
-				break;
-			}
-		}
-	}
-
-	Component(s) {
+	/**
+	 * Creates a component by copying a DOM subtree specified by it's ID attribute
+	 * and setting values into specific places.
+	 * @param {string} cid Component id. An element with that id will be copied and used as a component. 
+	 * The rest of arguments will be used to fill the component template tructure with content.
+	 */
+	Component() {
 		let args = Array.prototype.slice.apply(arguments);
 		let compID = args.shift();
 		let compE = this.$(`.components .${compID}`)[0];
@@ -100,29 +83,16 @@ class Tool {
 	
 			for (let aI in args) {
 				if (compE.dataset.arg == aI) {
-					this.T([compE], args[aI])
+					this.T(compE, args[aI])
 				}
 
-				let nodes = compE.querySelectorAll(`[data-arg="${aI}"]`);
+				let nodes = Array.from(compE.querySelectorAll(`[data-arg="${aI}"]`));
 				this.T(nodes, args[aI])
 			}
 
 			compE.querySelectorAll('.copy').forEach((v, k, p) => {v.onclick = onclickCopyToClipboard});
 	
 			return compE;
-		}
-	}
-
-	Error(id, err) {
-		let errEs = this.$(`.${id}`);
-		for (let errE of errEs) {
-			if (err) {
-				errE.classList.add('shown');
-				errE.firstChild.nextSibling.innerHTML = err;
-			} else {
-				errE.classList.remove('shown');
-				errE.firstChild.nextSibling.innerHTML = '&nbsp;';
-			}
 		}
 	}
 

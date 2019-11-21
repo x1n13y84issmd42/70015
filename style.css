@@ -54,7 +54,8 @@ input[type=checkbox] {
 	-webkit-outline: none;
 	border: 1px #00BBFF solid;
 	position: relative;
-    top: 2px;
+	top: 2px;
+	transition: border-color 200ms linear;
 }
 
 input[type=radio] {
@@ -64,13 +65,15 @@ input[type=radio] {
 input[type=checkbox]:active,
 input[type=checkbox]:checked {
 	box-shadow: inset 1px 1px 0px 1px rgb(255,255,255), inset -1px -1px 0px 1px rgb(255,255,255);
-    background: #00BBFF;
+	background: #00BBFF;
+	transition: background 200ms linear;
 }
 
 input[type=radio]:active,
 input[type=radio]:checked {
 	box-shadow: inset 1px 0 0px 1px rgb(255,255,255), inset -1px 0 0px 1px rgb(255,255,255), inset 0px 1px 0px 1px rgb(255,255,255), inset 0px -1px 0px 1px rgb(255,255,255);
     background: #00BBFF;
+	transition: background 200ms linear;
 }
 
 
@@ -110,13 +113,17 @@ input[type=radio]:checked {
     /* min-height: 80%; */
 }
 
-.tool > .controls > section .error.inset {
+/* .tool > .controls > section .error.inset {
 	position: absolute;
 	bottom: 0;
 	background: red;
 	color: white;
 	padding: 3px 15px;
 	border-top-right-radius: 9px;
+} */
+
+.tool > .controls > section.hidden {
+	display: none;
 }
 
 .tool > .controls > section {
@@ -130,9 +137,11 @@ input[type=radio]:checked {
 }
 
 .tool > .controls .left.l40 {width: 40%;}
+.tool > .controls .left.l35 {width: 35%;}
 .tool > .controls .left.l30 {width: 30%;}
 
 .tool > .controls .right.r60 {width: 60%;}
+.tool > .controls .right.r65 {width: 65%;}
 .tool > .controls .right.r70 {width: 70%;}
 
 .tool > .controls .right {
@@ -143,6 +152,7 @@ input[type=radio]:checked {
 .tool > .controls .subsection {
 	padding: 0;
 	margin-bottom: 2em;
+	display: block;
 }
 
 .tool > .controls h1 {
@@ -161,7 +171,7 @@ input[type=radio]:checked {
 
 .tool > .controls .error {
 	color: red;
-	font-size: 16pt;
+	/* font-size: 16pt; */
 	font-family: Quicksand;
 	visibility: hidden;
 }
@@ -177,6 +187,11 @@ input[type=radio]:checked {
 .tool > .controls label {
 	font-size: 22pt;
 	font-family: Quicksand;
+	transition: color 200ms ease-in-out;
+}
+
+.tool > .controls textarea {
+	padding-bottom: 35px;
 }
 
 .tool > .controls textarea,
@@ -196,7 +211,8 @@ input[type=radio]:checked {
 .tool > .controls textarea[disabled],
 .tool > .controls input[type=text][disabled] {
 	border: 1px #AAA solid;
-    background: #F3F3F3;
+	background: #F3F3F3;
+	white-space: pre;
 }
 
 .tool > .controls section > input[type=text],
@@ -293,7 +309,15 @@ input[type=radio]:checked {
 	display: table-row;
 }
 
-.kvpair-sub {
+.kvpair.section {
+	font-size: 22px;
+}
+
+.kvpair.section > .label{
+	padding-top: 20px;
+}
+
+.kvpair.sub {
 	margin-left: 50px;
 }
 
@@ -480,7 +504,7 @@ input[type=radio]:checked {
 
 .tool .undercontrols {
 	float: right;
-    width: auto;
+    width: 100%;
     /* padding-top: 10px; */
     height: 35px;
     z-index: 999;
@@ -492,12 +516,20 @@ input[type=radio]:checked {
     padding: 7px 15px;
     border-radius: 0 0 10px 10px;
     cursor: pointer;
-    transition: all 200ms linear;
+    transition: background 200ms linear;
     font-size: 12pt;
     color: white;
     z-index: 99;
     float: right;
     margin-left: 20px;
+}
+
+.tool .undercontrols > .error {
+	background-color: red;
+    float: left;
+    margin-left: 0;
+	color: white;
+	cursor: default;
 }
 
 .tool .undercontrols > a > i.far {
@@ -515,6 +547,30 @@ input[type=radio]:checked {
 .tool.switching.slide-left-transit {
 	margin-left: -100%;
 	transition: margin-left 400ms ease-in-out;
+}
+
+.disabled input[type=radio],
+.disabled input[type=checkbox] {
+    border-color: #d0d0d0;
+}
+
+.disabled input[type=radio]:checked,
+.disabled input[type=radio]:active,
+.disabled input[type=checkbox]:checked,
+.disabled input[type=checkbox]:active {
+    background: #d0d0d0;
+}
+
+.disabled label {
+	color: #d0d0d0;
+}
+
+.disabled .undercontrols > * {
+    background: #d0d0d0;
+}
+
+.disabled .switch:hover > div > a {
+	margin-top: -3em;
 }
 
 

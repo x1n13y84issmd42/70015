@@ -73,20 +73,164 @@ class LSConfig extends Config {
 
 
 
-class Tool {
+class DOMOps {
+	constructor(E) {
+		this.E = E;
+		this.ID = E.id;
+	}
+
+	/**
+	 * A document.querySelectorAll shortcut.
+	 * @param {string} s A selector.
+	 */
+	$(s) {
+		return Array.from(this.E.querySelectorAll(s));
+	}
+
+	/**
+	 * Retrieves an alement by it's hierarchical ID.
+	 * Hierarchical means here that actual HTML tags have both parent ID and it's own ID, separate by dash.
+	 * So a "cc" section of a "cards" tools has id="cards-cc" in HTML, and accessible as (new Tool('cards')).$$('cc')
+	 * @param {string} id An ID.
+	 * @param {any} v A value to set.
+	 */
+	$$(id, v) {
+		let e = document.getElementById(`${this.ID}-${id}`);
+
+		if (e && v) {
+			this.T(e, v);
+		}
+		
+		return e;
+	}
+
+	/**
+	 * Just removed all the child nodes of the given element.
+	 * @param {HTMLElement} e An element being spared of paternal rights.
+	 */
+	removeChildren(e) {
+		while (e.firstChild)
+			e.removeChild(e.firstChild);
+	}
+
+	/**
+	 * Set a value to nodes.
+	 * @param {HTMLElement} nodes A list of HTML DOM nodes.
+	 * @param {any} v A values to set to the nodes.
+	 */
+	T(nodes, v) {
+		if (! (nodes instanceof Array)) {
+			if (nodes.length) {
+				nodes = Array.from(nodes);
+			} else {
+				nodes = [nodes];
+			}
+		}
+
+		for (let e of nodes) {
+			switch (e.tagName) {
+				case "INPUT":
+				case "TEXTAREA":
+					e.value = v;
+				break;
+	
+				default:
+					e.innerHTML = v;
+				break;
+			}
+		}
+	}
+}
+
+
+/**
+ * Gives general control over a UI section.
+ * A UI section usually includes an input field and few associated extra controls, has some kind of state,
+ * and this class provides an onterface to control it.
+ */
+class Section extends DOMOps {
+	constructor(node) {
+		super(node);
+	}
+
+	Show() {
+		this.E.classList.remove('hidden');
+		return this;
+	}
+	
+	Hide() {
+		this.E.classList.add('hidden');
+		return this;
+	}
+	
+	Enable() {
+		this.E.classList.remove('disabled');
+		return this;
+	}
+	
+	/**
+	 * Disabled sections have their children controls disabled as well.
+	 * "Reuse" menus (via CSS) and "Copy" buttons (in the global click handler).
+	 */
+	Disable() {
+		this.E.classList.add('disabled');
+		return this;
+	}
+
+	/**
+	 * Show an error message.
+	 * @param {string} err An error message.
+	 */
+	Error(err) {
+		let errEs = this.$(`.error`);
+		for (let errE of errEs) {
+			if (err) {
+				errE.classList.add('shown');
+				errE.firstChild.nextSibling.innerHTML = err;
+			} else {
+				errE.classList.remove('shown');
+				errE.firstChild.nextSibling.innerHTML = '&nbsp;';
+			}
+		}
+		
+		if (err) {
+			this.E.classList.add('has-error');
+		} else {
+			this.E.classList.remove('has-error');
+		}
+
+		return this;
+	}
+
+	/**
+	 * Retrieves the main input field of the section.
+	 */
+	Input() {
+		let input = this.$$(`in`);
+		if (! input) {
+			throw new Error(`Could not find the input in the ${this.ID} section.`);
+		}
+		return input;
+	}
+}
+
+
+class Tool extends DOMOps {
 	constructor(id) {
-		let E = this.E = document.getElementById(id);
+		let E = document.getElementById(id);
+
+		super(E);
 	
 		E.querySelector('.preview').onclick = () => {
 			focus(id);
 		}
 
 		this.ID = id;
-		this._autoinput = false;
 		this.configuration = {};
 	
 		let ctrls = E.querySelector(".controls");
 
+		//	Creating a "X Close" link.
 		let eClose = document.createElement("a");
 		eClose.innerHTML = "<i>&#x1F860</i><span>CLOSE</span>";
 		eClose.classList.add("close");
@@ -98,15 +242,17 @@ class Tool {
 
 		ctrls.append(eClose);
 
+		//	Selecting all the checkboxes & radio buttons.
 		this.switches = this.$('input[type=radio],input[type=checkbox]');
 
+		//	Wiring the "Reuse" menu.
 		let eSwitches = this.$('.switch');
 		for (let eSw of eSwitches) {
 			let as = eSw.querySelectorAll('a');
 			for (let a of as) {
 				a.onclick = () => {
 					let data = {};
-					data[a.dataset.valueAs] = this.$$(a.dataset.valueFrom).value;
+					data[a.dataset.valueAs] = this.Section(a.dataset.valueFrom).Input().value;
 					this.bench.switch(a.dataset.to, data)
 				};
 			}
@@ -125,47 +271,26 @@ class Tool {
 		this.bench = b;
 	}
 
-	$(s) {
-		return this.E.querySelectorAll(s);
-	}
-
-	$$(id, v) {
-		if (v) {
-			this.T([document.getElementById(`${this.ID}-${id}`)], v);
+	/**
+	 * Creates a Section object to control a UI section with the specified sid.
+	 * @param {string} sid Section ID.
+	 */
+	Section(sid) {
+		let n = this.$$(sid);
+		if (n) {
+			return new Section(n);
 		} else {
-			return document.getElementById(`${this.ID}-${id}`);
+			throw new Error(`Could not find a section ${this.sid}.`);
 		}
 	}
 
-	autoinput(ai) {
-		if (ai) {
-			this._autoinput = !!ai;
-		} else {
-			return this._autoinput;
-		}
-	}
-
-	removeChildren(e) {
-		while (e.firstChild)
-			e.removeChild(e.firstChild);
-	}
-
-	T(nodes, v) {
-		for (let e of nodes) {
-			switch (e.tagName) {
-				case "INPUT":
-				case "TEXTAREA":
-					e.value = v;
-				break;
-	
-				default:
-					e.innerHTML = v;
-				break;
-			}
-		}
-	}
-
-	Component(s) {
+	/**
+	 * Creates a component by copying a DOM subtree specified by it's ID attribute
+	 * and setting values into specific places.
+	 * @param {string} cid Component id. An element with that id will be copied and used as a component. 
+	 * The rest of arguments will be used to fill the component template tructure with content.
+	 */
+	Component() {
 		let args = Array.prototype.slice.apply(arguments);
 		let compID = args.shift();
 		let compE = this.$(`.components .${compID}`)[0];
@@ -175,29 +300,16 @@ class Tool {
 	
 			for (let aI in args) {
 				if (compE.dataset.arg == aI) {
-					this.T([compE], args[aI])
+					this.T(compE, args[aI])
 				}
 
-				let nodes = compE.querySelectorAll(`[data-arg="${aI}"]`);
+				let nodes = Array.from(compE.querySelectorAll(`[data-arg="${aI}"]`));
 				this.T(nodes, args[aI])
 			}
 
 			compE.querySelectorAll('.copy').forEach((v, k, p) => {v.onclick = onclickCopyToClipboard});
 	
 			return compE;
-		}
-	}
-
-	Error(id, err) {
-		let errEs = this.$(`.${id}`);
-		for (let errE of errEs) {
-			if (err) {
-				errE.classList.add('shown');
-				errE.firstChild.nextSibling.innerHTML = err;
-			} else {
-				errE.classList.remove('shown');
-				errE.firstChild.nextSibling.innerHTML = '&nbsp;';
-			}
 		}
 	}
 
@@ -212,6 +324,9 @@ class Tool {
 
 
 
+/**
+ * Workbench controls all the tools.
+ */
 class Workbench {
 	constructor(config) {
 		this.config = config;

@@ -1,5 +1,5 @@
 <div class="tool unfocused col2" id="hasher" data-tag="hash md5 sha des">
-	<div class="preview"><h1>Hasher</h1></div>
+	<div class="preview"><h1>Hashes &amp; ciphers</h1></div>
 	<div class="controls smaller">
 		<label for="hasher-input">Input</label>
 		<input type="text" id="hasher-input" autofocus tabindex="21" />
@@ -62,7 +62,7 @@
 
 			import(data) {
 				if (data.input) {
-					this.T([this.$$('input')], data.input);
+					this.T(this.$$('input'), data.input);
 					this.hash();
 				}
 			}

@@ -1,26 +1,26 @@
 <div class="tool unfocused col3" id="json" data-tag="json format">
-	<div class="preview"><h1>JSON Format</h1></div>
-	<div class="controls">
-		<section>
-			<label for="json-jsonInput">JSON input</label>
-			<textarea id="json-jsonInput" autofocus spellcheck="false" style="margin-bottom:0;"></textarea>
-			<p class="jsonErr error inset"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
+	<div class="preview"><h1>Format JSON</h1></div>
+	<div class="controls smaller">
+		<section id="json-input">
+			<label for="json-input-in">JSON input</label>
+			<textarea id="json-input-in" autofocus spellcheck="false" style="margin-bottom:0;" rows="5"></textarea>
 			<div class="undercontrols">
+				<p class="jsonErr error inset"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
 				<div class="menu switch">
 					<span>Reuse<i class="fas fa-recycle"></i></span>
 					<div>
-						<a data-to="jsonyaml" data-value-from="jsonInput" data-value-as="json">Convert it to YAML</a>
-						<a data-to="base64" data-value-from="jsonInput" data-value-as="ascii">Base64-encode it</a>
+						<a data-to="jsonyaml" data-value-from="input" data-value-as="json">Convert it to YAML</a>
+						<a data-to="base64" data-value-from="input" data-value-as="ascii">Base64-encode it</a>
 					</div>
 				</div>
 			</div>
 		</section>
 		
-		<section>
-			<label for="json-1liner">One-liner JSON</label>
-			<div class="overcontrols" data-for="json-1liner">
+		<section id="json-1liner" class="disabled">
+			<label for="json-1liner-in">One-liner JSON</label>
+			<div class="overcontrols">
 				<label for="json-1liner-quote-identifiers">
-					<input type="checkbox" name="json-1liner-quote-identifiers" id="json-1liner-quote-identifiers">
+					<input type="checkbox" name="json-1liner-quote-identifiers" id="json-1liner-quote-identifiers" checked>
 					Quote names
 				</label>
 				<label for="json-1liner-escape-quotes">
@@ -28,7 +28,7 @@
 					Escape the quotes
 				</label>
 			</div>
-			<input type="text" id="json-1liner" spellcheck="false" disabled>
+			<input type="text" id="json-1liner-in" spellcheck="false" disabled>
 			<div class="undercontrols">
 				<div class="menu switch">
 					<span>Reuse<i class="fas fa-recycle"></i></span>
@@ -41,15 +41,15 @@
 			</div>
 		</section>
 		
-		<section>
-			<label for="json-pretty">Pretty JSON</label>
-			<div class="overcontrols" data-for="json-pretty">
+		<section id="json-pretty" class="disabled">
+			<label for="json-pretty-in">Pretty JSON</label>
+			<div class="overcontrols">
 				<label for="">Indent with</label>
 				<label for="json-pretty-indent-tabs"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-tabs" value="	" checked>tabs</label>
 				<label for="json-pretty-indent-4spaces"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-4spaces" value="    ">4 spaces</label>
 				<label for="json-pretty-indent-2spaces"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-2spaces" value="  ">2 spaces</label>
 			</div>
-			<textarea id="json-pretty" rows="8" spellcheck="false" disabled></textarea>
+			<textarea id="json-pretty-in" rows="8" spellcheck="false" disabled></textarea>
 			<div class="undercontrols">
 				<div class="menu switch">
 					<span>Reuse<i class="fas fa-recycle"></i></span>
@@ -58,7 +58,7 @@
 						<a data-to="base64" data-value-from="pretty" data-value-as="ascii">Base64-encode it</a>
 					</div>
 				</div>
-				<a class="copy" data-from="json-pretty"><span>Copy</span><i class="far fa-copy"></i></a>
+				<a class="copy" data-from="json-pretty-in"><span>Copy</span><i class="far fa-copy"></i></a>
 			</div>
 		</section>
 	</div>
@@ -68,12 +68,13 @@
 			constructor(id) {
 				super(id);
 
-				this.inJSON = this.$$('jsonInput');
-				this.outPretty = this.$$('pretty');
-				this.out1liner = this.$$('1liner');
+				this.inJSON = this.Section('input').Input();
+				this.outPretty = this.Section('pretty').Input();
+				this.out1liner = this.Section('1liner').Input();
+
 				this.indentRadios = this.$('input[name=json-pretty-indent]');
-				this.quoteCheck = document.getElementById('json-1liner-quote-identifiers');
-				this.escapeQuotesCheck = document.getElementById('json-1liner-escape-quotes');
+				this.quoteCheck = this.Section('1liner').$$('quote-identifiers');
+				this.escapeQuotesCheck = this.Section('1liner').$$('escape-quotes');
 
 				let update = () => {
 					this.update();
@@ -94,12 +95,16 @@
 			update() {
 				try {
 					let v = JSON.parse(this.inJSON.value);
-					this.Error('jsonErr', '');
+					this.Section('input').Error(undefined);
 					this.prettyPrint(v);
 					this.oneliner(v);
+					this.Section('1liner').Enable();
+					this.Section('pretty').Enable();
 				} catch (e) {
-					this.Error('jsonErr', e.message);
+					this.Section('input').Error(e.message);
 					this.outPretty.value = this.out1liner.value = '¯\\_(ツ)_/¯';
+					this.Section('1liner').Disable();
+					this.Section('pretty').Disable();
 				}
 			}
 
@@ -113,6 +118,7 @@
 					}
 
 					this.outPretty.value = JSON.stringify(v, null, indent);
+					this.outPretty.rows = this.outPretty.value.split("\n").length;
 				}
 			}
 
@@ -124,7 +130,7 @@
 
 			import(data) {
 				if (data.input) {
-					this.T([this.$$('jsonInput')], data.input)
+					this.inJSON.value = data.input;
 					this.update();
 				}
 			}

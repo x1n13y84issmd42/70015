@@ -53,7 +53,8 @@ input[type=checkbox] {
 	-webkit-outline: none;
 	border: 1px #00BBFF solid;
 	position: relative;
-    top: 2px;
+	top: 2px;
+	transition: border-color 200ms linear;
 }
 
 input[type=radio] {
@@ -63,11 +64,13 @@ input[type=radio] {
 input[type=checkbox]:active,
 input[type=checkbox]:checked {
 	box-shadow: inset 1px 1px 0px 1px rgb(255,255,255), inset -1px -1px 0px 1px rgb(255,255,255);
-    background: #00BBFF;
+	background: #00BBFF;
+	transition: background 200ms linear;
 }
 
 input[type=radio]:active,
 input[type=radio]:checked {
 	box-shadow: inset 1px 0 0px 1px rgb(255,255,255), inset -1px 0 0px 1px rgb(255,255,255), inset 0px 1px 0px 1px rgb(255,255,255), inset 0px -1px 0px 1px rgb(255,255,255);
     background: #00BBFF;
+	transition: background 200ms linear;
 }

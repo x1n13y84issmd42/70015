@@ -1,41 +1,42 @@
 <div class="tool unfocused" id="jsonyaml" data-tag="json yaml">
 	<div class="preview">
-		<h1>JSON&mdash;YAML Conversion</h1>
+		<h1>JSON &#x2942 YAML</h1>
 	</div>
 	<div class="controls smaller">
-		<section>
-			<label for="jsonyaml-json">JSON</label>
+		<section id="jsonyaml-json">
+			<label for="jsonyaml-json-in">JSON</label>
 
 			<div class="overcontrols">
 				<label for="">Indent with</label>
-				<label for="json-prettyIndentTabs"><input type="radio" name="json-pretty-indent" id="json-prettyIndentTabs" value="	" checked>tabs</label>
-				<label for="json-prettyIndent4spaces"><input type="radio" name="json-pretty-indent" id="json-prettyIndent4spaces" value="    ">4 spaces</label>
-				<label for="json-prettyIndent2spaces"><input type="radio" name="json-pretty-indent" id="json-prettyIndent2spaces" value="  ">2 spaces</label>
-				<a class="copy" data-from="jsonyaml-json"><span>COPY</span><i class="far fa-copy"></i></a>
+				<label for="json-pretty-indent-tabs"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-tabs" value="	" checked>tabs</label>
+				<label for="json-pretty-indent-4spaces"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-4spaces" value="    ">4 spaces</label>
+				<label for="json-pretty-indent-2spaces"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-2spaces" value="  ">2 spaces</label>
 			</div>
-
-			<textarea id="jsonyaml-json" cols="30" rows="9"></textarea>
-			<p class="jsonErr error inset"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
-
+			
+			<textarea id="jsonyaml-json-in" cols="30" rows="9"></textarea>
+			
 			<div class="undercontrols">
+				<p class="error"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
 				<div class="menu switch">
 					<span>Reuse<i class="fas fa-recycle"></i></span>
 					<div>
 						<a data-to="json" data-value-from="json" data-value-as="input">Format it</a>
 					</div>
 				</div>
+				<a class="copy" data-from="jsonyaml-json-in"><span>Copy</span><i class="far fa-copy"></i></a>
 			</div>
 		</section>
 		
 		<div class="bothways">It works ⇃both↾ ways.</div>
 		
-		<section>
-			<label for="jsonyaml-yaml">YAML</label>
-			<textarea id="jsonyaml-yaml" cols="30" rows="9"></textarea>
-			<p class="yamlErr error inset"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
+		<section id="jsonyaml-yaml">
+			<label for="jsonyaml-yaml-in">YAML</label>
+
+			<textarea id="jsonyaml-yaml-in" cols="30" rows="9"></textarea>
 
 			<div class="undercontrols">
-				<a class="copy" data-from="jsonyaml-yaml"><span>Copy</span><i class="far fa-copy"></i></a>
+				<p class="error inset"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
+				<a class="copy" data-from="jsonyaml-yaml-in"><span>Copy</span><i class="far fa-copy"></i></a>
 			</div>
 		</section>
 	</div>
@@ -47,8 +48,8 @@
 			constructor(id) {
 				super(id);
 
-				this.json = this.$$('json');
-				this.yaml = this.$$('yaml');
+				this.json = this.Section('json').Input();
+				this.yaml = this.Section('yaml').Input();
 
 				this.json.oninput = () => this.toYAML();
 				this.yaml.oninput = () => this.toJSON();
@@ -63,14 +64,15 @@
 			toYAML() {
 				try {
 					this.yaml.value = jsyaml.safeDump(JSON.parse(this.json.value));
-					this.Error('jsonErr', '');
-					this.Error('yamlErr', '');
+					this.Section('json').Error(undefined).Enable();
+					this.Section('yaml').Error(undefined).Enable();
 				} catch (e) {
-					this.Error('jsonErr', e.message);
+					this.Section('json').Error(e.message);
 					this.yaml.value = '¯\\_(ツ)_/¯';
+					this.Section('yaml').Disable();
 				}
 			}
-
+			
 			toJSON() {
 				let indent = "\t";
 				for (let r of this.indentRadios) {
@@ -78,25 +80,26 @@
 						indent = r.value;
 					}
 				}
-
+				
 				try {
 					this.json.value = JSON.stringify(jsyaml.safeLoad(this.yaml.value), undefined, indent);
-					this.Error('yamlErr', '');
-					this.Error('jsonErr', '');
+					this.Section('json').Error(undefined).Enable();
+					this.Section('yaml').Error(undefined).Enable();
 				} catch (e) {
-					this.Error('yamlErr', e.message);
+					this.Section('yaml').Error(e.message);
 					this.json.value = '¯\\_(ツ)_/¯';
+					this.Section('json').Disable();
 				}
 			}
 
 			import(data) {
 				if (data.json) {
-					this.T([this.$$('json')], data.json);
+					this.json.value = data.json;
 					this.toYAML();
 				}
 				
 				if (data.yaml) {
-					this.T([this.$$('yaml')], data.yaml);
+					this.yaml.value = data.yaml;
 					this.toJSON();
 				}
 			}

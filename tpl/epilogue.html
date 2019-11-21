@@ -44,6 +44,15 @@
 			function onclickCopyToClipboard(e) {
 				let from = e.currentTarget;
 
+				//	Looking for a disabled parent.
+				let pn = from.parentNode;
+				while (pn) {
+					if (pn.classList && pn.classList.contains('disabled')) {
+						return;
+					}
+					pn = pn.parentNode;
+				}
+
 				if (from.dataset.value) {
 					Clipboard.copy(from.dataset.value);
 					tmpStyle(from, 'copied', 200);
@@ -80,6 +89,7 @@
 				
 				filter.onkeydown = (e) => {
 					if (e.key == 'Enter') {
+						//	Focusing the only matched tool.
 						let matched = document.querySelectorAll(".matched");
 						if (matched.length == 1) {
 							focus(matched[0].id);
@@ -87,13 +97,16 @@
 							e.cancelBubble = true;
 						}
 					} else if (e.key == 'Escape') {
+						//	Clearing the filtering.
 						filter.value = "";
 						bench.filter("");
 					}
 				}
 
+				//	Copy buttons.
 				document.querySelectorAll('.copy').forEach((v, k, p) => {v.onclick = onclickCopyToClipboard});
 
+				//	Autofocusing tools upon page load.
 				if (window.location.hash) {
 					bench.focus(window.location.hash.substr(1));
 				}
