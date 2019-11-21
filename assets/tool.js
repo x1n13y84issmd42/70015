@@ -9,11 +9,11 @@ class Tool extends DOMOps {
 		}
 
 		this.ID = id;
-		this._autoinput = false;
 		this.configuration = {};
 	
 		let ctrls = E.querySelector(".controls");
 
+		//	Creating a "X Close" link.
 		let eClose = document.createElement("a");
 		eClose.innerHTML = "<i>&#x1F860</i><span>CLOSE</span>";
 		eClose.classList.add("close");
@@ -25,8 +25,10 @@ class Tool extends DOMOps {
 
 		ctrls.append(eClose);
 
+		//	Selecting all the checkboxes & radio buttons.
 		this.switches = this.$('input[type=radio],input[type=checkbox]');
 
+		//	Wiring the "Reuse" menu.
 		let eSwitches = this.$('.switch');
 		for (let eSw of eSwitches) {
 			let as = eSw.querySelectorAll('a');
@@ -52,6 +54,10 @@ class Tool extends DOMOps {
 		this.bench = b;
 	}
 
+	/**
+	 * Creates a Section object to control a UI section with the specified sid.
+	 * @param {string} sid Section ID.
+	 */
 	Section(sid) {
 		let n = this.$$(sid);
 		if (n) {
@@ -61,15 +67,13 @@ class Tool extends DOMOps {
 		}
 	}
 
-	autoinput(ai) {
-		if (ai) {
-			this._autoinput = !!ai;
-		} else {
-			return this._autoinput;
-		}
-	}
-
-	Component(s) {
+	/**
+	 * Creates a component by copying a DOM subtree specified by it's ID attribute
+	 * and setting values into specific places.
+	 * @param {string} cid Component id. An element with that id will be copied and used as a component. 
+	 * The rest of arguments will be used to fill the component template tructure with content.
+	 */
+	Component() {
 		let args = Array.prototype.slice.apply(arguments);
 		let compID = args.shift();
 		let compE = this.$(`.components .${compID}`)[0];

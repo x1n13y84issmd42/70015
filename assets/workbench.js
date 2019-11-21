@@ -1,3 +1,6 @@
+/**
+ * Workbench controls all the tools.
+ */
 class Workbench {
 	constructor(config) {
 		this.config = config;

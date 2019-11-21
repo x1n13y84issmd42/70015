@@ -79,10 +79,21 @@ class DOMOps {
 		this.ID = E.id;
 	}
 
+	/**
+	 * A document.querySelectorAll shortcut.
+	 * @param {string} s A selector.
+	 */
 	$(s) {
 		return this.E.querySelectorAll(s);
 	}
 
+	/**
+	 * Retrieves an alement by it's hierarchical ID.
+	 * Hierarchical means here that actual HTML tags have both parent ID and it's own ID, separate by dash.
+	 * So a "cc" section of a "cards" tools has id="cards-cc" in HTML, and accessible as (new Tool('cards')).$$('cc')
+	 * @param {string} id An ID.
+	 * @param {any} v A value to set.
+	 */
 	$$(id, v) {
 		if (v) {
 			this.T([document.getElementById(`${this.ID}-${id}`)], v);
@@ -91,12 +102,25 @@ class DOMOps {
 		}
 	}
 
+	/**
+	 * Just removed all the child nodes of the given element.
+	 * @param {HTMLElement} e An element being spared of paternal rights.
+	 */
 	removeChildren(e) {
 		while (e.firstChild)
 			e.removeChild(e.firstChild);
 	}
 
+	/**
+	 * Set a value to nodes.
+	 * @param {HTMLElement} nodes A list of HTML DOM nodes.
+	 * @param {any} v A values to set to the nodes.
+	 */
 	T(nodes, v) {
+		if (! (nodes instanceof Array)) {
+			nodes = [nodes];
+		}
+
 		for (let e of nodes) {
 			switch (e.tagName) {
 				case "INPUT":
@@ -113,6 +137,11 @@ class DOMOps {
 }
 
 
+/**
+ * Gives general control over a UI section.
+ * A UI section usually includes an input field and few associated extra controls, has some kind of state,
+ * and this class provides an onterface to control it.
+ */
 class Section extends DOMOps {
 	constructor(node) {
 		super(node);
@@ -133,11 +162,19 @@ class Section extends DOMOps {
 		return this;
 	}
 	
+	/**
+	 * Disabled sections have their children controls disabled as well.
+	 * "Reuse" menus (via CSS) and "Copy" buttons (in the global click handler).
+	 */
 	Disable() {
 		this.E.classList.add('disabled');
 		return this;
 	}
-	
+
+	/**
+	 * Show an error message.
+	 * @param {string} err An error message.
+	 */
 	Error(err) {
 		let errEs = this.$(`.error`);
 		for (let errE of errEs) {
@@ -159,6 +196,9 @@ class Section extends DOMOps {
 		return this;
 	}
 
+	/**
+	 * Retrieves the main input field of the section.
+	 */
 	Input() {
 		let input = this.$$(`in`);
 		if (! input) {
@@ -180,11 +220,11 @@ class Tool extends DOMOps {
 		}
 
 		this.ID = id;
-		this._autoinput = false;
 		this.configuration = {};
 	
 		let ctrls = E.querySelector(".controls");
 
+		//	Creating a "X Close" link.
 		let eClose = document.createElement("a");
 		eClose.innerHTML = "<i>&#x1F860</i><span>CLOSE</span>";
 		eClose.classList.add("close");
@@ -196,8 +236,10 @@ class Tool extends DOMOps {
 
 		ctrls.append(eClose);
 
+		//	Selecting all the checkboxes & radio buttons.
 		this.switches = this.$('input[type=radio],input[type=checkbox]');
 
+		//	Wiring the "Reuse" menu.
 		let eSwitches = this.$('.switch');
 		for (let eSw of eSwitches) {
 			let as = eSw.querySelectorAll('a');
@@ -223,6 +265,10 @@ class Tool extends DOMOps {
 		this.bench = b;
 	}
 
+	/**
+	 * Creates a Section object to control a UI section with the specified sid.
+	 * @param {string} sid Section ID.
+	 */
 	Section(sid) {
 		let n = this.$$(sid);
 		if (n) {
@@ -232,15 +278,13 @@ class Tool extends DOMOps {
 		}
 	}
 
-	autoinput(ai) {
-		if (ai) {
-			this._autoinput = !!ai;
-		} else {
-			return this._autoinput;
-		}
-	}
-
-	Component(s) {
+	/**
+	 * Creates a component by copying a DOM subtree specified by it's ID attribute
+	 * and setting values into specific places.
+	 * @param {string} cid Component id. An element with that id will be copied and used as a component. 
+	 * The rest of arguments will be used to fill the component template tructure with content.
+	 */
+	Component() {
 		let args = Array.prototype.slice.apply(arguments);
 		let compID = args.shift();
 		let compE = this.$(`.components .${compID}`)[0];
@@ -274,6 +318,9 @@ class Tool extends DOMOps {
 
 
 
+/**
+ * Workbench controls all the tools.
+ */
 class Workbench {
 	constructor(config) {
 		this.config = config;

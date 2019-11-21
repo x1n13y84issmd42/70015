@@ -1,3 +1,8 @@
+/**
+ * Gives general control over a UI section.
+ * A UI section usually includes an input field and few associated extra controls, has some kind of state,
+ * and this class provides an onterface to control it.
+ */
 class Section extends DOMOps {
 	constructor(node) {
 		super(node);
@@ -18,11 +23,19 @@ class Section extends DOMOps {
 		return this;
 	}
 	
+	/**
+	 * Disabled sections have their children controls disabled as well.
+	 * "Reuse" menus (via CSS) and "Copy" buttons (in the global click handler).
+	 */
 	Disable() {
 		this.E.classList.add('disabled');
 		return this;
 	}
-	
+
+	/**
+	 * Show an error message.
+	 * @param {string} err An error message.
+	 */
 	Error(err) {
 		let errEs = this.$(`.error`);
 		for (let errE of errEs) {
@@ -44,6 +57,9 @@ class Section extends DOMOps {
 		return this;
 	}
 
+	/**
+	 * Retrieves the main input field of the section.
+	 */
 	Input() {
 		let input = this.$$(`in`);
 		if (! input) {
