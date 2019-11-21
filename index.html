@@ -31,7 +31,7 @@
 	<div class="controls smaller">
 		<section id="base64-base64">
 			<label for="base64-base64-in">Base64-encoded string</label>
-			<textarea id="base64-base64-in" autofocus tabindex="21" rows="5"></textarea>
+			<textarea id="base64-base64-in" autofocus tabindex="21" rows="8"></textarea>
 			<div class="undercontrols">
 				<div class="menu switch">
 					<span>Reuse<i class="fas fa-recycle"></i></span>
@@ -47,7 +47,7 @@
 		
 		<section id="base64-ascii">
 			<label for="base64-ascii-in">ASCII string</label>
-			<textarea id="base64-ascii-in" tabindex="22" onFocus="this.tabIndex=20;" onBlur="this.tabIndex=22;" rows="10"></textarea>
+			<textarea id="base64-ascii-in" tabindex="22" onFocus="this.tabIndex=20;" onBlur="this.tabIndex=22;" rows="8"></textarea>
 			<div class="undercontrols">
 				<div class="menu switch">
 					<span>Reuse<i class="fas fa-recycle"></i></span>
@@ -162,7 +162,7 @@
 
 			import(data) {
 				if (data.input) {
-					this.T([this.$$('input')], data.input);
+					this.T(this.$$('input'), data.input);
 					this.hash();
 				}
 			}
@@ -187,7 +187,7 @@
 	<div class="controls smaller">
 		<section id="json-input">
 			<label for="json-input-in">JSON input</label>
-			<textarea id="json-input-in" autofocus spellcheck="false" style="margin-bottom:0;"></textarea>
+			<textarea id="json-input-in" autofocus spellcheck="false" style="margin-bottom:0;" rows="5"></textarea>
 			<div class="undercontrols">
 				<p class="jsonErr error inset"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
 				<div class="menu switch">
@@ -302,6 +302,7 @@
 					}
 
 					this.outPretty.value = JSON.stringify(v, null, indent);
+					this.outPretty.rows = this.outPretty.value.split("\n").length;
 				}
 			}
 
@@ -847,7 +848,7 @@
 	<div class="controls smaller">
 		<section id="xml-xml">
 			<label for="xml-xml-in">XML input</label>
-			<textarea id="xml-xml-in" autofocus spellcheck="false" style="margin-bottom:0;"></textarea>
+			<textarea id="xml-xml-in" autofocus spellcheck="false" style="margin-bottom:0;" rows="5"></textarea>
 			<div class="undercontrols">
 				<p class="error"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
 				<div class="menu switch">
@@ -861,14 +862,14 @@
 
 		<section id="xml-xpath">
 			<label for="xml-xpath-in">XPath query</label>
-			<input type="text" id="xml-xpath-in" spellcheck="false" style="margin-bottom:0;" value="//person/@last-name" />
+			<input type="text" id="xml-xpath-in" spellcheck="false" style="margin-bottom:0;" />
 			<div class="undercontrols">
 				<p class="error"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
 				<a class="copy" data-from="xml-xpath-in"><span>Copy</span><i class="far fa-copy"></i></a>
 			</div>
 		</section>
 		
-		<section id="xml-nice">
+		<section id="xml-nice" class="hidden">
 			<label>XML structure</label>
 			<div id="xml-nice-root"></div>
 		</section>

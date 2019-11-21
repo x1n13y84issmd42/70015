@@ -83,10 +83,10 @@ class Tool extends DOMOps {
 	
 			for (let aI in args) {
 				if (compE.dataset.arg == aI) {
-					this.T([compE], args[aI])
+					this.T(compE, args[aI])
 				}
 
-				let nodes = compE.querySelectorAll(`[data-arg="${aI}"]`);
+				let nodes = Array.from(compE.querySelectorAll(`[data-arg="${aI}"]`));
 				this.T(nodes, args[aI])
 			}
 

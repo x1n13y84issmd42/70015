@@ -84,7 +84,7 @@ class DOMOps {
 	 * @param {string} s A selector.
 	 */
 	$(s) {
-		return this.E.querySelectorAll(s);
+		return Array.from(this.E.querySelectorAll(s));
 	}
 
 	/**
@@ -95,11 +95,13 @@ class DOMOps {
 	 * @param {any} v A value to set.
 	 */
 	$$(id, v) {
-		if (v) {
-			this.T([document.getElementById(`${this.ID}-${id}`)], v);
-		} else {
-			return document.getElementById(`${this.ID}-${id}`);
+		let e = document.getElementById(`${this.ID}-${id}`);
+
+		if (e && v) {
+			this.T(e, v);
 		}
+		
+		return e;
 	}
 
 	/**
@@ -118,7 +120,11 @@ class DOMOps {
 	 */
 	T(nodes, v) {
 		if (! (nodes instanceof Array)) {
-			nodes = [nodes];
+			if (nodes.length) {
+				nodes = Array.from(nodes);
+			} else {
+				nodes = [nodes];
+			}
 		}
 
 		for (let e of nodes) {
@@ -294,10 +300,10 @@ class Tool extends DOMOps {
 	
 			for (let aI in args) {
 				if (compE.dataset.arg == aI) {
-					this.T([compE], args[aI])
+					this.T(compE, args[aI])
 				}
 
-				let nodes = compE.querySelectorAll(`[data-arg="${aI}"]`);
+				let nodes = Array.from(compE.querySelectorAll(`[data-arg="${aI}"]`));
 				this.T(nodes, args[aI])
 			}
 

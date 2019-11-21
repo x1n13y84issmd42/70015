@@ -3,7 +3,7 @@
 	<div class="controls smaller">
 		<section id="json-input">
 			<label for="json-input-in">JSON input</label>
-			<textarea id="json-input-in" autofocus spellcheck="false" style="margin-bottom:0;"></textarea>
+			<textarea id="json-input-in" autofocus spellcheck="false" style="margin-bottom:0;" rows="5"></textarea>
 			<div class="undercontrols">
 				<p class="jsonErr error inset"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
 				<div class="menu switch">
@@ -118,6 +118,7 @@
 					}
 
 					this.outPretty.value = JSON.stringify(v, null, indent);
+					this.outPretty.rows = this.outPretty.value.split("\n").length;
 				}
 			}
 

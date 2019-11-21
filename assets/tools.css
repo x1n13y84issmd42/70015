@@ -132,7 +132,8 @@
 .tool > .controls textarea[disabled],
 .tool > .controls input[type=text][disabled] {
 	border: 1px #AAA solid;
-    background: #F3F3F3;
+	background: #F3F3F3;
+	white-space: pre;
 }
 
 .tool > .controls section > input[type=text],
