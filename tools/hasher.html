@@ -1,28 +1,34 @@
-<div class="tool unfocused col2" id="hasher" data-tag="hash md5 sha des">
-	<div class="preview"><h1>Hashes &amp; ciphers</h1></div>
-	<div class="controls smaller">
-		<label for="hasher-input">Input</label>
-		<input type="text" id="hasher-input" autofocus tabindex="21" />
+<tool _id="hasher" data-tag="hash md5 sha des" name="Hashes &amp; ciphers">
+	<input type="text" _id="input" autofocus tabindex="21" label="Input"/>
 
-		<div class="checksums subsection"></div>
-		
-		<div class="hashes subsection"></div>
-		
-		<label for="hasherKeyInput">Encryption key</label>
-		<input type="text" class="hasherKeyInput" id="hasherKeyInput" autofocus tabindex="21" />
-		<div class="ciphers subsection"></div>
+	<div class="checksums subsection"></div>
+	<div class="hashes subsection"></div>
+	
+	<input type="text" class="hasherKeyInput" _id="key" autofocus tabindex="21" label="Encryption key" />
+
+	<div class="ciphers subsection"></div>
+
+	<div class="components">
+		<h1 class="sectionLabel" data-arg="0"></h1>
+	
+		<div class="hash kvpair">
+			<span class="label" data-arg="0"></span>
+			<span class="value copy" data-arg="1"></span>
+		</div>
 	</div>
+</tool>
 
-	<script src="./node_modules/crypto-js/crypto-js.js?dontcachemepls"></script>
-	<script src="./node_modules/js-crc/build/crc.min.js?dontcachemepls"></script>
+<script src="./node_modules/crypto-js/crypto-js.js?dontcachemepls"></script>
+<script src="./node_modules/js-crc/build/crc.min.js?dontcachemepls"></script>
 
-	<script>
+<script>
+	(() => {
 		class THasher extends Tool {
 			constructor(id) {
 				super(id);
 
 				this.input = this.$$('input');
-				this.keyInput = this.$('.hasherKeyInput')[0];
+				this.keyInput = this.$$('key');
 
 				this.keyInput.oninput = this.input.oninput = () => this.hash();
 			}
@@ -68,15 +74,8 @@
 			}
 		}
 
-		bench.add(new THasher("hasher"));
-	</script>
-
-	<div class="components">
-		<h1 class="sectionLabel" data-arg="0"></h1>
-
-		<div class="hash kvpair">
-			<span class="label" data-arg="0"></span>
-			<span class="value copy" data-arg="1"></span>
-		</div>
-	</div>
-</div>
+		let comp = Component.New('hasher');
+		window.tools.appendChild(comp);
+		bench.add(new THasher(comp));
+	})()
+</script>

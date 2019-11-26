@@ -118,14 +118,18 @@ let Comp = {
 	section: CompUtils.newConstructor('section'),
 	
 	input: CompUtils.newConstructor('div', [], (wrapperE, srcE, args, ctx) => {
+		delete wrapperE.id;
+
+		if (! srcE.attributes._id) {
+			srcE.setAttribute('_id', 'in');
+		}
+		
 		let inputE = document.createElement('input');
 		inputE.type = 'text';
 
 		if (srcE.attributes.type && srcE.attributes.type.nodeValue === 'area') {
 			inputE = document.createElement('textarea');
 		}
-
-		srcE.setAttribute('_id', 'in');
 
 		if (srcE.attributes.value) {
 			inputE.value = srcE.attributes.value.nodeValue;
