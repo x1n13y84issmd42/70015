@@ -75,6 +75,7 @@ input[type=radio]:checked {
 	transition: background 200ms linear;
 }
 
-#ui-stash {
+#ui-stash,
+#toolshed {
 	display: none;
 }

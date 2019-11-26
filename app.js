@@ -43,13 +43,8 @@ let CompUtils = {
 			
 			//	The default undefined value means true.
 			if (container !== false) {
-				let ctxChild = {...ctx};
-				if (E.id) {
-					ctxChild.parentID = E.id;
-				}
-
 				for (let srcEChild of srcE.children) {
-					E.appendChild(CompUtils.transform(srcEChild, args, ctxChild));
+					(ctx.get('reattachChildrenTo') || E).appendChild(CompUtils.transform(srcEChild, args, ctx.child(E)));
 				}
 			}
 			
@@ -71,6 +66,7 @@ let CompUtils = {
 
 	clone: function(srcE, args) {
 		let E = srcE.cloneNode();
+		E.innerText = srcE.innerText;
 		CompUtils.applyArgs(E, args);
 
 		for (let srcECN of srcE.children) {
@@ -84,6 +80,7 @@ let CompUtils = {
 		let srcEName = srcE.nodeName.toLowerCase();
 
 		if (Comp[srcEName]) {
+			console.log(`Creating a '${srcEName}' component.`);
 			return Comp[srcEName](srcE, args, ctx);
 		} else {
 			console.warn(`Component '${srcEName}' not found.`);
@@ -116,12 +113,8 @@ let CompUtils = {
 	},
 
 	copyAttributes: function(E, srcE, ctx) {
-		if (srcE.id) {
-			if (ctx.parentID) {
-				E.id = ctx.parentID + '-' + srcE.id;
-			} else {
-				E.id = srcE.id;
-			}
+		if (srcE.attributes._id) {
+			E.id = ctx.id(srcE.attributes._id.nodeValue);
 		}
 
 		srcE.classList.forEach(c => E.classList.add(c));
@@ -129,7 +122,16 @@ let CompUtils = {
 		for (let dsI in srcE.dataset) {
 			E.dataset[dsI] = srcE.dataset[dsI];
 		}
+	},
+
+	attributeValue: function(attrE, ctx) {
+		let v = attrE.nodeValue;
+		if (v[0] === '#') {
+			v = ctx.id(v.substr(1));
+		}
+		return v;
 	}
+
 };
 
 /**
@@ -152,7 +154,12 @@ let Comp = {
 	input: CompUtils.newConstructor('div', [], (wrapperE, srcE, args, ctx) => {
 		let inputE = document.createElement('input');
 		inputE.type = 'text';
-		srcE.id = 'in';
+
+		if (srcE.attributes.type && srcE.attributes.type.nodeValue === 'area') {
+			inputE = document.createElement('textarea');
+		}
+
+		srcE.setAttribute('_id', 'in');
 
 		if (srcE.attributes.value) {
 			inputE.value = srcE.attributes.value.nodeValue;
@@ -176,12 +183,12 @@ let Comp = {
 	error: CompUtils.newConstructor('p', ['error']),
 	
 	copy: CompUtils.newConstructor('a', ['copy'], (aE, srcE, args, ctx) => {
-		srcE.dataset.from && (aE.dataset.from = ctx.parentID + '-' + srcE.dataset.from);
+		srcE.dataset.from && (aE.dataset.from = ctx.id(srcE.dataset.from));
 		aE.innerHTML = '<span>Copy</span><i class="far fa-copy"></i>';
-		aE.dataset.from = ctx.parentID + '-in';
+		aE.dataset.from = ctx.id('in');
 	}),
 	
-	reuse: CompUtils.newConstructor('div', ['menu', 'switch'], (menuE, srcE, args) => {
+	reuse: CompUtils.newConstructor('div', ['menu', 'switch'], (menuE, srcE, args, ctx) => {
 		let span = document.createElement('span');
 		span.innerHTML = `${srcE.attributes.title || 'Reuse'}<i class="fas fa-recycle"></i>`;
 
@@ -194,7 +201,7 @@ let Comp = {
 			
 			for (let srcChildEAI = 0; srcChildEAI < srcChildE.attributes.length; srcChildEAI++) {
 				let srcChildEA = srcChildE.attributes[srcChildEAI];
-				aE.dataset[srcChildEA.nodeName] = srcChildEA.nodeValue;
+				aE.dataset[srcChildEA.nodeName] = CompUtils.attributeValue(srcChildEA, ctx);
 			}
 			
 			aE.innerText = srcChildE.innerText;
@@ -219,13 +226,55 @@ let Comp = {
 		menuE.appendChild(span);
 		menuE.appendChild(div);
 	}, false),
-	
+
+	tool: CompUtils.newConstructor('div', ['tool', 'unfocused'], (toolE, srcE, args, ctx) => {
+		let previewE = CompUtils.create('div', ['preview']);
+		previewE.innerHTML = `<h1>${srcE.attributes.name.nodeValue}</h1>`;
+		toolE.appendChild(previewE);
+		
+		let controlsE = CompUtils.create('div', ['controls', 'smaller']);
+		toolE.appendChild(controlsE);
+		ctx.set('reattachChildrenTo', controlsE);
+	}),
 };
+
+class CompContext {
+	constructor(data) {
+		this.data = data;
+	}
+
+	child(E) {
+		let data = {...this.data, reattachChildrenTo: null};
+		if (E.id) {
+			data.parentID = E.id;
+		}
+		return new CompContext(data);
+	}
+
+	id(id) {
+		if (this.data.parentID) {
+			return this.data.parentID + '-' + id;
+		}
+
+		return id;
+	}
+
+	get(k) {
+		return this.data[k];
+	}
+
+	set(k, v) {
+		return this.data[k] = v;
+	}
+}
 
 let Component = {
 	New: function(id, args) {
-		let srcCompE = document.getElementById(id);
-		return CompUtils.transform(srcCompE, args, {parentID: undefined});
+		let srcCompE = id;
+		if (typeof id === 'string') {
+			srcCompE = document.querySelector(`[_id=${id}]`);
+		}
+		return CompUtils.transform(srcCompE, args, new CompContext({parentID: undefined}));
 	},
 };
 
@@ -416,15 +465,18 @@ class Section extends DOMOps {
 
 class Tool extends DOMOps {
 	constructor(id) {
-		let E = document.getElementById(id);
+		let E = id;
+
+		if (typeof id == 'string') {
+			E = document.getElementById(id);
+		}
 
 		super(E);
 	
 		E.querySelector('.preview').onclick = () => {
-			focus(id);
+			focus(this.ID);
 		}
 
-		this.ID = id;
 		this.configuration = {};
 	
 		let ctrls = E.querySelector(".controls");
@@ -434,7 +486,7 @@ class Tool extends DOMOps {
 		eClose.innerHTML = "<i>&#x1F860</i><span>CLOSE</span>";
 		eClose.classList.add("close");
 		eClose.onclick = (e) => {
-			unfocus(id);
+			unfocus(this.ID);
 			e.preventDefault();
 			e.cancelBubble=true;
 		};
@@ -479,7 +531,7 @@ class Tool extends DOMOps {
 		if (n) {
 			return new Section(n);
 		} else {
-			throw new Error(`Could not find a section ${this.sid}.`);
+			throw new Error(`Could not find a section ${sid}.`);
 		}
 	}
 
@@ -531,12 +583,14 @@ class Workbench {
 		this.config = config;
 		this.tools = {};
 		this.currentlyFocusedID = undefined;
+		this.toolsE = document.getElementById('tools');
 	}
 
 	add(tool) {
 		this.tools[tool.ID] = tool;
 		tool.setBench(this);
 		tool.reconfigure(this.config.get(tool.ID));
+		this.toolsE.appendChild(tool.E);
 	}
 	
 	focus(id) {
@@ -595,7 +649,7 @@ class Workbench {
 	switch(toID, data) {
 		console.log(`Switching to ${toID}.`, data);
 		// this.unfocus(this.currentlyFocusedID);
-		let t1 = this.tools[this.currentlyFocusedID];
+		let t1 = (this.currentlyFocusedID !== undefined) && this.tools[this.currentlyFocusedID];
 		let t2 = this.tools[toID];
 		let cfid = this.currentlyFocusedID;
 		this.tools[toID].import(data);
@@ -613,7 +667,7 @@ class Workbench {
 				this.unfocus(id);
 			}, 400, cfid, t1, t2);
 		} else {
-			throw new Error(`One of the tools not found while switching.`);
+			throw new Error(`One of the tools was not found while switching.`);
 		}
 	}
 }

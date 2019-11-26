@@ -1,14 +1,17 @@
 class Tool extends DOMOps {
 	constructor(id) {
-		let E = document.getElementById(id);
+		let E = id;
+
+		if (typeof id == 'string') {
+			E = document.getElementById(id);
+		}
 
 		super(E);
 	
 		E.querySelector('.preview').onclick = () => {
-			focus(id);
+			focus(this.ID);
 		}
 
-		this.ID = id;
 		this.configuration = {};
 	
 		let ctrls = E.querySelector(".controls");
@@ -18,7 +21,7 @@ class Tool extends DOMOps {
 		eClose.innerHTML = "<i>&#x1F860</i><span>CLOSE</span>";
 		eClose.classList.add("close");
 		eClose.onclick = (e) => {
-			unfocus(id);
+			unfocus(this.ID);
 			e.preventDefault();
 			e.cancelBubble=true;
 		};
@@ -63,7 +66,7 @@ class Tool extends DOMOps {
 		if (n) {
 			return new Section(n);
 		} else {
-			throw new Error(`Could not find a section ${this.sid}.`);
+			throw new Error(`Could not find a section ${sid}.`);
 		}
 	}
 
