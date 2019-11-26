@@ -1,4 +1,14 @@
 let CompUtils = {
+	/**
+	 * Creates a default consuctor function which allows to create a standard HTML tag, which will be the component's root element
+	 * (often the only one, though). The created element gets it's attributes copied from the source component element,
+	 * and data from the arguments object.
+	 * The additionally supplied constructor function is there to additionally configure the created element and create some extra elements.
+	 * @param {string} tag An HTML element name to create.
+	 * @param {string[]} classes A list of CSS classes to apply to the new element.
+	 * @param {Function} ctorFn A constructor function to fine tune the element's internals.
+	 * @param {boolean} container When set to true, then entire component subtree will be processed automatically.
+	 */
 	newConstructor: function(tag, classes, ctorFn, container) {
 		return function(srcE, args, ctx) {
 			let E = CompUtils.create(tag, classes);
@@ -18,6 +28,11 @@ let CompUtils = {
 		};
 	},
 
+	/**
+	 * A generic function to create HTML DOM elements.
+	 * @param {string} tag An HTML element name to create.
+	 * @param {string[]} classes A list of class names to apply. 
+	 */
 	create: function(tag, classes) {
 		let E = document.createElement(tag);
 		
@@ -30,6 +45,12 @@ let CompUtils = {
 		return E;
 	},
 
+	/**
+	 * Performs a shallow copy of the given srcE element. Used as a pass-through function for standard HTML elements.
+	 * The child elements of those still get processed and transformed as usual.
+	 * @param {HTMLElement} srcE An element to clone.
+	 * @param {Object} args Arguments.
+	 */
 	clone: function(srcE, args) {
 		let E = srcE.cloneNode();
 		E.innerText = srcE.innerText;
@@ -42,6 +63,12 @@ let CompUtils = {
 		return E;
 	},
 
+	/**
+	 * Either creates a new component from the given srcE node, or clones it.
+	 * @param {HTMLElement} srcE A source HTML element to create a component from.
+	 * @param {Object} args Arguments.
+	 * @param {CompContext} ctx A context.
+	 */
 	transform: function(srcE, args, ctx) {
 		let srcEName = srcE.nodeName.toLowerCase();
 
@@ -54,8 +81,13 @@ let CompUtils = {
 		}
 	},
 
+	/**
+	 * Replaces occurences of variables ${} in a DOM object's attributes,
+	 * and replaces them with values from the corresponding fields in args. 
+	 * @param {HTMLElement} E A subject HTML DOM element.
+	 * @param {Object} args An arguments object.
+	 */
 	applyArgs: function(E, args) {
-		// return;
 		function applyArgsToString(s) {
 			if (args) {
 				for (let aN in args) {
@@ -78,6 +110,12 @@ let CompUtils = {
 		}
 	},
 
+	/**
+	 * Copies various attributes from the source component element to the new DOM element, such as _id, CSS classes, data-* and others.
+	 * @param {HTMLElement} E An HTML element, corresponding to the source element of the component template (srcE).
+	 * @param {HTMLElement} srcE A source root element of a component template.
+	 * @param {CompContext} ctx A context.
+	 */
 	copyAttributes: function(E, srcE, ctx) {
 		if (srcE.attributes._id) {
 			E.id = ctx.id(srcE.attributes._id.nodeValue);
@@ -118,7 +156,7 @@ let Comp = {
 	
 	input: CompUtils.newConstructor('div', [], (wrapperE, srcE, args, ctx) => {
 		wrapperE.id = null;
-		delete wrapperE['id'];
+		delete wrapperE.id;
 
 		if (! srcE.attributes._id) {
 			srcE.setAttribute('_id', 'in');
@@ -208,11 +246,18 @@ let Comp = {
 	}),
 };
 
+/**
+ * A composition context. Keeps track of some useful bits of data during construction of a Component.
+ */
 class CompContext {
 	constructor(data) {
 		this.data = data;
 	}
 
+	/**
+	 * Creates a child context, keeps parent ID.
+	 * @param {HTMLElement} E A parent element, corresponding to the child context being created.
+	 */
 	child(E) {
 		let data = {...this.data, reattachChildrenTo: null};
 		if (E.id) {
@@ -221,6 +266,10 @@ class CompContext {
 		return new CompContext(data);
 	}
 
+	/**
+	 * Creates a hierarchical ID by prepending the given id with the 'parentID' value when possible.
+	 * @param {string} id An ID.
+	 */
 	id(id) {
 		if (this.data.parentID) {
 			return this.data.parentID + '-' + id;
@@ -237,16 +286,30 @@ class CompContext {
 		return [this.data.toolID, id, 'in'].filter(v=>!!v).join('-');
 	}
 
+	/**
+	 * A data getter.
+	 * @param {string} k A key.
+	 */
 	get(k) {
 		return this.data[k];
 	}
 
+	/**
+	 * A data setter.
+	 * @param {string} k A key.
+	 * @param {*} v A value to set.
+	 */
 	set(k, v) {
 		return this.data[k] = v;
 	}
 }
 
 let Component = {
+	/**
+	 * Creates a new component from the given ID of an HTML DOM node.
+	 * @param {string | HTMLElement} id Either a string ID or an HTML element.
+	 * @param {Object} args Arguments.
+	 */
 	New: function(id, args) {
 		let srcCompE = id;
 		if (typeof id === 'string') {
