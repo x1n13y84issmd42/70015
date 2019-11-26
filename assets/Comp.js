@@ -93,7 +93,7 @@ let CompUtils = {
 	attributeValue: function(attrE, ctx) {
 		let v = attrE.nodeValue;
 		if (v[0] === '#') {
-			v = ctx.id(v.substr(1));
+			v = ctx.iid(v.substr(1));
 		}
 		return v;
 	}
@@ -138,7 +138,7 @@ let Comp = {
 		if (srcE.attributes.label) {
 			let labelE = document.createElement('label');
 			labelE.innerHTML = srcE.attributes.label.nodeValue;
-			labelE.for = srcE.id;
+			labelE.for = inputE.id;
 			CompUtils.applyArgs(labelE, args);
 			wrapperE.insertBefore(labelE, inputE);
 		}
@@ -149,9 +149,8 @@ let Comp = {
 	error: CompUtils.newConstructor('p', ['error']),
 	
 	copy: CompUtils.newConstructor('a', ['copy'], (aE, srcE, args, ctx) => {
-		srcE.dataset.from && (aE.dataset.from = ctx.id(srcE.dataset.from));
+		srcE.attributes.from && (aE.dataset.from = CompUtils.attributeValue(srcE.attributes.from, ctx));
 		aE.innerHTML = '<span>Copy</span><i class="far fa-copy"></i>';
-		aE.dataset.from = ctx.id('in');
 	}),
 	
 	reuse: CompUtils.newConstructor('div', ['menu', 'switch'], (menuE, srcE, args, ctx) => {
@@ -201,6 +200,7 @@ let Comp = {
 		let controlsE = CompUtils.create('div', ['controls', 'smaller']);
 		toolE.appendChild(controlsE);
 		ctx.set('reattachChildrenTo', controlsE);
+		ctx.set('toolID', toolE.id);
 	}),
 };
 
@@ -223,6 +223,14 @@ class CompContext {
 		}
 
 		return id;
+	}
+
+	/**
+	 * Input ID, i.e. ID of a section's main input field.
+	 * @param {string} id A section id.
+	 */
+	iid(id) {
+		return [this.data.toolID, id, 'in'].filter(v=>!!v).join('-');
 	}
 
 	get(k) {
