@@ -97,7 +97,6 @@ let CompUtils = {
 		}
 		return v;
 	}
-
 };
 
 /**
@@ -118,7 +117,8 @@ let Comp = {
 	section: CompUtils.newConstructor('section'),
 	
 	input: CompUtils.newConstructor('div', [], (wrapperE, srcE, args, ctx) => {
-		delete wrapperE.id;
+		wrapperE.id = null;
+		delete wrapperE['id'];
 
 		if (! srcE.attributes._id) {
 			srcE.setAttribute('_id', 'in');

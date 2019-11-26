@@ -37,8 +37,9 @@ class Tool extends DOMOps {
 			let as = eSw.querySelectorAll('a');
 			for (let a of as) {
 				a.onclick = () => {
-					let data = {};
-					data[a.dataset.valueAs] = this.Section(a.dataset.valueFrom).Input().value;
+					let data = {...a.dataset};
+					delete data.to;
+					data = Object.fromEntries(Object.entries(data).map(e=>[e[0],document.getElementById(e[1]).value]))
 					this.bench.switch(a.dataset.to, data)
 				};
 			}
