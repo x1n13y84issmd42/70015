@@ -142,7 +142,7 @@ let Comp = {
 		if (srcE.attributes.label) {
 			let labelE = document.createElement('label');
 			labelE.innerHTML = srcE.attributes.label.nodeValue;
-			labelE.for = inputE.id;
+			labelE.htmlFor = inputE.id;
 			CompUtils.applyArgs(labelE, args);
 			wrapperE.insertBefore(labelE, inputE);
 		}
