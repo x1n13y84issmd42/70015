@@ -13,7 +13,7 @@ class Tool extends DOMOps {
 	
 		let ctrls = E.querySelector(".controls");
 
-		//	Creating a "X Close" link.
+		//	Creating a "Close" link.
 		let eClose = document.createElement("a");
 		eClose.innerHTML = "<i>&#x1F860</i><span>CLOSE</span>";
 		eClose.classList.add("close");

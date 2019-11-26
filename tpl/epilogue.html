@@ -1,5 +1,23 @@
 		</div>
 
+		<div id="ui-stash">
+			<dialog data-purpose="social" id="share" title="${title}">
+				<section id="link">
+					<input type="text" label="<<${title} a link>>" value="${value}" />
+					<undercontrols>
+						<error></error>
+						<copy from="link"></copy>
+						<reuse>
+							<urlparse url="share-link-in">Parse it</urlparse>
+							<urldecode ascii="share-link-in">URL-encode it</urldecode>
+							<base64 ascii="share-link-in">Base64-encode it</base64>
+							<hasher input="share-link-in">Hash it!</hasher>
+						</reuse>
+					</undercontrols>
+				</section>
+			</dialog>
+		</div>
+
 		<script>
 			function focus(id) {
 				bench.focus(id);
@@ -82,6 +100,12 @@
 			}
 
 			document.body.onload = () => {
+				let dialogE = Component.New('share', {
+					title: 'Share',
+					value: `${window.location.pathname}#yolo2020`
+				});
+				document.body.appendChild(dialogE);
+
 				let filter = document.getElementById("filter");
 				filter.oninput = () => {
 					bench.filter(filter.value);
