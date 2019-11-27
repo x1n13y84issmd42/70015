@@ -121,7 +121,7 @@
 
 
 
-<tool _id="hasher" data-tag="hash md5 sha des" name="Hashes &amp; results">
+<tool _id="hasher" data-tag="hash md5 sha des" name="Hashes &amp; ciphers">
 	<input type="text" _id="input" autofocus tabindex="21" label="Input"/>
 	<input type="text" class="hasherKeyInput" _id="key" autofocus tabindex="21" label="Encryption key" />
 
@@ -187,6 +187,55 @@
 
 
 
+<tool _id="urldecode" data-tag="url trans encode decode" name="Transcode URL">
+	<section _id="encoded">
+		<input type="text" autofocus tabindex="11" label="URL-encoded string">
+		<undercontrols>
+			<copy from="#encoded"></copy>
+		</undercontrols>
+	</section>
+
+	<div class="bothways">It works ⇃both↾ ways.</div>
+
+	<section _id="decoded" >
+		<label for="urldecode-encinput"></label>		
+		<input type="text" label="ASCII string" tabindex="12" onFocus="this.tabIndex=10;" onBlur="this.tabIndex=12;">
+		<undercontrols>
+			<copy from="#decoded"></copy>
+		</undercontrols>
+	</section>
+</tool>
+
+<script>
+	(() => {
+		class TURLTranscoder extends Tool {
+			constructor(id) {
+				super(id)
+				
+				this.encoded = this.Section('encoded').Input();
+				this.decoded = this.Section('decoded').Input();
+				this.encoded.oninput = () => this.decode();
+				this.decoded.oninput = () => this.encode();
+			}
+			
+			decode() {
+				this.decoded.value = decodeURIComponent(this.encoded.value);
+			};
+			
+			encode() {
+				this.encoded.value = encodeURIComponent(this.decoded.value);
+			};
+			
+		}
+		
+		let comp = Component.New('urldecode');
+		window.tools.appendChild(comp);
+		bench.add(new TURLTranscoder(comp));
+	})()
+</script>
+
+
+
 <tool _id="urlparse" name="Parse URL" data-tag="urlparse">
 	<section _id="url">
 		<input type="text" label="URL">
@@ -199,88 +248,89 @@
 </tool>
 
 <script>
-	class TURLParser extends Tool {
-		constructor(id) {
-			super(id);
-			this.URL = this.Section("url").Input();
+	(() => {
+		class TURLParser extends Tool {
+			constructor(id) {
+				super(id);
+				this.URL = this.Section("url").Input();
 
-			this.URL.oninput = () => {
-				let fields = this.$(".fields")[0];
-				while (fields.firstChild)
-					fields.removeChild(fields.firstChild);
+				this.URL.oninput = () => {
+					let fields = this.$(".fields")[0];
+					this.removeChidren(fields);
 
-				let url;
+					let url;
 
-				try {
-					url = new URL(this.URL.value);
-					this.Section("url").Error(undefined);
-					this.Section('fields').Show();
-				} catch (err) {
-					this.Section("url").Error(err.message);
-					this.Section('fields').Hide();
-					return;
-				}
-				
-				fields.appendChild(this.Component("kvsection", {label: "URL"}));
-				url.protocol && fields.appendChild(this.Component("kv", {k: "Protocol", v: url.protocol}));
-				url.hostname && fields.appendChild(this.Component("kv", {k: "Domain", v: url.hostname}));
-				url.username && fields.appendChild(this.Component("kv", {k: "Username", v: url.username}));
-				url.password && fields.appendChild(this.Component("kv", {k: "Password", v: url.password}));
+					try {
+						url = new URL(this.URL.value);
+						this.Section("url").Error(undefined);
+						this.Section('fields').Show();
+					} catch (err) {
+						this.Section("url").Error(err.message);
+						this.Section('fields').Hide();
+						return;
+					}
+					
+					fields.appendChild(this.Component("kvsection", {label: "URL"}));
+					url.protocol && fields.appendChild(this.Component("kv", {k: "Protocol", v: url.protocol}));
+					url.hostname && fields.appendChild(this.Component("kv", {k: "Domain", v: url.hostname}));
+					url.username && fields.appendChild(this.Component("kv", {k: "Username", v: url.username}));
+					url.password && fields.appendChild(this.Component("kv", {k: "Password", v: url.password}));
 
-				if (url.path) {
-					fields.appendChild(this.Component("kv", {k: "Path", v: url.path}));
-				} else if (url.pathname) {
-					fields.appendChild(this.Component("kv", {k: "Path", v: url.pathname}));
-				}
+					if (url.path) {
+						fields.appendChild(this.Component("kv", {k: "Path", v: url.path}));
+					} else if (url.pathname) {
+						fields.appendChild(this.Component("kv", {k: "Path", v: url.pathname}));
+					}
 
-				url.port && fields.appendChild(this.Component("kv", {k: "Port", v: url.port}));
-				url.hash && fields.appendChild(this.Component("kv", {k: "Hash", v: url.hash}));
+					url.port && fields.appendChild(this.Component("kv", {k: "Port", v: url.port}));
+					url.hash && fields.appendChild(this.Component("kv", {k: "Hash", v: url.hash}));
 
-				if (url.search && url.searchParams) {
-					fields.appendChild(this.Component("kvsection", {label: "Query"}));
-					let sp = this.improveSearchParams(url.searchParams);
-					for (let spn in sp) {
-						let spv = sp[spn];
-						if (spv instanceof Array) {
-							let t = true;
-							for (let spvv of spv) {
-								fields.appendChild(this.Component("kv", {k: t ? (t = false, spn) : "", v: spvv}));
+					if (url.search && url.searchParams) {
+						fields.appendChild(this.Component("kvsection", {label: "Query"}));
+						let sp = this.improveSearchParams(url.searchParams);
+						for (let spn in sp) {
+							let spv = sp[spn];
+							if (spv instanceof Array) {
+								let t = true;
+								for (let spvv of spv) {
+									fields.appendChild(this.Component("kv", {k: t ? (t = false, spn) : "", v: spvv}));
+								}
+							} else {
+								fields.appendChild(this.Component("kv", {k: spn, v: spv}));
 							}
-						} else {
-							fields.appendChild(this.Component("kv", {k: spn, v: spv}));
 						}
 					}
-				}
-			};
-		}
-		
-		/**
-		 * Stores array values as arrays.
-		 */
-		improveSearchParams(urlsp) {
-			let res = {};
-			for (let e of urlsp.entries()) {
-				let qspn = e[0];
-				let qspv = e[1];
-
-				if (qspn.substr(-2) == '[]') {
-					qspn = qspn.substr(0, qspn.length - 2);
-					res[qspn] || (res[qspn] = []);
-					res[qspn].push(qspv);
-				} else {
-					res[qspn] = qspv;
-				}
+				};
 			}
+			
+			/**
+			 * Stores array values as arrays.
+			 */
+			improveSearchParams(urlsp) {
+				let res = {};
+				for (let e of urlsp.entries()) {
+					let qspn = e[0];
+					let qspv = e[1];
 
-			return res;
+					if (qspn.substr(-2) == '[]') {
+						qspn = qspn.substr(0, qspn.length - 2);
+						res[qspn] || (res[qspn] = []);
+						res[qspn].push(qspv);
+					} else {
+						res[qspn] = qspv;
+					}
+				}
+
+				return res;
+			}
 		}
-	}
 
-	let comp = Component.New('urlparse');
-	window.tools.appendChild(comp);
-	bench.add(new TURLParser(comp));
-	
+		let comp = Component.New('urlparse');
+		window.tools.appendChild(comp);
+		bench.add(new TURLParser(comp));
+	})()
 </script>
+
 
 
 		<!-- opened in components.html -->
