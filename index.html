@@ -47,6 +47,8 @@
 		<span class="value copy">${v}</span>
 	</div>
 
+	<h1 class="sectionLabel">${label}</h1>
+
 </div>
 
 <div id="toolshed">
@@ -119,24 +121,11 @@
 
 
 
-<tool _id="hasher" data-tag="hash md5 sha des" name="Hashes &amp; ciphers">
+<tool _id="hasher" data-tag="hash md5 sha des" name="Hashes &amp; results">
 	<input type="text" _id="input" autofocus tabindex="21" label="Input"/>
-
-	<div class="checksums subsection"></div>
-	<div class="hashes subsection"></div>
-	
 	<input type="text" class="hasherKeyInput" _id="key" autofocus tabindex="21" label="Encryption key" />
 
-	<div class="ciphers subsection"></div>
-
-	<div class="components">
-		<h1 class="sectionLabel" data-arg="0"></h1>
-	
-		<div class="hash kvpair">
-			<span class="label" data-arg="0"></span>
-			<span class="value copy" data-arg="1"></span>
-		</div>
-	</div>
+	<div class="results subsection"></div>
 </tool>
 
 <script src="./node_modules/crypto-js/crypto-js.js?dontcachemepls"></script>
@@ -155,25 +144,20 @@
 			}
 
 			hash() {
-				let checksums = this.$(".checksums")[0];
-				let hashes = this.$(".hashes")[0];
-				let ciphers = this.$(".ciphers")[0];
+				let results = this.$(".results")[0];
+				this.removeChildren(results);
 
-				this.removeChildren(checksums);
-				this.removeChildren(hashes);
-				this.removeChildren(ciphers);
-
-				checksums.appendChild(this.Component('sectionLabel', "Checksums"));
-				checksums.appendChild(this.Component('hash', "CRC16", crc16(this.input.value)));
-				checksums.appendChild(this.Component('hash', "CRC32", crc32(this.input.value)));
+				results.appendChild(this.Component('kvsection', {label: "Checksums"}));
+				results.appendChild(this.Component('kv', {k: "CRC16", v: crc16(this.input.value)}));
+				results.appendChild(this.Component('kv', {k: "CRC32", v: crc32(this.input.value)}));
 				
-				hashes.appendChild(this.Component('sectionLabel', "Hashes"));
-				hashes.appendChild(this.Component('hash', "MD5", '' + CryptoJS.MD5(this.input.value)));
-				hashes.appendChild(this.Component('hash', "SHA1", '' + CryptoJS.SHA1(this.input.value)));
-				hashes.appendChild(this.Component('hash', "SHA3", '' + CryptoJS.SHA3(this.input.value)));
-				hashes.appendChild(this.Component('hash', "SHA256", '' + CryptoJS.SHA256(this.input.value)));
+				results.appendChild(this.Component('kvsection', {label: "Hashes"}));
+				results.appendChild(this.Component('kv', {k: "MD5", v: '' + CryptoJS.MD5(this.input.value)}));
+				results.appendChild(this.Component('kv', {k: "SHA1", v: '' + CryptoJS.SHA1(this.input.value)}));
+				results.appendChild(this.Component('kv', {k: "SHA3", v: '' + CryptoJS.SHA3(this.input.value)}));
+				results.appendChild(this.Component('kv', {k: "SHA256", v: '' + CryptoJS.SHA256(this.input.value)}));
 				
-				ciphers.appendChild(this.Component('sectionLabel', "Ciphers"));
+				results.appendChild(this.Component('kvsection', {label: "Ciphers"}));
 				let aes = CryptoJS.AES.encrypt(this.input.value, this.keyInput.value, {keySize: 128});
 				let des = CryptoJS.DES.encrypt(this.input.value, this.keyInput.value, {keySize: 128});
 				// console.log(aes);
@@ -183,8 +167,8 @@
 				// console.log(aes.key);
 				// console.log(aes.iv);
 				// console.log(aes.ciphertext);
-				ciphers.appendChild(this.Component('hash', "AES", aes.ciphertext.toString()));
-				ciphers.appendChild(this.Component('hash', "DES", des.ciphertext.toString()));
+				results.appendChild(this.Component('kv', {k: "AES", v: aes.ciphertext.toString()}));
+				results.appendChild(this.Component('kv', {k: "DES", v: des.ciphertext.toString()}));
 			};
 
 			import(data) {
