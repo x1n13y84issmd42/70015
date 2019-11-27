@@ -187,6 +187,114 @@
 
 
 
+<tool _id="jsonyaml" data-tag="json yaml" name="JSON &#x2942 YAML">
+	<section _id="json">
+		<div class="overcontrols">
+			<label for="">Indent with</label>
+			<label for="json-pretty-indent-tabs"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-tabs" value="	" checked>tabs</label>
+			<label for="json-pretty-indent-4spaces"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-4spaces" value="    ">4 spaces</label>
+			<label for="json-pretty-indent-2spaces"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-2spaces" value="  ">2 spaces</label>
+		</div>
+		
+		<input type="area" rows="9" label="JSON"></input>
+		
+		<undercontrols>
+			<reuse>
+				<json input="json">Format it</json>
+			</reuse>
+			<copy from="#json"></copy>
+		</undercontrols>
+	</section>
+	
+	<div class="bothways">It works ⇃both↾ ways.</div>
+	
+	<section _id="yaml">
+		<input type="area" rows="9" label="YAML"></input>
+		<undercontrols error="true">
+			<copy from="#yaml"></copy>
+		</undercontrols>
+	</section>
+</tool>
+
+<script src="./node_modules/js-yaml/dist/js-yaml.min.js"></script>
+
+<script>
+	(()=>{
+		class TJSONYAML extends Tool {
+			constructor(id) {
+				super(id);
+	
+				this.json = this.Section('json').Input();
+				this.yaml = this.Section('yaml').Input();
+	
+				this.json.oninput = () => this.toYAML();
+				this.yaml.oninput = () => this.toJSON();
+	
+				this.indentRadios = this.$('input[name=json-pretty-indent]');
+	
+				for (let s of this.switches) {
+					s.onchange = () => this.toJSON();
+				}
+			}
+	
+			toYAML() {
+				try {
+					this.yaml.value = jsyaml.safeDump(JSON.parse(this.json.value));
+					this.Section('json').Error(undefined).Enable();
+					this.Section('yaml').Error(undefined).Enable();
+				} catch (e) {
+					this.Section('json').Error(e.message);
+					this.yaml.value = '¯\\_(ツ)_/¯';
+					this.Section('yaml').Disable();
+				}
+			}
+			
+			toJSON() {
+				let indent = "\t";
+				for (let r of this.indentRadios) {
+					if (r.checked) {
+						indent = r.value;
+					}
+				}
+				
+				try {
+					this.json.value = JSON.stringify(jsyaml.safeLoad(this.yaml.value), undefined, indent);
+					this.Section('json').Error(undefined).Enable();
+					this.Section('yaml').Error(undefined).Enable();
+				} catch (e) {
+					this.Section('yaml').Error(e.message);
+					this.json.value = '¯\\_(ツ)_/¯';
+					this.Section('json').Disable();
+				}
+			}
+	
+			import(data) {
+				if (data.json) {
+					this.json.value = data.json;
+					this.toYAML();
+				}
+				
+				if (data.yaml) {
+					this.yaml.value = data.yaml;
+					this.toJSON();
+				}
+			}
+		}
+	
+		let comp = Component.New('jsonyaml');
+		window.tools.appendChild(comp);
+		bench.add(new TJSONYAML(comp));
+	})()
+</script>
+
+<style>
+	#jsonyaml .subcontrols {
+		width: 1000px;
+	}
+</style>
+
+
+
 <tool _id="unixtime" data-tag="unixtime" name="Unixtime">
 	<section _id="ts">
 		<input type="text" autofocus label="Unixtime">
