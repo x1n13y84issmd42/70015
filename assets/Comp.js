@@ -55,12 +55,12 @@ let CompUtils = {
 	 * @param {HTMLElement} srcE An element to clone.
 	 * @param {Object} args Arguments.
 	 */
-	clone: function(srcE, args) {
+	clone: function(srcE, args, ctx) {
 		let E = srcE.cloneNode();
-		
+
 		if (srcE.children && srcE.children.length) {
 			for (let srcECN of srcE.children) {
-				E.appendChild(CompUtils.transform(srcECN, args));
+				E.appendChild(CompUtils.transform(srcECN, args, ctx));
 			}
 		} else {
 			E.innerText = srcE.innerText;
