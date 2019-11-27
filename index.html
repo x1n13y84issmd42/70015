@@ -191,16 +191,17 @@
 	<section _id="json">
 		<div class="overcontrols">
 			<label for="">Indent with</label>
-			<label for="json-pretty-indent-tabs"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-tabs" value="	" checked>tabs</label>
-			<label for="json-pretty-indent-4spaces"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-4spaces" value="    ">4 spaces</label>
-			<label for="json-pretty-indent-2spaces"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-2spaces" value="  ">2 spaces</label>
+
+			<radio name="indent" _id="tabs" value="	">tabs</radio>
+			<radio name="indent" _id="4spaces" value="    ">4 spaces</radio>
+			<radio name="indent" _id="2spaces" value="  ">2 spaces</radio>
 		</div>
 		
 		<input type="area" rows="9" label="JSON"></input>
 		
 		<undercontrols>
 			<reuse>
-				<json input="json">Format it</json>
+				<json input="#json">Format it</json>
 			</reuse>
 			<copy from="#json"></copy>
 		</undercontrols>
@@ -230,7 +231,7 @@
 				this.json.oninput = () => this.toYAML();
 				this.yaml.oninput = () => this.toJSON();
 	
-				this.indentRadios = this.$('input[name=json-pretty-indent]');
+				this.indentRadios = this.$('input[name=jsonyaml-json-indent]');
 	
 				for (let s of this.switches) {
 					s.onchange = () => this.toJSON();

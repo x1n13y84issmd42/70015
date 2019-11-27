@@ -9,14 +9,14 @@ let CompUtils = {
 	 * @param {Function} ctorFn A constructor function to fine tune the element's internals.
 	 * @param {boolean} container When set to true, then entire component subtree will be processed automatically.
 	 */
-	newConstructor: function(tag, classes, ctorFn, container) {
+	newConstructor: function(tag, classes, ctorFn, container, ignoredAttributes) {
 		return function(srcE, args, ctx) {
 			if (! srcE) {
 				srcE = document.createElement('div');
 			}
 
 			let E = CompUtils.create(tag, classes);
-			CompUtils.copyAttributes(E, srcE, ctx);
+			CompUtils.copyAttributes(E, srcE, ctx, ignoredAttributes);
 			CompUtils.applyArgs(E, args);
 
 			ctorFn && ctorFn(E, srcE, args, ctx);
@@ -122,8 +122,11 @@ let CompUtils = {
 	 * @param {HTMLElement} E An HTML element, corresponding to the source element of the component template (srcE).
 	 * @param {HTMLElement} srcE A source root element of a component template.
 	 * @param {CompContext} ctx A context.
+	 * @param {string[]} ignoredAttributes A list of tag attributes to not include in copy.
 	 */
-	copyAttributes: function(E, srcE, ctx) {
+	copyAttributes: function(E, srcE, ctx, ignoredAttributes) {
+		ignoredAttributes = [].concat(ignoredAttributes, ['_id']);
+
 		if (srcE.attributes._id) {
 			E.id = ctx.id(srcE.attributes._id.nodeValue);
 		}
@@ -133,6 +136,15 @@ let CompUtils = {
 		for (let dsI in srcE.dataset) {
 			E.dataset[dsI] = srcE.dataset[dsI];
 		}
+
+		for (let aI = 0; aI < srcE.attributes.length; aI++) {
+			let attr = srcE.attributes[aI];
+			if (ignoredAttributes && ignoredAttributes.includes(attr.name)) {
+				//
+			} else {
+				E.setAttribute(attr.name, attr.value);
+			}
+		}
 	},
 
 	attributeValue: function(attrE, ctx) {
@@ -141,6 +153,10 @@ let CompUtils = {
 			v = ctx.iid(v.substr(1));
 		}
 		return v;
+	},
+
+	id: function() {
+		return Array.from(arguments).filter(v=>!!v).join('-');
 	}
 };
 
@@ -162,8 +178,7 @@ let Comp = {
 	section: CompUtils.newConstructor('section'),
 	
 	input: CompUtils.newConstructor('div', [], (wrapperE, srcE, args, ctx) => {
-		wrapperE.id = null;
-		delete wrapperE.id;
+		wrapperE.removeAttribute('id');;
 
 		if (! srcE.attributes._id) {
 			srcE.setAttribute('_id', 'in');
@@ -172,8 +187,16 @@ let Comp = {
 		let inputE = document.createElement('input');
 		inputE.type = 'text';
 
-		if (srcE.attributes.type && srcE.attributes.type.nodeValue === 'area') {
-			inputE = document.createElement('textarea');
+		if (srcE.attributes.type) {
+			switch (srcE.attributes.type.nodeValue) {
+				case 'area':
+					inputE = document.createElement('textarea');
+				break;
+				
+				default:
+					inputE.type = 'radio';
+				break;
+			}
 		}
 
 		if (srcE.attributes.value) {
@@ -192,7 +215,20 @@ let Comp = {
 			wrapperE.insertBefore(labelE, inputE);
 		}
 	}),
-	
+
+	radio: CompUtils.newConstructor('label', [], (labelE, srcE, args, ctx) => {
+		let radioE = document.createElement("input");
+		radioE.type = "radio";
+		radioE.name = CompUtils.id(ctx.get('parentID'), srcE.attributes.name.value);
+		radioE.value = srcE.attributes.value.value;
+		labelE.appendChild(radioE);
+		labelE.appendChild(document.createTextNode(srcE.innerText));
+		radioE.id = labelE.htmlFor = CompUtils.id(radioE.name, srcE.attributes._id.value);
+		labelE.removeAttribute('id');
+	}, false, ['name', 'value']),
+
+	overcontrols: CompUtils.newConstructor('div', ['overcontrols']),
+
 	undercontrols: CompUtils.newConstructor('div', ['undercontrols'], (ucE, srcE, args, ctx) => {
 		if (srcE.attributes.error) {
 			ucE.appendChild(Comp.error(undefined, args, ctx));

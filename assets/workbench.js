@@ -71,7 +71,10 @@ class Workbench {
 
 	switch(toID, data) {
 		console.log(`Switching to ${toID}.`, data);
-		// this.unfocus(this.currentlyFocusedID);
+		if (!this.tools[toID]) {
+			throw new Error(`The tool #${toID} does not exist.`);
+		}
+
 		let t1 = (this.currentlyFocusedID !== undefined) && this.tools[this.currentlyFocusedID];
 		let t2 = this.tools[toID];
 		let cfid = this.currentlyFocusedID;
