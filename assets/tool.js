@@ -77,26 +77,19 @@ class Tool extends DOMOps {
 	 * @param {string} cid Component id. An element with that id will be copied and used as a component. 
 	 * The rest of arguments will be used to fill the component template tructure with content.
 	 */
-	Component() {
-		let args = Array.prototype.slice.apply(arguments);
-		let compID = args.shift();
+	Component(compID, args) {
 		let compE = this.$(`.components .${compID}`)[0];
+
+		if (! compE) {
+			compE = document.querySelector(`#components > .${compID}`)
+		}
 	
 		if (compE) {
-			compE = compE.cloneNode(true);
-	
-			for (let aI in args) {
-				if (compE.dataset.arg == aI) {
-					this.T(compE, args[aI])
-				}
-
-				let nodes = Array.from(compE.querySelectorAll(`[data-arg="${aI}"]`));
-				this.T(nodes, args[aI])
-			}
-
+			compE = Component.New(compE, args);
 			compE.querySelectorAll('.copy').forEach((v, k, p) => {v.onclick = onclickCopyToClipboard});
-	
 			return compE;
+		} else {
+			throw new Error(`Could not find a '${compID}' component.`);
 		}
 	}
 

@@ -45,6 +45,10 @@ let CompUtils = {
 	 */
 	newConstructor: function(tag, classes, ctorFn, container) {
 		return function(srcE, args, ctx) {
+			if (! srcE) {
+				srcE = document.createElement('div');
+			}
+
 			let E = CompUtils.create(tag, classes);
 			CompUtils.copyAttributes(E, srcE, ctx);
 			CompUtils.applyArgs(E, args);
@@ -87,11 +91,14 @@ let CompUtils = {
 	 */
 	clone: function(srcE, args) {
 		let E = srcE.cloneNode();
-		E.innerText = srcE.innerText;
-		CompUtils.applyArgs(E, args);
-
-		for (let srcECN of srcE.children) {
-			E.appendChild(CompUtils.transform(srcECN, args));
+		
+		if (srcE.children && srcE.children.length) {
+			for (let srcECN of srcE.children) {
+				E.appendChild(CompUtils.transform(srcECN, args));
+			}
+		} else {
+			E.innerText = srcE.innerText;
+			CompUtils.applyArgs(E, args);
 		}
 
 		return E;
@@ -220,9 +227,15 @@ let Comp = {
 		}
 	}),
 	
-	undercontrols: CompUtils.newConstructor('div', ['undercontrols']),
+	undercontrols: CompUtils.newConstructor('div', ['undercontrols'], (ucE, srcE, args, ctx) => {
+		if (srcE.attributes.error) {
+			ucE.appendChild(Comp.error(undefined, args, ctx));
+		}
+	}),
 	
-	error: CompUtils.newConstructor('p', ['error']),
+	error: CompUtils.newConstructor('p', ['error'], (errorE, srcE, args, ctx) => {
+		errorE.innerHTML = '<i class="fas fa-exclamation-circle"></i><span>&nbsp;</span>';
+	}),
 	
 	copy: CompUtils.newConstructor('a', ['copy'], (aE, srcE, args, ctx) => {
 		srcE.attributes.from && (aE.dataset.from = CompUtils.attributeValue(srcE.attributes.from, ctx));
@@ -617,26 +630,19 @@ class Tool extends DOMOps {
 	 * @param {string} cid Component id. An element with that id will be copied and used as a component. 
 	 * The rest of arguments will be used to fill the component template tructure with content.
 	 */
-	Component() {
-		let args = Array.prototype.slice.apply(arguments);
-		let compID = args.shift();
+	Component(compID, args) {
 		let compE = this.$(`.components .${compID}`)[0];
+
+		if (! compE) {
+			compE = document.querySelector(`#components > .${compID}`)
+		}
 	
 		if (compE) {
-			compE = compE.cloneNode(true);
-	
-			for (let aI in args) {
-				if (compE.dataset.arg == aI) {
-					this.T(compE, args[aI])
-				}
-
-				let nodes = Array.from(compE.querySelectorAll(`[data-arg="${aI}"]`));
-				this.T(nodes, args[aI])
-			}
-
+			compE = Component.New(compE, args);
 			compE.querySelectorAll('.copy').forEach((v, k, p) => {v.onclick = onclickCopyToClipboard});
-	
 			return compE;
+		} else {
+			throw new Error(`Could not find a '${compID}' component.`);
 		}
 	}
 

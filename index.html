@@ -25,7 +25,32 @@
 			let bench = new Workbench(config);
 		</script>
 
-		<div id="toolshed">
+
+
+<div id="components">
+
+	<dialog data-purpose="social" id="share" title="${title}">
+		<section id="link">
+			<input type="text" label="<<${title} a link>>" value="${value}" />
+			<undercontrols>
+				<copy from="link"></copy>
+			</undercontrols>
+		</section>
+	</dialog>
+
+	<div class="kvpair kvsection">
+		<span class="label">${label}</span>
+	</div>
+
+	<div class="kvpair kv">
+		<span class="label">${k}</span>
+		<span class="value copy">${v}</span>
+	</div>
+
+</div>
+
+<div id="toolshed">
+	<!-- it continues in epilogue.html -->
 
 
 <tool _id="base64" data-tag="base64" name="Base64">
@@ -178,24 +203,103 @@
 
 
 
-		</div>
+<tool _id="urlparse" name="Parse URL" data-tag="urlparse">
+	<section _id="url">
+		<input type="text" label="URL">
+		<undercontrols error="true"></undercontrols>
+	</section>
 
-		<div id="ui-stash">
-			<dialog data-purpose="social" id="share" title="${title}">
-				<section id="link">
-					<input type="text" label="<<${title} a link>>" value="${value}" />
-					<undercontrols>
-						<error></error>
-						<copy from="link"></copy>
-						<reuse>
-							<urlparse url="share-link-in">Parse it</urlparse>
-							<urldecode ascii="share-link-in">URL-encode it</urldecode>
-							<base64 ascii="share-link-in">Base64-encode it</base64>
-							<hasher input="share-link-in">Hash it!</hasher>
-						</reuse>
-					</undercontrols>
-				</section>
-			</dialog>
+	<section _id="fields">
+		<div class="fields"></div>
+	</section>
+</tool>
+
+<script>
+	class TURLParser extends Tool {
+		constructor(id) {
+			super(id);
+			this.URL = this.Section("url").Input();
+
+			this.URL.oninput = () => {
+				let fields = this.$(".fields")[0];
+				while (fields.firstChild)
+					fields.removeChild(fields.firstChild);
+
+				let url;
+
+				try {
+					url = new URL(this.URL.value);
+					this.Section("url").Error(undefined);
+					this.Section('fields').Show();
+				} catch (err) {
+					this.Section("url").Error(err.message);
+					this.Section('fields').Hide();
+					return;
+				}
+				
+				fields.appendChild(this.Component("kvsection", {label: "URL"}));
+				url.protocol && fields.appendChild(this.Component("kv", {k: "Protocol", v: url.protocol}));
+				url.hostname && fields.appendChild(this.Component("kv", {k: "Domain", v: url.hostname}));
+				url.username && fields.appendChild(this.Component("kv", {k: "Username", v: url.username}));
+				url.password && fields.appendChild(this.Component("kv", {k: "Password", v: url.password}));
+
+				if (url.path) {
+					fields.appendChild(this.Component("kv", {k: "Path", v: url.path}));
+				} else if (url.pathname) {
+					fields.appendChild(this.Component("kv", {k: "Path", v: url.pathname}));
+				}
+
+				url.port && fields.appendChild(this.Component("kv", {k: "Port", v: url.port}));
+				url.hash && fields.appendChild(this.Component("kv", {k: "Hash", v: url.hash}));
+
+				if (url.search && url.searchParams) {
+					fields.appendChild(this.Component("kvsection", {label: "Query"}));
+					let sp = this.improveSearchParams(url.searchParams);
+					for (let spn in sp) {
+						let spv = sp[spn];
+						if (spv instanceof Array) {
+							let t = true;
+							for (let spvv of spv) {
+								fields.appendChild(this.Component("kv", {k: t ? (t = false, spn) : "", v: spvv}));
+							}
+						} else {
+							fields.appendChild(this.Component("kv", {k: spn, v: spv}));
+						}
+					}
+				}
+			};
+		}
+		
+		/**
+		 * Stores array values as arrays.
+		 */
+		improveSearchParams(urlsp) {
+			let res = {};
+			for (let e of urlsp.entries()) {
+				let qspn = e[0];
+				let qspv = e[1];
+
+				if (qspn.substr(-2) == '[]') {
+					qspn = qspn.substr(0, qspn.length - 2);
+					res[qspn] || (res[qspn] = []);
+					res[qspn].push(qspv);
+				} else {
+					res[qspn] = qspv;
+				}
+			}
+
+			return res;
+		}
+	}
+
+	let comp = Component.New('urlparse');
+	window.tools.appendChild(comp);
+	bench.add(new TURLParser(comp));
+	
+</script>
+
+
+		<!-- opened in components.html -->
 		</div>
 
 		<script>

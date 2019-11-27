@@ -11,6 +11,10 @@ let CompUtils = {
 	 */
 	newConstructor: function(tag, classes, ctorFn, container) {
 		return function(srcE, args, ctx) {
+			if (! srcE) {
+				srcE = document.createElement('div');
+			}
+
 			let E = CompUtils.create(tag, classes);
 			CompUtils.copyAttributes(E, srcE, ctx);
 			CompUtils.applyArgs(E, args);
@@ -53,11 +57,14 @@ let CompUtils = {
 	 */
 	clone: function(srcE, args) {
 		let E = srcE.cloneNode();
-		E.innerText = srcE.innerText;
-		CompUtils.applyArgs(E, args);
-
-		for (let srcECN of srcE.children) {
-			E.appendChild(CompUtils.transform(srcECN, args));
+		
+		if (srcE.children && srcE.children.length) {
+			for (let srcECN of srcE.children) {
+				E.appendChild(CompUtils.transform(srcECN, args));
+			}
+		} else {
+			E.innerText = srcE.innerText;
+			CompUtils.applyArgs(E, args);
 		}
 
 		return E;
@@ -186,9 +193,15 @@ let Comp = {
 		}
 	}),
 	
-	undercontrols: CompUtils.newConstructor('div', ['undercontrols']),
+	undercontrols: CompUtils.newConstructor('div', ['undercontrols'], (ucE, srcE, args, ctx) => {
+		if (srcE.attributes.error) {
+			ucE.appendChild(Comp.error(undefined, args, ctx));
+		}
+	}),
 	
-	error: CompUtils.newConstructor('p', ['error']),
+	error: CompUtils.newConstructor('p', ['error'], (errorE, srcE, args, ctx) => {
+		errorE.innerHTML = '<i class="fas fa-exclamation-circle"></i><span>&nbsp;</span>';
+	}),
 	
 	copy: CompUtils.newConstructor('a', ['copy'], (aE, srcE, args, ctx) => {
 		srcE.attributes.from && (aE.dataset.from = CompUtils.attributeValue(srcE.attributes.from, ctx));

@@ -230,11 +230,11 @@
 	display: table-row;
 }
 
-.kvpair.section {
+.kvpair.kvsection {
 	font-size: 22px;
 }
 
-.kvpair.section > .label{
+.kvpair.kvsection > .label{
 	padding-top: 20px;
 }
 
