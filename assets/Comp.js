@@ -214,7 +214,7 @@ let Comp = {
 			CompUtils.applyArgs(labelE, args);
 			wrapperE.insertBefore(labelE, inputE);
 		}
-	}),
+	}, false, ['type', 'rows', 'cols', 'spellcheck', 'disabled', 'autofocus', 'tabindex', 'label']),
 
 	radio: CompUtils.newConstructor('label', [], (labelE, srcE, args, ctx) => {
 		let radioE = document.createElement("input");
