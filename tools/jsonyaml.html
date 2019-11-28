@@ -1,66 +1,54 @@
-<div class="tool unfocused" id="jsonyaml" data-tag="json yaml">
-	<div class="preview">
-		<h1>JSON &#x2942 YAML</h1>
-	</div>
-	<div class="controls smaller">
-		<section id="jsonyaml-json">
-			<label for="jsonyaml-json-in">JSON</label>
+<tool _id="jsonyaml" data-tag="json yaml" name="JSON &#x2942 YAML">
+	<section _id="json">
+		<div class="overcontrols">
+			<label for="">Indent with</label>
 
-			<div class="overcontrols">
-				<label for="">Indent with</label>
-				<label for="json-pretty-indent-tabs"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-tabs" value="	" checked>tabs</label>
-				<label for="json-pretty-indent-4spaces"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-4spaces" value="    ">4 spaces</label>
-				<label for="json-pretty-indent-2spaces"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-2spaces" value="  ">2 spaces</label>
-			</div>
-			
-			<textarea id="jsonyaml-json-in" cols="30" rows="9"></textarea>
-			
-			<div class="undercontrols">
-				<p class="error"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
-				<div class="menu switch">
-					<span>Reuse<i class="fas fa-recycle"></i></span>
-					<div>
-						<a data-to="json" data-value-from="json" data-value-as="input">Format it</a>
-					</div>
-				</div>
-				<a class="copy" data-from="jsonyaml-json-in"><span>Copy</span><i class="far fa-copy"></i></a>
-			</div>
-		</section>
+			<radio name="indent" _id="tabs" value="	">tabs</radio>
+			<radio name="indent" _id="4spaces" value="    ">4 spaces</radio>
+			<radio name="indent" _id="2spaces" value="  ">2 spaces</radio>
+		</div>
 		
-		<div class="bothways">It works ⇃both↾ ways.</div>
+		<input type="area" rows="9" label="JSON"></input>
 		
-		<section id="jsonyaml-yaml">
-			<label for="jsonyaml-yaml-in">YAML</label>
+		<undercontrols>
+			<reuse>
+				<json input="#json">Format it</json>
+			</reuse>
+			<copy from="#json"></copy>
+		</undercontrols>
+	</section>
+	
+	<div class="bothways">It works ⇃both↾ ways.</div>
+	
+	<section _id="yaml">
+		<input type="area" rows="9" label="YAML"></input>
+		<undercontrols error="true">
+			<copy from="#yaml"></copy>
+		</undercontrols>
+	</section>
+</tool>
 
-			<textarea id="jsonyaml-yaml-in" cols="30" rows="9"></textarea>
+<script src="./node_modules/js-yaml/dist/js-yaml.min.js"></script>
 
-			<div class="undercontrols">
-				<p class="error inset"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
-				<a class="copy" data-from="jsonyaml-yaml-in"><span>Copy</span><i class="far fa-copy"></i></a>
-			</div>
-		</section>
-	</div>
-
-	<script src="./node_modules/js-yaml/dist/js-yaml.min.js"></script>
-
-	<script>
+<script>
+	(()=>{
 		class TJSONYAML extends Tool {
 			constructor(id) {
 				super(id);
-
+	
 				this.json = this.Section('json').Input();
 				this.yaml = this.Section('yaml').Input();
-
+	
 				this.json.oninput = () => this.toYAML();
 				this.yaml.oninput = () => this.toJSON();
-
-				this.indentRadios = this.$('input[name=json-pretty-indent]');
-
+	
+				this.indentRadios = this.$('input[name=jsonyaml-json-indent]');
+	
 				for (let s of this.switches) {
 					s.onchange = () => this.toJSON();
 				}
 			}
-
+	
 			toYAML() {
 				try {
 					this.yaml.value = jsyaml.safeDump(JSON.parse(this.json.value));
@@ -91,7 +79,7 @@
 					this.Section('json').Disable();
 				}
 			}
-
+	
 			import(data) {
 				if (data.json) {
 					this.json.value = data.json;
@@ -104,13 +92,15 @@
 				}
 			}
 		}
+	
+		let comp = Component.New('jsonyaml');
+		window.tools.appendChild(comp);
+		bench.add(new TJSONYAML(comp));
+	})()
+</script>
 
-		bench.add(new TJSONYAML('jsonyaml'));
-	</script>
-
-	<style>
-		#jsonyaml .subcontrols {
-			width: 1000px;
-		}
-	</style>
-</div>
+<style>
+	#jsonyaml .subcontrols {
+		width: 1000px;
+	}
+</style>

@@ -1,36 +1,34 @@
-<div class="tool unfocused col1" id="urldecode" data-tag="url trans encode decode">
-	<div class="preview"><h1>Transcode URL</h1></div>
-	<div class="controls smaller">
-		<section>
-			<label for="urldecode-encinput">URL-encoded string</label>
-			<input type="text" class="encinput" id="urldecode-encinput" autofocus tabindex="11">
-			<div class="undercontrols">
-				<a class="copy" data-from="urldecode-encinput"><span>Copy</span><i class="far fa-copy"></i></a>
-			</div>
-		</section>
+<tool _id="urldecode" data-tag="url trans encode decode" name="Transcode URL">
+	<section _id="encoded">
+		<input type="text" autofocus tabindex="11" label="URL-encoded string">
+		<undercontrols>
+			<copy from="#encoded"></copy>
+		</undercontrols>
+	</section>
 
-		<div class="bothways">It works ⇃both↾ ways.</div>
+	<div class="bothways">It works ⇃both↾ ways.</div>
 
-		<section>
-			<label for="urldecode-encinput">ASCII string</label>		
-			<input type="text" class="decinput" id="urldecode-decinput" tabindex="12" onFocus="this.tabIndex=10;" onBlur="this.tabIndex=12;">
-			<div class="undercontrols">
-				<a class="copy" data-from="urldecode-decinput"><span>Copy</span><i class="far fa-copy"></i></a>
-			</div>
-		</section>
-	</div>
+	<section _id="decoded" >
+		<label for="urldecode-encinput"></label>		
+		<input type="text" label="ASCII string" tabindex="12" onFocus="this.tabIndex=10;" onBlur="this.tabIndex=12;">
+		<undercontrols>
+			<copy from="#decoded"></copy>
+		</undercontrols>
+	</section>
+</tool>
 
-	<script>
+<script>
+	(() => {
 		class TURLTranscoder extends Tool {
 			constructor(id) {
 				super(id)
-
-				this.encoded = this.$('.encinput')[0];
-				this.decoded = this.$('.decinput')[0];
+				
+				this.encoded = this.Section('encoded').Input();
+				this.decoded = this.Section('decoded').Input();
 				this.encoded.oninput = () => this.decode();
 				this.decoded.oninput = () => this.encode();
 			}
-	
+			
 			decode() {
 				this.decoded.value = decodeURIComponent(this.encoded.value);
 			};
@@ -38,10 +36,11 @@
 			encode() {
 				this.encoded.value = encodeURIComponent(this.decoded.value);
 			};
-
+			
 		}
-
-		bench.add(new TURLTranscoder("urldecode"));
-
-	</script>
-</div>
+		
+		let comp = Component.New('urldecode');
+		window.tools.appendChild(comp);
+		bench.add(new TURLTranscoder(comp));
+	})()
+</script>

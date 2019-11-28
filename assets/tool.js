@@ -1,24 +1,27 @@
 class Tool extends DOMOps {
 	constructor(id) {
-		let E = document.getElementById(id);
+		let E = id;
+
+		if (typeof id == 'string') {
+			E = document.getElementById(id);
+		}
 
 		super(E);
 	
 		E.querySelector('.preview').onclick = () => {
-			focus(id);
+			focus(this.ID);
 		}
 
-		this.ID = id;
 		this.configuration = {};
 	
 		let ctrls = E.querySelector(".controls");
 
-		//	Creating a "X Close" link.
+		//	Creating a "Close" link.
 		let eClose = document.createElement("a");
 		eClose.innerHTML = "<i>&#x1F860</i><span>CLOSE</span>";
 		eClose.classList.add("close");
 		eClose.onclick = (e) => {
-			unfocus(id);
+			unfocus(this.ID);
 			e.preventDefault();
 			e.cancelBubble=true;
 		};
@@ -34,8 +37,9 @@ class Tool extends DOMOps {
 			let as = eSw.querySelectorAll('a');
 			for (let a of as) {
 				a.onclick = () => {
-					let data = {};
-					data[a.dataset.valueAs] = this.Section(a.dataset.valueFrom).Input().value;
+					let data = {...a.dataset};
+					delete data.to;
+					data = Object.fromEntries(Object.entries(data).map(e=>[e[0],document.getElementById(e[1]).value]))
 					this.bench.switch(a.dataset.to, data)
 				};
 			}
@@ -63,7 +67,7 @@ class Tool extends DOMOps {
 		if (n) {
 			return new Section(n);
 		} else {
-			throw new Error(`Could not find a section ${this.sid}.`);
+			throw new Error(`Could not find a section ${sid}.`);
 		}
 	}
 
@@ -73,26 +77,19 @@ class Tool extends DOMOps {
 	 * @param {string} cid Component id. An element with that id will be copied and used as a component. 
 	 * The rest of arguments will be used to fill the component template tructure with content.
 	 */
-	Component() {
-		let args = Array.prototype.slice.apply(arguments);
-		let compID = args.shift();
+	Component(compID, args) {
 		let compE = this.$(`.components .${compID}`)[0];
+
+		if (! compE) {
+			compE = document.querySelector(`#components > .${compID}`)
+		}
 	
 		if (compE) {
-			compE = compE.cloneNode(true);
-	
-			for (let aI in args) {
-				if (compE.dataset.arg == aI) {
-					this.T(compE, args[aI])
-				}
-
-				let nodes = Array.from(compE.querySelectorAll(`[data-arg="${aI}"]`));
-				this.T(nodes, args[aI])
-			}
-
+			compE = Component.New(compE, args);
 			compE.querySelectorAll('.copy').forEach((v, k, p) => {v.onclick = onclickCopyToClipboard});
-	
 			return compE;
+		} else {
+			throw new Error(`Could not find a '${compID}' component.`);
 		}
 	}
 

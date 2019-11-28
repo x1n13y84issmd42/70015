@@ -28,13 +28,13 @@
 	opacity: 0;
 }
 
-.tool > .controls.smaller {
+.controls.smaller {
 	padding: 5% 20%;
     width: 60%;
     /* min-height: 80%; */
 }
 
-/* .tool > .controls > section .error.inset {
+/* .controls > section .error.inset {
 	position: absolute;
 	bottom: 0;
 	background: red;
@@ -43,45 +43,45 @@
 	border-top-right-radius: 9px;
 } */
 
-.tool > .controls > section.hidden {
+.controls > section.hidden {
 	display: none;
 }
 
-.tool > .controls > section {
+.controls > section {
 	position: relative;
 	margin-bottom: 3em;
 }
 
-.tool > .controls .left {
+.controls .left {
 	float: left;
 	width: 50%;
 }
 
-.tool > .controls .left.l40 {width: 40%;}
-.tool > .controls .left.l35 {width: 35%;}
-.tool > .controls .left.l30 {width: 30%;}
+.controls .left.l40 {width: 40%;}
+.controls .left.l35 {width: 35%;}
+.controls .left.l30 {width: 30%;}
 
-.tool > .controls .right.r60 {width: 60%;}
-.tool > .controls .right.r65 {width: 65%;}
-.tool > .controls .right.r70 {width: 70%;}
+.controls .right.r60 {width: 60%;}
+.controls .right.r65 {width: 65%;}
+.controls .right.r70 {width: 70%;}
 
-.tool > .controls .right {
+.controls .right {
 	float: right;
 	width: 50%;
 }
 
-.tool > .controls .subsection {
+.controls .subsection {
 	padding: 0;
 	margin-bottom: 2em;
 	display: block;
 }
 
-.tool > .controls h1 {
+.controls h1 {
 	font-size: 22pt;
 	font-weight: normal;
 }
 
-.tool > .controls {
+.controls {
 	padding: 5% 10%;
 	width: 80%;
 	/* min-height: 80%; */
@@ -90,33 +90,33 @@
 	transition: opacity 200ms ease-in-out, background-color 200ms ease-in-out;
 }
 
-.tool > .controls .error {
+.controls .error {
 	color: red;
 	/* font-size: 16pt; */
 	font-family: Quicksand;
 	visibility: hidden;
 }
 
-.tool > .controls .error.shown {
+.controls .error.shown {
 	visibility: visible;
 }
 
-.tool > .controls .error > i.fas {
+.controls .error > i.fas {
 	margin-right: 5px;
 }
 
-.tool > .controls label {
+.controls label {
 	font-size: 22pt;
 	font-family: Quicksand;
 	transition: color 200ms ease-in-out;
 }
 
-.tool > .controls textarea {
+.controls textarea {
 	padding-bottom: 35px;
 }
 
-.tool > .controls textarea,
-.tool > .controls input[type=text] {
+.controls textarea,
+.controls input[type=text] {
 	width: 100%;
 	min-width: 100%;
 	max-width: 100%;
@@ -129,15 +129,15 @@
 	border: 2px #00BBFF solid;
 }
 
-.tool > .controls textarea[disabled],
-.tool > .controls input[type=text][disabled] {
+.controls textarea[disabled],
+.controls input[type=text][disabled] {
 	border: 1px #AAA solid;
 	background: #F3F3F3;
 	white-space: pre;
 }
 
-.tool > .controls section > input[type=text],
-.tool > .controls section > textarea {
+.controls section input[type=text],
+.controls section textarea {
 	margin-bottom: 0;
 }
 
@@ -176,13 +176,13 @@
 	-o-transition: all 100ms ease-in-out;
 }
 
-.tool > .controls .overcontrols > label {
+.controls .overcontrols > label {
 	font-size: 12pt;
 	font-family: Quicksand;
 	margin-right: 20px;
 }
 
-.tool > .controls a.close {
+.controls a.close {
 	font-family: Quicksand;
 	font-size: 24pt;
 	position: absolute;
@@ -192,18 +192,18 @@
 	cursor: pointer;
 }
 
-.tool > .controls a.close > * {
+.controls a.close > * {
 	line-height: 24pt;
 	vertical-align: middle;
 }
 
-.tool > .controls a.close > i {
+.controls a.close > i {
 	font-style: normal;
 	font-size: 32pt;
 	margin-right: 5px;
 }
 
-.tool > .controls a.close > span {
+.controls a.close > span {
 	font-size: 12pt;
 	opacity: 0;
 	transition: all 100ms ease-in-out;
@@ -212,7 +212,7 @@
 	-o-transition: all 100ms ease-in-out;
 }
 
-.tool > .controls a.close:hover > span {
+.controls a.close:hover > span {
 	font-size: 12pt;
 	opacity: 1;
 	transition: all 100ms ease-in-out;
@@ -230,11 +230,11 @@
 	display: table-row;
 }
 
-.kvpair.section {
-	font-size: 22px;
+.kvpair.kvsection {
+	font-size: 22pt;
 }
 
-.kvpair.section > .label{
+.kvpair.kvsection > .label{
 	padding-top: 20px;
 }
 
@@ -370,7 +370,7 @@
 	/* position: relative; */
 }
 
-.tool > .controls {
+.controls {
 	position: absolute;
 	left: 0;
 	top: 0;
@@ -424,7 +424,7 @@
 	border-radius: 0 0 10px 10px;
 }
 
-.tool .undercontrols {
+.controls .undercontrols {
 	float: right;
     width: 100%;
     /* padding-top: 10px; */
@@ -433,7 +433,7 @@
 	position: relative;
 }
 
-.tool .undercontrols > * {
+.controls .undercontrols > * {
     background: #00BBFF;
     padding: 7px 15px;
     border-radius: 0 0 10px 10px;
@@ -446,7 +446,7 @@
     margin-left: 20px;
 }
 
-.tool .undercontrols > .error {
+.controls .undercontrols > .error {
 	background-color: red;
     float: left;
     margin-left: 0;
@@ -454,11 +454,11 @@
 	cursor: default;
 }
 
-.tool .undercontrols > a > i.far {
+.controls .undercontrols > a > i.far {
 	margin-left: 10px;
 }
 
-.tool .undercontrols > .menu {
+.controls .undercontrols > .menu {
 	padding: 0;
 }
 

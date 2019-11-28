@@ -1,38 +1,29 @@
-<div class="tool unfocused col2" id="base64" data-tag="base64">
-	<div class="preview"><h1>Base64</h1></div>
-	<div class="controls smaller">
-		<section id="base64-base64">
-			<label for="base64-base64-in">Base64-encoded string</label>
-			<textarea id="base64-base64-in" autofocus tabindex="21" rows="8"></textarea>
-			<div class="undercontrols">
-				<div class="menu switch">
-					<span>Reuse<i class="fas fa-recycle"></i></span>
-					<div>
-						<a data-to="hasher" data-value-from="base64" data-value-as="input">Hash it</a>
-					</div>
-				</div>
-				<a class="copy" data-from="base64-base64-in"><span>Copy</span><i class="far fa-copy"></i></a>
-			</div>
-		</section>
-		
-		<div class="bothways">It works ⇃both↾ ways.</div>
-		
-		<section id="base64-ascii">
-			<label for="base64-ascii-in">ASCII string</label>
-			<textarea id="base64-ascii-in" tabindex="22" onFocus="this.tabIndex=20;" onBlur="this.tabIndex=22;" rows="8"></textarea>
-			<div class="undercontrols">
-				<div class="menu switch">
-					<span>Reuse<i class="fas fa-recycle"></i></span>
-					<div>
-						<a data-to="hasher" data-value-from="ascii" data-value-as="input">Hash it</a>
-					</div>
-				</div>
-				<a class="copy" data-from="base64-ascii-in"><span>Copy</span><i class="far fa-copy"></i></a>
-			</div>
-		</section>
-	</div>
+<tool _id="base64" data-tag="base64" name="Base64">
+	<section _id="base64">
+		<input type="area" rows="8" label="Base64-encoded string">
+		<undercontrols>
+			<reuse>
+				<hasher input="#base64">Hash it</hasher>
+			</reuse>
+			<copy from="#base64"></copy>
+		</undercontrols>
+	</section>
 
-	<script>
+	<div class="bothways">It works ⇃both↾ ways.</div>
+
+	<section _id="ascii">
+		<input type="area" rows="8" label="ASCII string">
+		<undercontrols>
+			<reuse>
+				<hasher input="#ascii">Hash it</hasher>
+			</reuse>
+			<copy from="#ascii"></copy>
+		</undercontrols>
+	</section>
+</tool>
+
+<script>
+	(() => {
 		class TBase64 extends Tool {
 			constructor(id) {
 				super(id);
@@ -65,6 +56,8 @@
 			}
 		}
 
-		bench.add(new TBase64("base64"));
-	</script>
-</div>
+		let comp = Component.New('base64');
+		window.tools.appendChild(comp);
+		bench.add(new TBase64(comp));
+	})()
+</script>

@@ -6,12 +6,14 @@ class Workbench {
 		this.config = config;
 		this.tools = {};
 		this.currentlyFocusedID = undefined;
+		this.toolsE = document.getElementById('tools');
 	}
 
 	add(tool) {
 		this.tools[tool.ID] = tool;
 		tool.setBench(this);
 		tool.reconfigure(this.config.get(tool.ID));
+		this.toolsE.appendChild(tool.E);
 	}
 	
 	focus(id) {
@@ -69,8 +71,11 @@ class Workbench {
 
 	switch(toID, data) {
 		console.log(`Switching to ${toID}.`, data);
-		// this.unfocus(this.currentlyFocusedID);
-		let t1 = this.tools[this.currentlyFocusedID];
+		if (!this.tools[toID]) {
+			throw new Error(`The tool #${toID} does not exist.`);
+		}
+
+		let t1 = (this.currentlyFocusedID !== undefined) && this.tools[this.currentlyFocusedID];
 		let t2 = this.tools[toID];
 		let cfid = this.currentlyFocusedID;
 		this.tools[toID].import(data);
@@ -88,7 +93,7 @@ class Workbench {
 				this.unfocus(id);
 			}, 400, cfid, t1, t2);
 		} else {
-			throw new Error(`One of the tools not found while switching.`);
+			throw new Error(`One of the tools was not found while switching.`);
 		}
 	}
 }

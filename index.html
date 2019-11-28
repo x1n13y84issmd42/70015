@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<link href="https://fonts.googleapis.com/css?family=Abril+Fatface|Share+Tech+Mono|Bungee+Shade|Cinzel:400,700|Cute+Font|Faster+One|Monoton|Permanent+Marker|Quicksand:400,600,700|Special+Elite|Vibes&display=swap" rel="stylesheet">
-		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+		<link href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous" rel="stylesheet">
 		<link href="./style.css" rel="stylesheet">
 		<script src="./app.js"></script>
 	</head>
@@ -18,49 +18,69 @@
 			</div>
 		</div>
 
+		<div id="tools"></div>
+
 		<script>
 			let config = new LSConfig();
 			let bench = new Workbench(config);
 		</script>
 
-		<div id="tools">
 
 
-<div class="tool unfocused col2" id="base64" data-tag="base64">
-	<div class="preview"><h1>Base64</h1></div>
-	<div class="controls smaller">
-		<section id="base64-base64">
-			<label for="base64-base64-in">Base64-encoded string</label>
-			<textarea id="base64-base64-in" autofocus tabindex="21" rows="8"></textarea>
-			<div class="undercontrols">
-				<div class="menu switch">
-					<span>Reuse<i class="fas fa-recycle"></i></span>
-					<div>
-						<a data-to="hasher" data-value-from="base64" data-value-as="input">Hash it</a>
-					</div>
-				</div>
-				<a class="copy" data-from="base64-base64-in"><span>Copy</span><i class="far fa-copy"></i></a>
-			</div>
+<div id="components">
+
+	<dialog data-purpose="social" id="share" title="${title}">
+		<section id="link">
+			<input type="text" label="<<${title} a link>>" value="${value}" />
+			<undercontrols>
+				<copy from="link"></copy>
+			</undercontrols>
 		</section>
-		
-		<div class="bothways">It works ⇃both↾ ways.</div>
-		
-		<section id="base64-ascii">
-			<label for="base64-ascii-in">ASCII string</label>
-			<textarea id="base64-ascii-in" tabindex="22" onFocus="this.tabIndex=20;" onBlur="this.tabIndex=22;" rows="8"></textarea>
-			<div class="undercontrols">
-				<div class="menu switch">
-					<span>Reuse<i class="fas fa-recycle"></i></span>
-					<div>
-						<a data-to="hasher" data-value-from="ascii" data-value-as="input">Hash it</a>
-					</div>
-				</div>
-				<a class="copy" data-from="base64-ascii-in"><span>Copy</span><i class="far fa-copy"></i></a>
-			</div>
-		</section>
+	</dialog>
+
+	<div class="kvpair kvsection">
+		<span class="label">${label}</span>
 	</div>
 
-	<script>
+	<div class="kvpair kv">
+		<span class="label">${k}</span>
+		<span class="value copy">${v}</span>
+	</div>
+
+	<h1 class="sectionLabel">${label}</h1>
+
+</div>
+
+<div id="toolshed">
+	<!-- it continues in epilogue.html -->
+
+
+<tool _id="base64" data-tag="base64" name="Base64">
+	<section _id="base64">
+		<input type="area" rows="8" label="Base64-encoded string">
+		<undercontrols>
+			<reuse>
+				<hasher input="#base64">Hash it</hasher>
+			</reuse>
+			<copy from="#base64"></copy>
+		</undercontrols>
+	</section>
+
+	<div class="bothways">It works ⇃both↾ ways.</div>
+
+	<section _id="ascii">
+		<input type="area" rows="8" label="ASCII string">
+		<undercontrols>
+			<reuse>
+				<hasher input="#ascii">Hash it</hasher>
+			</reuse>
+			<copy from="#ascii"></copy>
+		</undercontrols>
+	</section>
+</tool>
+
+<script>
+	(() => {
 		class TBase64 extends Tool {
 			constructor(id) {
 				super(id);
@@ -93,60 +113,51 @@
 			}
 		}
 
-		bench.add(new TBase64("base64"));
-	</script>
-</div>
+		let comp = Component.New('base64');
+		window.tools.appendChild(comp);
+		bench.add(new TBase64(comp));
+	})()
+</script>
 
 
-<div class="tool unfocused col2" id="hasher" data-tag="hash md5 sha des">
-	<div class="preview"><h1>Hashes &amp; ciphers</h1></div>
-	<div class="controls smaller">
-		<label for="hasher-input">Input</label>
-		<input type="text" id="hasher-input" autofocus tabindex="21" />
 
-		<div class="checksums subsection"></div>
-		
-		<div class="hashes subsection"></div>
-		
-		<label for="hasherKeyInput">Encryption key</label>
-		<input type="text" class="hasherKeyInput" id="hasherKeyInput" autofocus tabindex="21" />
-		<div class="ciphers subsection"></div>
-	</div>
+<tool _id="hasher" data-tag="hash md5 sha des" name="Hashes &amp; ciphers">
+	<input type="text" _id="input" autofocus tabindex="21" label="Input"/>
+	<input type="text" class="hasherKeyInput" _id="key" autofocus tabindex="21" label="Encryption key" />
 
-	<script src="./node_modules/crypto-js/crypto-js.js?dontcachemepls"></script>
-	<script src="./node_modules/js-crc/build/crc.min.js?dontcachemepls"></script>
+	<div class="results subsection"></div>
+</tool>
 
-	<script>
+<script src="./node_modules/crypto-js/crypto-js.js?dontcachemepls"></script>
+<script src="./node_modules/js-crc/build/crc.min.js?dontcachemepls"></script>
+
+<script>
+	(() => {
 		class THasher extends Tool {
 			constructor(id) {
 				super(id);
 
 				this.input = this.$$('input');
-				this.keyInput = this.$('.hasherKeyInput')[0];
+				this.keyInput = this.$$('key');
 
 				this.keyInput.oninput = this.input.oninput = () => this.hash();
 			}
 
 			hash() {
-				let checksums = this.$(".checksums")[0];
-				let hashes = this.$(".hashes")[0];
-				let ciphers = this.$(".ciphers")[0];
+				let results = this.$(".results")[0];
+				this.removeChildren(results);
 
-				this.removeChildren(checksums);
-				this.removeChildren(hashes);
-				this.removeChildren(ciphers);
-
-				checksums.appendChild(this.Component('sectionLabel', "Checksums"));
-				checksums.appendChild(this.Component('hash', "CRC16", crc16(this.input.value)));
-				checksums.appendChild(this.Component('hash', "CRC32", crc32(this.input.value)));
+				results.appendChild(this.Component('kvsection', {label: "Checksums"}));
+				results.appendChild(this.Component('kv', {k: "CRC16", v: crc16(this.input.value)}));
+				results.appendChild(this.Component('kv', {k: "CRC32", v: crc32(this.input.value)}));
 				
-				hashes.appendChild(this.Component('sectionLabel', "Hashes"));
-				hashes.appendChild(this.Component('hash', "MD5", '' + CryptoJS.MD5(this.input.value)));
-				hashes.appendChild(this.Component('hash', "SHA1", '' + CryptoJS.SHA1(this.input.value)));
-				hashes.appendChild(this.Component('hash', "SHA3", '' + CryptoJS.SHA3(this.input.value)));
-				hashes.appendChild(this.Component('hash', "SHA256", '' + CryptoJS.SHA256(this.input.value)));
+				results.appendChild(this.Component('kvsection', {label: "Hashes"}));
+				results.appendChild(this.Component('kv', {k: "MD5", v: '' + CryptoJS.MD5(this.input.value)}));
+				results.appendChild(this.Component('kv', {k: "SHA1", v: '' + CryptoJS.SHA1(this.input.value)}));
+				results.appendChild(this.Component('kv', {k: "SHA3", v: '' + CryptoJS.SHA3(this.input.value)}));
+				results.appendChild(this.Component('kv', {k: "SHA256", v: '' + CryptoJS.SHA256(this.input.value)}));
 				
-				ciphers.appendChild(this.Component('sectionLabel', "Ciphers"));
+				results.appendChild(this.Component('kvsection', {label: "Ciphers"}));
 				let aes = CryptoJS.AES.encrypt(this.input.value, this.keyInput.value, {keySize: 128});
 				let des = CryptoJS.DES.encrypt(this.input.value, this.keyInput.value, {keySize: 128});
 				// console.log(aes);
@@ -156,8 +167,8 @@
 				// console.log(aes.key);
 				// console.log(aes.iv);
 				// console.log(aes.ciphertext);
-				ciphers.appendChild(this.Component('hash', "AES", aes.ciphertext.toString()));
-				ciphers.appendChild(this.Component('hash', "DES", des.ciphertext.toString()));
+				results.appendChild(this.Component('kv', {k: "AES", v: aes.ciphertext.toString()}));
+				results.appendChild(this.Component('kv', {k: "DES", v: des.ciphertext.toString()}));
 			};
 
 			import(data) {
@@ -168,98 +179,68 @@
 			}
 		}
 
-		bench.add(new THasher("hasher"));
-	</script>
-
-	<div class="components">
-		<h1 class="sectionLabel" data-arg="0"></h1>
-
-		<div class="hash kvpair">
-			<span class="label" data-arg="0"></span>
-			<span class="value copy" data-arg="1"></span>
-		</div>
-	</div>
-</div>
+		let comp = Component.New('hasher');
+		window.tools.appendChild(comp);
+		bench.add(new THasher(comp));
+	})()
+</script>
 
 
-<div class="tool unfocused col3" id="json" data-tag="json format">
-	<div class="preview"><h1>Format JSON</h1></div>
-	<div class="controls smaller">
-		<section id="json-input">
-			<label for="json-input-in">JSON input</label>
-			<textarea id="json-input-in" autofocus spellcheck="false" style="margin-bottom:0;" rows="5"></textarea>
-			<div class="undercontrols">
-				<p class="jsonErr error inset"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
-				<div class="menu switch">
-					<span>Reuse<i class="fas fa-recycle"></i></span>
-					<div>
-						<a data-to="jsonyaml" data-value-from="input" data-value-as="json">Convert it to YAML</a>
-						<a data-to="base64" data-value-from="input" data-value-as="ascii">Base64-encode it</a>
-					</div>
-				</div>
-			</div>
-		</section>
-		
-		<section id="json-1liner" class="disabled">
-			<label for="json-1liner-in">One-liner JSON</label>
-			<div class="overcontrols">
-				<label for="json-1liner-quote-identifiers">
-					<input type="checkbox" name="json-1liner-quote-identifiers" id="json-1liner-quote-identifiers" checked>
-					Quote names
-				</label>
-				<label for="json-1liner-escape-quotes">
-					<input type="checkbox" name="json-1liner-escape-quotes" id="json-1liner-escape-quotes">
-					Escape the quotes
-				</label>
-			</div>
-			<input type="text" id="json-1liner-in" spellcheck="false" disabled>
-			<div class="undercontrols">
-				<div class="menu switch">
-					<span>Reuse<i class="fas fa-recycle"></i></span>
-					<div>
-						<a data-to="jsonyaml" data-value-from="1liner" data-value-as="json">Convert it to YAML</a>
-						<a data-to="base64" data-value-from="1liner" data-value-as="ascii">Base64-encode it</a>
-					</div>
-				</div>
-				<a class="copy" data-from="json-1liner"><span>Copy</span><i class="far fa-copy"></i></a>
-			</div>
-		</section>
-		
-		<section id="json-pretty" class="disabled">
-			<label for="json-pretty-in">Pretty JSON</label>
-			<div class="overcontrols">
-				<label for="">Indent with</label>
-				<label for="json-pretty-indent-tabs"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-tabs" value="	" checked>tabs</label>
-				<label for="json-pretty-indent-4spaces"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-4spaces" value="    ">4 spaces</label>
-				<label for="json-pretty-indent-2spaces"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-2spaces" value="  ">2 spaces</label>
-			</div>
-			<textarea id="json-pretty-in" rows="8" spellcheck="false" disabled></textarea>
-			<div class="undercontrols">
-				<div class="menu switch">
-					<span>Reuse<i class="fas fa-recycle"></i></span>
-					<div>
-						<a data-to="jsonyaml" data-value-from="pretty" data-value-as="json">Convert it to YAML</a>
-						<a data-to="base64" data-value-from="pretty" data-value-as="ascii">Base64-encode it</a>
-					</div>
-				</div>
-				<a class="copy" data-from="json-pretty-in"><span>Copy</span><i class="far fa-copy"></i></a>
-			</div>
-		</section>
-	</div>
+
+<tool _id="json" data-tag="json format" name="Format JSON">
+	<section _id="input">
+		<input type="area" autofocus spellcheck="false" rows="5" label="JSON input">
+		<undercontrols error="true">
+			<reuse>
+				<jsonyaml json="#input">Convert it to YAML</jsonyaml>
+				<base64 ascii="#input">Base64-encode it</base64>
+			</reuse>
+		</undercontrols>
+	</section>
 	
-	<script>
+	<section _id="1liner" class="disabled">
+		<overcontrols>
+			<checkbox _id="quote-identifiers" checked >Quote names</checkbox>
+			<checkbox _id="escape-quotes" >Escape the quotes</checkbox>
+		</overcontrols>
+		<input type="text" spellcheck="false" disabled label="One-liner JSON">
+		<undercontrols>
+			<copy from="#1liner">
+		</undercontrols>
+	</section>
+	
+	<section _id="pretty" class="disabled">
+		<overcontrols>
+			<label for="">Indent with</label>
+			<radio name="indent" _id="tabs" value="	">tabs</radio>
+			<radio name="indent" _id="4spaces" value="    ">4 spaces</radio>
+			<radio name="indent" _id="2spaces" value="  ">2 spaces</radio>
+		</overcontrols>
+		<input type="area" rows="8" spellcheck="false" disabled label="Pretty JSON">
+		<undercontrols>
+			<reuse>
+				<jsonyaml json="#pretty">Convert it to YAML</jsonyaml>
+				<base64 ascii="#pretty">Base64-encode it</base64>
+			</reuse>
+			<copy from="#pretty">
+		</undercontrols>
+	</section>
+</tool>
+	
+<script>
+	(()=>{
 		class TJSON extends Tool {
 			constructor(id) {
 				super(id);
-
+	
 				this.inJSON = this.Section('input').Input();
 				this.outPretty = this.Section('pretty').Input();
 				this.out1liner = this.Section('1liner').Input();
-
+	
 				this.indentRadios = this.$('input[name=json-pretty-indent]');
 				this.quoteCheck = this.Section('1liner').$$('quote-identifiers');
 				this.escapeQuotesCheck = this.Section('1liner').$$('escape-quotes');
-
+	
 				let update = () => {
 					this.update();
 				}
@@ -268,14 +249,14 @@
 				for (let s of switches) {
 					s.onchange = update;
 				}
-
+	
 				this.inJSON.oninput = update;
 			}
-
+	
 			import(data) {
 				data.json && (this.$$('json', data.json));
 			}
-
+	
 			update() {
 				try {
 					let v = JSON.parse(this.inJSON.value);
@@ -291,7 +272,7 @@
 					this.Section('pretty').Disable();
 				}
 			}
-
+	
 			prettyPrint(v) {
 				if (v) {
 					let indent = "\t";
@@ -300,18 +281,18 @@
 							indent = r.value;
 						}
 					}
-
+	
 					this.outPretty.value = JSON.stringify(v, null, indent);
 					this.outPretty.rows = this.outPretty.value.split("\n").length;
 				}
 			}
-
+	
 			oneliner(v) {
 				if (v) {
 					this.out1liner.value = JSON1Liner(undefined, v, this.quoteCheck.checked, this.escapeQuotesCheck.checked);
 				}
 			}
-
+	
 			import(data) {
 				if (data.input) {
 					this.inJSON.value = data.input;
@@ -319,20 +300,20 @@
 				}
 			}
 		}
-
+	
 		function JSON1Liner(name, v, quoteNames, escapeQuotes) {
 			let quote = (s) => escapeQuotes ? `\\"${s}\\"` : `"${s}"`;
 			let namePrefix = '';
 			name && (namePrefix = name) && quoteNames && (namePrefix = quote(namePrefix));
 			namePrefix && (namePrefix += ':');
-
+	
 			switch (typeof v) {
 				case 'string':
 					return namePrefix + quote(v);
-
+	
 				case 'number':
 					return namePrefix + v.toString();
-
+	
 				case 'object':
 					if (v instanceof Array) {
 						return `${namePrefix}[` + v.map((vv) => JSON1Liner(undefined, vv, quoteNames, escapeQuotes)).join(',') + "]";
@@ -342,81 +323,72 @@
 					break
 			}
 		}
+	
+		let comp = Component.New('json');
+		window.tools.appendChild(comp);
+		bench.add(new TJSON(comp));
+	})()
+</script>
 
-		bench.add(new TJSON('json'));
-	</script>
-
-	<style>
-		#json .subcontrols {
-			width: 1000px;
-		}
-	</style>
-</div>
+<style>
+	#json .subcontrols {
+		width: 1000px;
+	}
+</style>
 
 
-<div class="tool unfocused" id="jsonyaml" data-tag="json yaml">
-	<div class="preview">
-		<h1>JSON &#x2942 YAML</h1>
-	</div>
-	<div class="controls smaller">
-		<section id="jsonyaml-json">
-			<label for="jsonyaml-json-in">JSON</label>
 
-			<div class="overcontrols">
-				<label for="">Indent with</label>
-				<label for="json-pretty-indent-tabs"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-tabs" value="	" checked>tabs</label>
-				<label for="json-pretty-indent-4spaces"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-4spaces" value="    ">4 spaces</label>
-				<label for="json-pretty-indent-2spaces"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-2spaces" value="  ">2 spaces</label>
-			</div>
-			
-			<textarea id="jsonyaml-json-in" cols="30" rows="9"></textarea>
-			
-			<div class="undercontrols">
-				<p class="error"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
-				<div class="menu switch">
-					<span>Reuse<i class="fas fa-recycle"></i></span>
-					<div>
-						<a data-to="json" data-value-from="json" data-value-as="input">Format it</a>
-					</div>
-				</div>
-				<a class="copy" data-from="jsonyaml-json-in"><span>Copy</span><i class="far fa-copy"></i></a>
-			</div>
-		</section>
+<tool _id="jsonyaml" data-tag="json yaml" name="JSON &#x2942 YAML">
+	<section _id="json">
+		<div class="overcontrols">
+			<label for="">Indent with</label>
+
+			<radio name="indent" _id="tabs" value="	">tabs</radio>
+			<radio name="indent" _id="4spaces" value="    ">4 spaces</radio>
+			<radio name="indent" _id="2spaces" value="  ">2 spaces</radio>
+		</div>
 		
-		<div class="bothways">It works ⇃both↾ ways.</div>
+		<input type="area" rows="9" label="JSON"></input>
 		
-		<section id="jsonyaml-yaml">
-			<label for="jsonyaml-yaml-in">YAML</label>
+		<undercontrols>
+			<reuse>
+				<json input="#json">Format it</json>
+			</reuse>
+			<copy from="#json"></copy>
+		</undercontrols>
+	</section>
+	
+	<div class="bothways">It works ⇃both↾ ways.</div>
+	
+	<section _id="yaml">
+		<input type="area" rows="9" label="YAML"></input>
+		<undercontrols error="true">
+			<copy from="#yaml"></copy>
+		</undercontrols>
+	</section>
+</tool>
 
-			<textarea id="jsonyaml-yaml-in" cols="30" rows="9"></textarea>
+<script src="./node_modules/js-yaml/dist/js-yaml.min.js"></script>
 
-			<div class="undercontrols">
-				<p class="error inset"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
-				<a class="copy" data-from="jsonyaml-yaml-in"><span>Copy</span><i class="far fa-copy"></i></a>
-			</div>
-		</section>
-	</div>
-
-	<script src="./node_modules/js-yaml/dist/js-yaml.min.js"></script>
-
-	<script>
+<script>
+	(()=>{
 		class TJSONYAML extends Tool {
 			constructor(id) {
 				super(id);
-
+	
 				this.json = this.Section('json').Input();
 				this.yaml = this.Section('yaml').Input();
-
+	
 				this.json.oninput = () => this.toYAML();
 				this.yaml.oninput = () => this.toJSON();
-
-				this.indentRadios = this.$('input[name=json-pretty-indent]');
-
+	
+				this.indentRadios = this.$('input[name=jsonyaml-json-indent]');
+	
 				for (let s of this.switches) {
 					s.onchange = () => this.toJSON();
 				}
 			}
-
+	
 			toYAML() {
 				try {
 					this.yaml.value = jsyaml.safeDump(JSON.parse(this.json.value));
@@ -447,7 +419,7 @@
 					this.Section('json').Disable();
 				}
 			}
-
+	
 			import(data) {
 				if (data.json) {
 					this.json.value = data.json;
@@ -460,64 +432,63 @@
 				}
 			}
 		}
+	
+		let comp = Component.New('jsonyaml');
+		window.tools.appendChild(comp);
+		bench.add(new TJSONYAML(comp));
+	})()
+</script>
 
-		bench.add(new TJSONYAML('jsonyaml'));
-	</script>
-
-	<style>
-		#jsonyaml .subcontrols {
-			width: 1000px;
-		}
-	</style>
-</div>
+<style>
+	#jsonyaml .subcontrols {
+		width: 1000px;
+	}
+</style>
 
 
-<div class="tool unfocused col3" id="unixtime" data-tag="unixtime">
-	<div class="preview"><h1>Unixtime</h1></div>
-	<div class="controls smaller">
-		<section id="unixtime-ts">
-			<label for="unixtime-ts-in">Unixtime</label>
-			<input type="text" class="inTimestamp" id="unixtime-ts-in" autofocus>
-			<div class="undercontrols">
-				<p class="error"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
+
+<tool _id="unixtime" data-tag="unixtime" name="Unixtime">
+	<section _id="ts">
+		<input type="text" autofocus label="Unixtime">
+		<undercontrols error="true"></undercontrols>
+	</section>
+
+	<section _id="formatted">
+		<div class="left l35">
+			<div class="typographyDate copy">
+				<p class="l10">&nbsp;</p>
 			</div>
-		</section>
+		</div>
+		
+		<div class="right r65">
+			<div class="dates"></div>
+		</div>
+	</section>
+</tool>
 
-		<section id="unixtime-formatted">
-			<div class="left l35">
-				<div class="typographyDate copy">
-					<p class="l10">&nbsp;</p>
-				</div>
-			</div>
-			
-			<div class="right r65">
-				<div class="dates"></div>
-			</div>
-		</section>
-	</div>
-
-	<script>
+<script>
+	(()=>{
 		class TUnixtime extends Tool {
 			constructor(id) {
 				super(id);
-
+	
 				this.inTS = this.Section('ts').Input();
 				this.dates = this.$('.dates')[0];
-
+	
 				this.inTS.oninput = () => this.convert();
 			}
-
+	
 			convert() {
 				this.removeChildren(this.dates);
-
+	
 				try {
 					let d = new Date();
 					d.setTime(this.inTS.value.trim() + "000")
-
+	
 					this.typographyDate(d);
-					this.dates.appendChild(this.Component("sectionLabel", "Formatted"))
-					this.dates.appendChild(this.Component("kvpair", "ISO 8601", d.toISOString()))
-					this.dates.appendChild(this.Component("kvpair", "Date.toString()", d.toString()))
+					this.dates.appendChild(this.Component("kvsection", {label: "Formatted"}))
+					this.dates.appendChild(this.Component("kv", {k: "ISO 8601", v: d.toISOString()}))
+					this.dates.appendChild(this.Component("kv", {k: "Date.toString()", v: d.toString()}))
 					this.Section('ts').Error(undefined);
 					this.Section('formatted').Show();
 				} catch (err) {
@@ -525,7 +496,7 @@
 					this.Section('formatted').Hide();
 				}
 			}
-
+	
 			typographyDate(d) {
 				let timezone = undefined;
 				let eTZT = document.createElement("p");
@@ -539,7 +510,7 @@
 					minute: "numeric",
 					second: "numeric",
 				};
-
+	
 				let locale = "en-US";
 				let weekday = d.toLocaleDateString(locale, {timezone, weekday: "long"});
 				let weekdayClass = "l" + weekday.length;
@@ -553,7 +524,7 @@
 				let time = d.toLocaleDateString(locale, {timezone, hour: "numeric", minute: "numeric", second: "numeric"}).split(', ')[1] || "00";
 				let timeClass = "l" + time.length;
 				let timeE = document.createElement("p");
-
+	
 				weekdayE.classList.add("weekday", weekdayClass);
 				weekdayE.innerHTML = weekday;
 				monthE.classList.add("month", monthClass);
@@ -562,164 +533,159 @@
 				yearE.innerHTML = year;
 				timeE.classList.add("time", timeClass);
 				timeE.innerHTML = time;
-
+	
 				let tdE = this.$(".typographyDate")[0];
 				this.removeChildren(tdE)
-
+	
 				tdE.dataset.value = `${weekday}, ${month} ${year}, ${time}`;
-
+	
 				tdE.appendChild(weekdayE);
 				tdE.appendChild(monthE);
 				tdE.appendChild(yearE);
 				tdE.appendChild(timeE);
 			}
 		}
+	
+		let comp = Component.New('unixtime');
+		window.tools.appendChild(comp);
+		bench.add(new TUnixtime(comp));
+	})()
+</script>
 
-		bench.add(new TUnixtime("unixtime"));
+<style>
+	#unixtime .dates .kvpair > .label {
+		padding-bottom: 2em;
+	}
 
-	</script>
+	.timezones > p {
+		opacity: 0;
+		font-family: Quicksand;
+	}
 
-	<style>
-		.timezones > p {
-			opacity: 0;
-			font-family: Quicksand;
-		}
+	.timezones > p.v {
+		opacity: 1;
+		font-family: Quicksand;
+		transition: all 400ms ease-in-out;
+		-webkit-transition: all 400ms ease-in-out;
+		-moz-transition: all 400ms ease-in-out;
+		-o-transition: all 400ms ease-in-out;
+	}
+								
+	.timezones > p > i {
+		margin-right: 20px;
+		font-family: inherit;
+		display: inline-block;
+		width: 110px;
+		font-style: normal;
+	}
 
-		.timezones > p.v {
-			opacity: 1;
-			font-family: Quicksand;
-			transition: all 400ms ease-in-out;
-			-webkit-transition: all 400ms ease-in-out;
-			-moz-transition: all 400ms ease-in-out;
-			-o-transition: all 400ms ease-in-out;
-		}
-									
-		.timezones > p > i {
-			margin-right: 20px;
-			font-family: inherit;
-			display: inline-block;
-			width: 110px;
-			font-style: normal;
-		}
+	.timezones > p > span {
+		font-family: inherit;
+		font-size: 125%;
+	}
 
-		.timezones > p > span {
-			font-family: inherit;
-			font-size: 125%;
-		}
+	#unixtime .typographyDate {
+		font-family: Share Tech Mono;
+		width: 370px;
+	}
+	
+	#unixtime .typographyDate:hover {
+		transform: scale(1.05);
+		color: #00BBFF;
+		transition: all 100ms ease-in-out;
+	}
 
-		#unixtime .typographyDate {
-			font-family: Share Tech Mono;
-			width: 370px;
-		}
-		
-		#unixtime .typographyDate:hover {
-			transform: scale(1.05);
-			color: #00BBFF;
-			transition: all 100ms ease-in-out;
-		}
+	#unixtime .typographyDate > * {
+		font-family: inherit;
+		line-height: 90%;
+		cursor: pointer;
+	}
 
-		#unixtime .typographyDate > * {
-			font-family: inherit;
-			line-height: 90%;
-			cursor: pointer;
-		}
-
-		#unixtime .typographyDate > .l1 {font-size: 500.00pt;}
-		#unixtime .typographyDate > .l2 {font-size: 250.00pt;}
-		#unixtime .typographyDate > .l3 {font-size: 166.67pt;}
-		#unixtime .typographyDate > .l4 {font-size: 125.00pt;}
-		#unixtime .typographyDate > .l5 {font-size: 100.00pt;}
-		#unixtime .typographyDate > .l6 {font-size: 83.33pt;}
-		#unixtime .typographyDate > .l7 {font-size: 71.43pt;}
-		#unixtime .typographyDate > .l8 {font-size: 62.50pt;}
-		#unixtime .typographyDate > .l9 {font-size: 55.56pt;}
-		#unixtime .typographyDate > .l10 {font-size: 50.00pt;}
-		#unixtime .typographyDate > .l11 {font-size: 45.45pt;}
-		#unixtime .typographyDate > .l12 {font-size: 41.67pt;}
-		#unixtime .typographyDate > .l13 {font-size: 38.46pt;}
-		#unixtime .typographyDate > .l14 {font-size: 35.71pt;}
-		#unixtime .typographyDate > .l15 {font-size: 33.33pt;}
-		#unixtime .typographyDate > .l16 {font-size: 31.25pt;}
-		#unixtime .typographyDate > .l17 {font-size: 29.41pt;}
-		#unixtime .typographyDate > .l18 {font-size: 27.78pt;}
-		#unixtime .typographyDate > .l19 {font-size: 26.32pt;}
-		#unixtime .typographyDate > .l20 {font-size: 25.00pt;}
-		#unixtime .typographyDate > .l21 {font-size: 23.81pt;}
-		#unixtime .typographyDate > .l22 {font-size: 22.73pt;}
-		#unixtime .typographyDate > .l23 {font-size: 21.74pt;}
-		#unixtime .typographyDate > .l24 {font-size: 20.83pt;}
-		#unixtime .typographyDate > .l25 {font-size: 20.00pt;}
-		#unixtime .typographyDate > .l26 {font-size: 19.23pt;}
-		#unixtime .typographyDate > .l27 {font-size: 18.52pt;}
-		#unixtime .typographyDate > .l28 {font-size: 17.86pt;}
-		#unixtime .typographyDate > .l29 {font-size: 17.24pt;}
-		#unixtime .typographyDate > .l30 {font-size: 16.67pt;}
-		#unixtime .typographyDate > .l31 {font-size: 16.13pt;}
-		#unixtime .typographyDate > .l32 {font-size: 15.63pt;}
-		#unixtime .typographyDate > .l33 {font-size: 15.15pt;}
-		#unixtime .typographyDate > .l34 {font-size: 14.71pt;}
-		#unixtime .typographyDate > .l35 {font-size: 14.29pt;}
-		#unixtime .typographyDate > .l36 {font-size: 13.89pt;}
-		#unixtime .typographyDate > .l37 {font-size: 13.51pt;}
-		#unixtime .typographyDate > .l38 {font-size: 13.16pt;}
-		#unixtime .typographyDate > .l39 {font-size: 12.82pt;}
-		#unixtime .typographyDate > .l40 {font-size: 12.50pt;}
-		#unixtime .typographyDate > .l41 {font-size: 12.20pt;}
-		#unixtime .typographyDate > .l42 {font-size: 11.90pt;}
-		#unixtime .typographyDate > .l43 {font-size: 11.63pt;}
-		#unixtime .typographyDate > .l44 {font-size: 11.36pt;}
-		#unixtime .typographyDate > .l45 {font-size: 11.11pt;}
-		#unixtime .typographyDate > .l46 {font-size: 10.87pt;}
-		#unixtime .typographyDate > .l47 {font-size: 10.64pt;}
-		#unixtime .typographyDate > .l48 {font-size: 10.42pt;}
-		#unixtime .typographyDate > .l49 {font-size: 10.20pt;}
-		#unixtime .typographyDate > .l50 {font-size: 10.00pt;}
-	</style>
-
-	<div class="components">
-		<h1 class="sectionLabel" data-arg="0"></h1>
-
-		<div class="kvpair">
-			<span class="label" data-arg="0"></span>
-			<a class="value copy" data-arg="1" style="padding-bottom:2em;"></a>
-		</div>
-	</div>
-</div>
+	#unixtime .typographyDate > .l1 {font-size: 500.00pt;}
+	#unixtime .typographyDate > .l2 {font-size: 250.00pt;}
+	#unixtime .typographyDate > .l3 {font-size: 166.67pt;}
+	#unixtime .typographyDate > .l4 {font-size: 125.00pt;}
+	#unixtime .typographyDate > .l5 {font-size: 100.00pt;}
+	#unixtime .typographyDate > .l6 {font-size: 83.33pt;}
+	#unixtime .typographyDate > .l7 {font-size: 71.43pt;}
+	#unixtime .typographyDate > .l8 {font-size: 62.50pt;}
+	#unixtime .typographyDate > .l9 {font-size: 55.56pt;}
+	#unixtime .typographyDate > .l10 {font-size: 50.00pt;}
+	#unixtime .typographyDate > .l11 {font-size: 45.45pt;}
+	#unixtime .typographyDate > .l12 {font-size: 41.67pt;}
+	#unixtime .typographyDate > .l13 {font-size: 38.46pt;}
+	#unixtime .typographyDate > .l14 {font-size: 35.71pt;}
+	#unixtime .typographyDate > .l15 {font-size: 33.33pt;}
+	#unixtime .typographyDate > .l16 {font-size: 31.25pt;}
+	#unixtime .typographyDate > .l17 {font-size: 29.41pt;}
+	#unixtime .typographyDate > .l18 {font-size: 27.78pt;}
+	#unixtime .typographyDate > .l19 {font-size: 26.32pt;}
+	#unixtime .typographyDate > .l20 {font-size: 25.00pt;}
+	#unixtime .typographyDate > .l21 {font-size: 23.81pt;}
+	#unixtime .typographyDate > .l22 {font-size: 22.73pt;}
+	#unixtime .typographyDate > .l23 {font-size: 21.74pt;}
+	#unixtime .typographyDate > .l24 {font-size: 20.83pt;}
+	#unixtime .typographyDate > .l25 {font-size: 20.00pt;}
+	#unixtime .typographyDate > .l26 {font-size: 19.23pt;}
+	#unixtime .typographyDate > .l27 {font-size: 18.52pt;}
+	#unixtime .typographyDate > .l28 {font-size: 17.86pt;}
+	#unixtime .typographyDate > .l29 {font-size: 17.24pt;}
+	#unixtime .typographyDate > .l30 {font-size: 16.67pt;}
+	#unixtime .typographyDate > .l31 {font-size: 16.13pt;}
+	#unixtime .typographyDate > .l32 {font-size: 15.63pt;}
+	#unixtime .typographyDate > .l33 {font-size: 15.15pt;}
+	#unixtime .typographyDate > .l34 {font-size: 14.71pt;}
+	#unixtime .typographyDate > .l35 {font-size: 14.29pt;}
+	#unixtime .typographyDate > .l36 {font-size: 13.89pt;}
+	#unixtime .typographyDate > .l37 {font-size: 13.51pt;}
+	#unixtime .typographyDate > .l38 {font-size: 13.16pt;}
+	#unixtime .typographyDate > .l39 {font-size: 12.82pt;}
+	#unixtime .typographyDate > .l40 {font-size: 12.50pt;}
+	#unixtime .typographyDate > .l41 {font-size: 12.20pt;}
+	#unixtime .typographyDate > .l42 {font-size: 11.90pt;}
+	#unixtime .typographyDate > .l43 {font-size: 11.63pt;}
+	#unixtime .typographyDate > .l44 {font-size: 11.36pt;}
+	#unixtime .typographyDate > .l45 {font-size: 11.11pt;}
+	#unixtime .typographyDate > .l46 {font-size: 10.87pt;}
+	#unixtime .typographyDate > .l47 {font-size: 10.64pt;}
+	#unixtime .typographyDate > .l48 {font-size: 10.42pt;}
+	#unixtime .typographyDate > .l49 {font-size: 10.20pt;}
+	#unixtime .typographyDate > .l50 {font-size: 10.00pt;}
+</style>
 
 
-<div class="tool unfocused col1" id="urldecode" data-tag="url trans encode decode">
-	<div class="preview"><h1>Transcode URL</h1></div>
-	<div class="controls smaller">
-		<section>
-			<label for="urldecode-encinput">URL-encoded string</label>
-			<input type="text" class="encinput" id="urldecode-encinput" autofocus tabindex="11">
-			<div class="undercontrols">
-				<a class="copy" data-from="urldecode-encinput"><span>Copy</span><i class="far fa-copy"></i></a>
-			</div>
-		</section>
 
-		<div class="bothways">It works ⇃both↾ ways.</div>
+<tool _id="urldecode" data-tag="url trans encode decode" name="Transcode URL">
+	<section _id="encoded">
+		<input type="text" autofocus tabindex="11" label="URL-encoded string">
+		<undercontrols>
+			<copy from="#encoded"></copy>
+		</undercontrols>
+	</section>
 
-		<section>
-			<label for="urldecode-encinput">ASCII string</label>		
-			<input type="text" class="decinput" id="urldecode-decinput" tabindex="12" onFocus="this.tabIndex=10;" onBlur="this.tabIndex=12;">
-			<div class="undercontrols">
-				<a class="copy" data-from="urldecode-decinput"><span>Copy</span><i class="far fa-copy"></i></a>
-			</div>
-		</section>
-	</div>
+	<div class="bothways">It works ⇃both↾ ways.</div>
 
-	<script>
+	<section _id="decoded" >
+		<label for="urldecode-encinput"></label>		
+		<input type="text" label="ASCII string" tabindex="12" onFocus="this.tabIndex=10;" onBlur="this.tabIndex=12;">
+		<undercontrols>
+			<copy from="#decoded"></copy>
+		</undercontrols>
+	</section>
+</tool>
+
+<script>
+	(() => {
 		class TURLTranscoder extends Tool {
 			constructor(id) {
 				super(id)
-
-				this.encoded = this.$('.encinput')[0];
-				this.decoded = this.$('.decinput')[0];
+				
+				this.encoded = this.Section('encoded').Input();
+				this.decoded = this.Section('decoded').Input();
 				this.encoded.oninput = () => this.decode();
 				this.decoded.oninput = () => this.encode();
 			}
-	
+			
 			decode() {
 				this.decoded.value = decodeURIComponent(this.encoded.value);
 			};
@@ -727,33 +693,30 @@
 			encode() {
 				this.encoded.value = encodeURIComponent(this.decoded.value);
 			};
-
+			
 		}
+		
+		let comp = Component.New('urldecode');
+		window.tools.appendChild(comp);
+		bench.add(new TURLTranscoder(comp));
+	})()
+</script>
 
-		bench.add(new TURLTranscoder("urldecode"));
-
-	</script>
-</div>
 
 
-<div class="tool unfocused" id="urlparse" data-tag="urlparse">
-	<div class="preview"><h1>Parse URL</h1></div>
-	<div class="controls smaller">
-		<section id="urlparse-url">
-			<label for="urlparse-url-in">URL</label>
-			<input type="text" id="urlparse-url-in" spellcheck="false" autofocus>
-			<div class="undercontrols">
-				<p class="error"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
-			</div>
-		</section>
+<tool _id="urlparse" name="Parse URL" data-tag="urlparse">
+	<section _id="url">
+		<input type="text" label="URL">
+		<undercontrols error="true"></undercontrols>
+	</section>
 
-		<section id="urlparse-fields">
-			<div class="fields">
-			</div>
-		</section>
-	</div>
+	<section _id="fields">
+		<div class="fields"></div>
+	</section>
+</tool>
 
-	<script>
+<script>
+	(() => {
 		class TURLParser extends Tool {
 			constructor(id) {
 				super(id);
@@ -761,8 +724,7 @@
 
 				this.URL.oninput = () => {
 					let fields = this.$(".fields")[0];
-					while (fields.firstChild)
-						fields.removeChild(fields.firstChild);
+					this.removeChidren(fields);
 
 					let url;
 
@@ -776,58 +738,42 @@
 						return;
 					}
 					
-					if (url.protocol) {
-						fields.appendChild(this.Component("urlprop", "Protocol", url.protocol));
-					}
-
-					if (url.hostname) {
-						fields.appendChild(this.Component("urlprop", "Domain", url.hostname));
-					}
-
-					if (url.username) {
-						fields.appendChild(this.Component("urlprop", "Username", url.username));
-					}
-
-					if (url.password) {
-						fields.appendChild(this.Component("urlprop", "Password", url.password));
-					}
+					fields.appendChild(this.Component("kvsection", {label: "URL"}));
+					url.protocol && fields.appendChild(this.Component("kv", {k: "Protocol", v: url.protocol}));
+					url.hostname && fields.appendChild(this.Component("kv", {k: "Domain", v: url.hostname}));
+					url.username && fields.appendChild(this.Component("kv", {k: "Username", v: url.username}));
+					url.password && fields.appendChild(this.Component("kv", {k: "Password", v: url.password}));
 
 					if (url.path) {
-						fields.appendChild(this.Component("urlprop", "Path", url.path));
+						fields.appendChild(this.Component("kv", {k: "Path", v: url.path}));
 					} else if (url.pathname) {
-						fields.appendChild(this.Component("urlprop", "Path", url.pathname));
+						fields.appendChild(this.Component("kv", {k: "Path", v: url.pathname}));
 					}
 
-					if (url.port) {
-						fields.appendChild(this.Component("urlprop", "Port", url.port));
-					}
+					url.port && fields.appendChild(this.Component("kv", {k: "Port", v: url.port}));
+					url.hash && fields.appendChild(this.Component("kv", {k: "Hash", v: url.hash}));
 
-					if (url.hash) {
-						fields.appendChild(this.Component("urlprop", "Hash", url.hash));
-					}
-
-					/* if (url.search) {
-						fields.appendChild(this.Component("urlprop", "Query string", url.search));
-					} */
-					
 					if (url.search && url.searchParams) {
-						fields.appendChild(this.Component("section", "Query"));
+						fields.appendChild(this.Component("kvsection", {label: "Query"}));
 						let sp = this.improveSearchParams(url.searchParams);
 						for (let spn in sp) {
 							let spv = sp[spn];
 							if (spv instanceof Array) {
 								let t = true;
 								for (let spvv of spv) {
-									fields.appendChild(this.Component("urlprop-sub", t ? (t = false, spn) : "", spvv));
+									fields.appendChild(this.Component("kv", {k: t ? (t = false, spn) : "", v: spvv}));
 								}
 							} else {
-								fields.appendChild(this.Component("urlprop-sub", spn, spv));
+								fields.appendChild(this.Component("kv", {k: spn, v: spv}));
 							}
 						}
 					}
 				};
 			}
 			
+			/**
+			 * Stores array values as arrays.
+			 */
 			improveSearchParams(urlsp) {
 				let res = {};
 				for (let e of urlsp.entries()) {
@@ -847,355 +793,334 @@
 			}
 		}
 
-		bench.add(new TURLParser("urlparse"));
-		
-	</script>
-
-	<div class="components">
-		<div class="urlprop kvpair">
-			<span class="label" data-arg="0"></span>
-			<span class="value copy" data-arg="1"></span>
-		</div>
-		
-		<div class="kvpair section">
-			<span class="label" data-arg="0"></span>
-			<span class="value">&nbsp;</span>
-		</div>
-		
-		<div class="urlprop-sub kvpair sub">
-			<span class="label" data-arg="0"></span>
-			<span class="value copy" data-arg="1"></span>
-		</div>
-	</div>
-</div>
+		let comp = Component.New('urlparse');
+		window.tools.appendChild(comp);
+		bench.add(new TURLParser(comp));
+	})()
+</script>
 
 
-<div class="tool unfocused col1" id="xml" data-tag="xml xpath">
-	<div class="preview"><h1>XML &amp; Xpath</h1></div>
-	<div class="controls smaller">
-		<section id="xml-xml">
-			<label for="xml-xml-in">XML input</label>
-			<textarea id="xml-xml-in" autofocus spellcheck="false" style="margin-bottom:0;" rows="5"></textarea>
-			<div class="undercontrols">
-				<p class="error"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
-				<div class="menu switch">
-					<span>Reuse<i class="fas fa-recycle"></i></span>
-					<div>
-						<a data-to="base64" data-value-from="xml" data-value-as="ascii">Base64-encode it</a>
-					</div>
-				</div>
-			</div>
-		</section>
 
-		<section id="xml-xpath">
-			<label for="xml-xpath-in">XPath query</label>
-			<input type="text" id="xml-xpath-in" spellcheck="false" style="margin-bottom:0;" />
-			<div class="undercontrols">
-				<p class="error"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
-				<a class="copy" data-from="xml-xpath-in"><span>Copy</span><i class="far fa-copy"></i></a>
-			</div>
-		</section>
-		
-		<section id="xml-nice" class="hidden">
-			<label>XML structure</label>
-			<div id="xml-nice-root"></div>
-		</section>
-	</div>
+<tool _id="xml" data-tag="xml xpath" name="XML &amp; Xpath">
+	<section _id="xml">
+		<input type="area" autofocus spellcheck="false" rows="5" label="XML input"></input>
+		<undercontrols error="true">
+			<reuse>
+				<base64 ascii="#xml">Base64-encode it</base64>
+			</reuse>
+		</undercontrols>
+	</section>
 
-	<script>
-		class TXML extends Tool {
-			constructor(id) {
-				super(id)
+	<section _id="xpath">
+		<input type="text" id="xml-xpath-in" spellcheck="false" label="XPath query"></input>
+		<undercontrols error="true">
+			<copy from="#xpath"></copy>
+		</undercontrols>
+	</section>
+	
+	<section _id="nice" class="hidden">
+		<label>XML structure</label>
+		<div id="xml-nice-root"></div>
+	</section>
+</tool>
 
-				this.xml = this.Section('xml').Input();
-				this.xpath = this.Section('xpath').Input();
-				this.xmlNice = this.Section('nice').$$('root');
+<script>
+	class TXML extends Tool {
+		constructor(id) {
+			super(id)
 
-				this.xml.oninput = () => this.update();
-				this.xpath.oninput = () => this.update();
-			}
+			this.xml = this.Section('xml').Input();
+			this.xpath = this.Section('xpath').Input();
+			this.xmlNice = this.Section('nice').$$('root');
 
-			parseXML(s) {
-				let parser = new DOMParser();
-				let xml = parser.parseFromString(s, "text/xml");
+			this.xml.oninput = () => this.update();
+			this.xpath.oninput = () => this.update();
+		}
 
-				this.checkXMLParserErrors(xml);
+		parseXML(s) {
+			let parser = new DOMParser();
+			let xml = parser.parseFromString(s, "text/xml");
 
-				return xml;
-			}
+			this.checkXMLParserErrors(xml);
 
-			//	DOMParser.parseFromString() won't throw or report errorss in any other way.
-			//	Instead it creates a document with a markup in it, where an information about error is stored.
-			//	Wat.
-			checkXMLParserErrors(xml) {
-				let parserError = xml.getElementsByTagName("parsererror")[0];
+			return xml;
+		}
 
-				if (parserError) {
-					let errors = parserError.getElementsByTagName("div");
-					if (errors.length) {
-						throw Array.from(errors).map(en => en.innerText).join('<br/>');
-					}
+		//	DOMParser.parseFromString() won't throw or report errorss in any other way.
+		//	Instead it creates a document with a markup in it, where an information about error is stored.
+		//	Wat.
+		checkXMLParserErrors(xml) {
+			let parserError = xml.getElementsByTagName("parsererror")[0];
+
+			if (parserError) {
+				let errors = parserError.getElementsByTagName("div");
+				if (errors.length) {
+					throw Array.from(errors).map(en => en.innerText).join('<br/>');
 				}
 			}
+		}
 
-			update() {
-				let xml;
-				let found = [];
+		update() {
+			let xml;
+			let found = [];
 
-				try {
-					xml = this.parseXML(this.xml.value);
-					this.Section('xml').Error();
-					this.Section('xpath').Enable();
-					this.Section('nice').Show();
-				} catch(err) {
-					this.Section('xml').Error(err);
-					this.Section('xpath').Disable();
-					this.Section('nice').Hide();
+			try {
+				xml = this.parseXML(this.xml.value);
+				this.Section('xml').Error();
+				this.Section('xpath').Enable();
+				this.Section('nice').Show();
+			} catch(err) {
+				this.Section('xml').Error(err);
+				this.Section('xpath').Disable();
+				this.Section('nice').Hide();
+			}
+			
+			try {
+				found = this.queryXPath(xml, this.xpath.value);
+				this.Section('xpath').Error();
+				this.Section('nice').Show();
+			} catch(err) {
+				this.Section('xpath').Error(err.message);
+				this.Section('nice').Hide();
+			}
+
+			while(this.xmlNice.firstChild) {
+				this.xmlNice.removeChild(this.xmlNice.firstChild)
+			}
+
+			this.renderXML(xml, this.xmlNice, found);
+		}
+
+		queryXPath(doc, xpath) {
+			var found = [];
+
+			if (doc && xpath) {
+				var xpe = new XPathEvaluator();
+				var result = xpe.evaluate(xpath, doc);
+				var res;
+				while (res = result.iterateNext()) {
+					found.push(res);
 				}
 				
-				try {
-					found = this.queryXPath(xml, this.xpath.value);
-					this.Section('xpath').Error();
-					this.Section('nice').Show();
-				} catch(err) {
-					this.Section('xpath').Error(err.message);
-					this.Section('nice').Hide();
-				}
-
-				while(this.xmlNice.firstChild) {
-					this.xmlNice.removeChild(this.xmlNice.firstChild)
-				}
-
-				this.renderXML(xml, this.xmlNice, found);
+				console.log("Found XML nodes: ", found);
 			}
 
-			queryXPath(doc, xpath) {
-				var found = [];
+			return found;
+		}
 
-				if (doc && xpath) {
-					var xpe = new XPathEvaluator();
-					var result = xpe.evaluate(xpath, doc);
-					var res;
-					while (res = result.iterateNext()) {
-						found.push(res);
-					}
-					
-					console.log("Found XML nodes: ", found);
+		nodeStr(node) {
+			let str = node.nodeName;
+			let attributes = '';
+			let position = 0;
+
+			if (node.attributes) {
+				let attrs = [];
+				for (let aI = 0; aI < node.attributes.length; aI++) {
+					let a = node.attributes[aI];
+					attrs.push(`${a.name}=${a.nodeValue}`);
 				}
 
-				return found;
+				attributes = `(${attrs.join(',')})`;
 			}
 
-			nodeStr(node) {
-				let str = node.nodeName;
-				let attributes = '';
-				let position = 0;
-
-				if (node.attributes) {
-					let attrs = [];
-					for (let aI = 0; aI < node.attributes.length; aI++) {
-						let a = node.attributes[aI];
-						attrs.push(`${a.name}=${a.nodeValue}`);
-					}
-
-					attributes = `(${attrs.join(',')})`;
-				}
-
-				let n = node;
-				while (n.previousSibling) {
-					n = n.previousSibling;
-					position++;
-				}
-
-				return `${str}#${position}${attributes}`;
+			let n = node;
+			while (n.previousSibling) {
+				n = n.previousSibling;
+				position++;
 			}
 
-			isFound(node, foundNodes) {
-				let nodePath = this.getNodePath(node);
+			return `${str}#${position}${attributes}`;
+		}
 
-				for (let fn of foundNodes) {
-					let fnPath = this.getNodePath(fn);
+		isFound(node, foundNodes) {
+			let nodePath = this.getNodePath(node);
 
-					if (nodePath === fnPath) {
-						return true;
-					}
+			for (let fn of foundNodes) {
+				let fnPath = this.getNodePath(fn);
+
+				if (nodePath === fnPath) {
+					return true;
 				}
-
-				return false;
 			}
 
-			getNodePath(xmlNode) {
-				let p = [];
-				let n = xmlNode;
-				while (n) {
-					p.push(this.nodeStr(n));
-					n = n.parentNode || n.ownerElement;
-				}
-				return p.join(',');
+			return false;
+		}
+
+		getNodePath(xmlNode) {
+			let p = [];
+			let n = xmlNode;
+			while (n) {
+				p.push(this.nodeStr(n));
+				n = n.parentNode || n.ownerElement;
+			}
+			return p.join(',');
+		}
+
+		createXMLNode(classes, value) {
+			let n = document.createElement('div');
+			classes && (n.className = classes.join(' '));
+			value && (n.innerHTML = value);
+			return n;
+		}
+
+		renderXML(xml, E, foundXML) {
+			if (! xml) {
+				return
 			}
 
-			createXMLNode(classes, value) {
-				let n = document.createElement('div');
-				classes && (n.className = classes.join(' '));
-				value && (n.innerHTML = value);
-				return n;
-			}
+			let xmlE = document.createElement('div');
+			xmlE.classList.add("xml-node");
 
-			renderXML(xml, E, foundXML) {
-				if (! xml) {
-					return
-				}
+			switch (xml.nodeType) {
+				case Node.ELEMENT_NODE:
+					let xattrs = [];
 
-				let xmlE = document.createElement('div');
-				xmlE.classList.add("xml-node");
-
-				switch (xml.nodeType) {
-					case Node.ELEMENT_NODE:
-						let xattrs = [];
-
-						let xt = this.createXMLNode(['tag']);
-						let xto = this.createXMLNode(['opening']);
-						let xtn = this.createXMLNode(['name'], xml.nodeName);
-
-						xt.appendChild(xto);
-						xt.appendChild(xtn);
-
-						for (let attrI = 0; attrI < xml.attributes.length; attrI++) {
-							let attr = xml.attributes[attrI];
-
-							let xattrName = this.createXMLNode(['name'], attr.name);
-							let xattrEq = this.createXMLNode(['eq']);
-							let xattrValue = this.createXMLNode(['value'], `"${attr.nodeValue}"`);
-							let xattr = this.createXMLNode(['attr']);
-							xattr.appendChild(xattrName);
-							xattr.appendChild(xattrEq);
-							xattr.appendChild(xattrValue);
-
-							if (this.isFound(attr, foundXML)) {
-								// console.log("Found an attribute!", attr);
-								xattr.classList.add('found');
-							}
-
-							xt.appendChild(xattr);
-						}
-
-						if (xml.childNodes.length) {
-							xt.appendChild(this.createXMLNode(['closing']))
-						} else {
-							xt.appendChild(this.createXMLNode(['closing-short']))
-						}
-
-						xmlE.appendChild(xt);
-						xmlE.dataset.xmlName = xml.nodeName;
-					break;
-
-					case Node.TEXT_NODE:
-						xmlE.classList.add('text');
-						xmlE.innerHTML = xml.nodeValue;
-					break;
-					
-					case Node.CDATA_SECTION_NODE:
-					break;
-				}
-
-				if (this.isFound(xml, foundXML)) {
-					// console.log("Found the node!", xml)
-					xmlE.classList.add('found');
-				}
-				
-				E.appendChild(xmlE);
-				
-				for (let xmlCN of xml.childNodes) {
-					this.renderXML(xmlCN, xmlE, foundXML);
-				}
-				
-				if (xml.nodeType === 1 && xml.childNodes.length) {
-					
 					let xt = this.createXMLNode(['tag']);
-					xt.appendChild(this.createXMLNode(['opening-closing']));
-					xt.appendChild(this.createXMLNode(['name'], xml.nodeName));
-					xt.appendChild(this.createXMLNode(['closing']));
-					xmlE.appendChild(xt)
-				}
+					let xto = this.createXMLNode(['opening']);
+					let xtn = this.createXMLNode(['name'], xml.nodeName);
+
+					xt.appendChild(xto);
+					xt.appendChild(xtn);
+
+					for (let attrI = 0; attrI < xml.attributes.length; attrI++) {
+						let attr = xml.attributes[attrI];
+
+						let xattrName = this.createXMLNode(['name'], attr.name);
+						let xattrEq = this.createXMLNode(['eq']);
+						let xattrValue = this.createXMLNode(['value'], `"${attr.nodeValue}"`);
+						let xattr = this.createXMLNode(['attr']);
+						xattr.appendChild(xattrName);
+						xattr.appendChild(xattrEq);
+						xattr.appendChild(xattrValue);
+
+						if (this.isFound(attr, foundXML)) {
+							// console.log("Found an attribute!", attr);
+							xattr.classList.add('found');
+						}
+
+						xt.appendChild(xattr);
+					}
+
+					if (xml.childNodes.length) {
+						xt.appendChild(this.createXMLNode(['closing']))
+					} else {
+						xt.appendChild(this.createXMLNode(['closing-short']))
+					}
+
+					xmlE.appendChild(xt);
+					xmlE.dataset.xmlName = xml.nodeName;
+				break;
+
+				case Node.TEXT_NODE:
+					xmlE.classList.add('text');
+					xmlE.innerHTML = xml.nodeValue;
+				break;
+				
+				case Node.CDATA_SECTION_NODE:
+				break;
+			}
+
+			if (this.isFound(xml, foundXML)) {
+				// console.log("Found the node!", xml)
+				xmlE.classList.add('found');
+			}
+			
+			E.appendChild(xmlE);
+			
+			for (let xmlCN of xml.childNodes) {
+				this.renderXML(xmlCN, xmlE, foundXML);
+			}
+			
+			if (xml.nodeType === 1 && xml.childNodes.length) {
+				
+				let xt = this.createXMLNode(['tag']);
+				xt.appendChild(this.createXMLNode(['opening-closing']));
+				xt.appendChild(this.createXMLNode(['name'], xml.nodeName));
+				xt.appendChild(this.createXMLNode(['closing']));
+				xmlE.appendChild(xt)
 			}
 		}
+	}
 
-		bench.add(new TXML("xml"));
+	let comp = Component.New('xml');
+	window.tools.appendChild(comp);
+	bench.add(new TXML(comp));
 
-	</script>
+</script>
 
-	<style>
-		#xml-nice .found,
-		#xml-nice .found * {
-			color: white !important;
-			background: #00BBFF !important;
-		}
+<style>
+	#xml-nice .found,
+	#xml-nice .found * {
+		color: white !important;
+		background: #00BBFF !important;
+	}
 
-		.xml-node {
-			position: relative;
-			left: 20px;
-			float: left;
-			clear: left;
-		}
-		
-		.xml-node.text {
-			font-style: italic;
-		}
+	.xml-node {
+		position: relative;
+		left: 20px;
+		float: left;
+		clear: left;
+	}
+	
+	.xml-node.text {
+		font-style: italic;
+	}
 
-		.xml-node > .tag {
-			clear: both;
-		}
+	.xml-node > .tag {
+		clear: both;
+	}
 
-		.xml-node > .tag > * {
-			display: inline-block;
-		}
-		
-		.xml-node > .tag > .name {
-			color: #062873;
-    		font-weight: bold;
-		}
-		
-		.xml-node > .tag > .opening::after {
-			content: "<";
-		}
-		
-		.xml-node > .tag > .opening-closing::after {
-			content: "</";
-		}
-		
-		.xml-node > .tag > .closing::after {
-			content: ">";
-		}
-		
-		.xml-node > .tag > .closing-short::after {
-			content: " />";
-		}
-		
-		.xml-node > .tag > .attr {
-			margin-left: 10px;
-		}
-		
-		.xml-node > .tag > .attr > * {
-			display: inline-block;
-		}
-		
-		.xml-node > .tag > .attr > .name {
-			color: #062873;
-		}
+	.xml-node > .tag > * {
+		display: inline-block;
+	}
+	
+	.xml-node > .tag > .name {
+		color: #062873;
+		font-weight: bold;
+	}
+	
+	.xml-node > .tag > .opening::after {
+		content: "<";
+	}
+	
+	.xml-node > .tag > .opening-closing::after {
+		content: "</";
+	}
+	
+	.xml-node > .tag > .closing::after {
+		content: ">";
+	}
+	
+	.xml-node > .tag > .closing-short::after {
+		content: " />";
+	}
+	
+	.xml-node > .tag > .attr {
+		margin-left: 10px;
+	}
+	
+	.xml-node > .tag > .attr > * {
+		display: inline-block;
+	}
+	
+	.xml-node > .tag > .attr > .name {
+		color: #062873;
+	}
 
-		.xml-node > .tag > .attr > .eq:after {
-			content: "="
-		}
+	.xml-node > .tag > .attr > .eq:after {
+		content: "="
+	}
 
-		.xml-node > .tag > .attr > .value {
-			font-weight: bold;
-			color: #444;
-			font-style: italic;
-		}
-	</style>
-</div>
+	.xml-node > .tag > .attr > .value {
+		font-weight: bold;
+		color: #444;
+		font-style: italic;
+	}
+</style>
 
 
+
+		<!-- opened in components.html -->
 		</div>
 
 		<script>
@@ -1280,6 +1205,12 @@
 			}
 
 			document.body.onload = () => {
+				// let dialogE = Component.New('share', {
+				// 	title: 'Share',
+				// 	value: `${window.location.pathname}#yolo2020`
+				// });
+				// document.body.appendChild(dialogE);
+
 				let filter = document.getElementById("filter");
 				filter.oninput = () => {
 					bench.filter(filter.value);
