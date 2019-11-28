@@ -1,81 +1,57 @@
-<div class="tool unfocused col3" id="json" data-tag="json format">
-	<div class="preview"><h1>Format JSON</h1></div>
-	<div class="controls smaller">
-		<section id="json-input">
-			<label for="json-input-in">JSON input</label>
-			<textarea id="json-input-in" autofocus spellcheck="false" style="margin-bottom:0;" rows="5"></textarea>
-			<div class="undercontrols">
-				<p class="jsonErr error inset"><i class="fas fa-exclamation-circle"></i><span>&nbsp;</span></p>
-				<div class="menu switch">
-					<span>Reuse<i class="fas fa-recycle"></i></span>
-					<div>
-						<a data-to="jsonyaml" data-value-from="input" data-value-as="json">Convert it to YAML</a>
-						<a data-to="base64" data-value-from="input" data-value-as="ascii">Base64-encode it</a>
-					</div>
-				</div>
-			</div>
-		</section>
-		
-		<section id="json-1liner" class="disabled">
-			<label for="json-1liner-in">One-liner JSON</label>
-			<div class="overcontrols">
-				<label for="json-1liner-quote-identifiers">
-					<input type="checkbox" name="json-1liner-quote-identifiers" id="json-1liner-quote-identifiers" checked>
-					Quote names
-				</label>
-				<label for="json-1liner-escape-quotes">
-					<input type="checkbox" name="json-1liner-escape-quotes" id="json-1liner-escape-quotes">
-					Escape the quotes
-				</label>
-			</div>
-			<input type="text" id="json-1liner-in" spellcheck="false" disabled>
-			<div class="undercontrols">
-				<div class="menu switch">
-					<span>Reuse<i class="fas fa-recycle"></i></span>
-					<div>
-						<a data-to="jsonyaml" data-value-from="1liner" data-value-as="json">Convert it to YAML</a>
-						<a data-to="base64" data-value-from="1liner" data-value-as="ascii">Base64-encode it</a>
-					</div>
-				</div>
-				<a class="copy" data-from="json-1liner"><span>Copy</span><i class="far fa-copy"></i></a>
-			</div>
-		</section>
-		
-		<section id="json-pretty" class="disabled">
-			<label for="json-pretty-in">Pretty JSON</label>
-			<div class="overcontrols">
-				<label for="">Indent with</label>
-				<label for="json-pretty-indent-tabs"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-tabs" value="	" checked>tabs</label>
-				<label for="json-pretty-indent-4spaces"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-4spaces" value="    ">4 spaces</label>
-				<label for="json-pretty-indent-2spaces"><input type="radio" name="json-pretty-indent" id="json-pretty-indent-2spaces" value="  ">2 spaces</label>
-			</div>
-			<textarea id="json-pretty-in" rows="8" spellcheck="false" disabled></textarea>
-			<div class="undercontrols">
-				<div class="menu switch">
-					<span>Reuse<i class="fas fa-recycle"></i></span>
-					<div>
-						<a data-to="jsonyaml" data-value-from="pretty" data-value-as="json">Convert it to YAML</a>
-						<a data-to="base64" data-value-from="pretty" data-value-as="ascii">Base64-encode it</a>
-					</div>
-				</div>
-				<a class="copy" data-from="json-pretty-in"><span>Copy</span><i class="far fa-copy"></i></a>
-			</div>
-		</section>
-	</div>
+<tool _id="json" data-tag="json format" name="Format JSON">
+	<section _id="input">
+		<input type="area" autofocus spellcheck="false" rows="5" label="JSON input">
+		<undercontrols error="true">
+			<reuse>
+				<jsonyaml json="#input">Convert it to YAML</jsonyaml>
+				<base64 ascii="#input">Base64-encode it</base64>
+			</reuse>
+		</undercontrols>
+	</section>
 	
-	<script>
+	<section _id="1liner" class="disabled">
+		<overcontrols>
+			<checkbox _id="quote-identifiers" checked >Quote names</checkbox>
+			<checkbox _id="escape-quotes" >Escape the quotes</checkbox>
+		</overcontrols>
+		<input type="text" spellcheck="false" disabled label="One-liner JSON">
+		<undercontrols>
+			<copy from="#1liner">
+		</undercontrols>
+	</section>
+	
+	<section _id="pretty" class="disabled">
+		<overcontrols>
+			<label for="">Indent with</label>
+			<radio name="indent" _id="tabs" value="	">tabs</radio>
+			<radio name="indent" _id="4spaces" value="    ">4 spaces</radio>
+			<radio name="indent" _id="2spaces" value="  ">2 spaces</radio>
+		</overcontrols>
+		<input type="area" rows="8" spellcheck="false" disabled label="Pretty JSON">
+		<undercontrols>
+			<reuse>
+				<jsonyaml json="#pretty">Convert it to YAML</jsonyaml>
+				<base64 ascii="#pretty">Base64-encode it</base64>
+			</reuse>
+			<copy from="#pretty">
+		</undercontrols>
+	</section>
+</tool>
+	
+<script>
+	(()=>{
 		class TJSON extends Tool {
 			constructor(id) {
 				super(id);
-
+	
 				this.inJSON = this.Section('input').Input();
 				this.outPretty = this.Section('pretty').Input();
 				this.out1liner = this.Section('1liner').Input();
-
+	
 				this.indentRadios = this.$('input[name=json-pretty-indent]');
 				this.quoteCheck = this.Section('1liner').$$('quote-identifiers');
 				this.escapeQuotesCheck = this.Section('1liner').$$('escape-quotes');
-
+	
 				let update = () => {
 					this.update();
 				}
@@ -84,14 +60,14 @@
 				for (let s of switches) {
 					s.onchange = update;
 				}
-
+	
 				this.inJSON.oninput = update;
 			}
-
+	
 			import(data) {
 				data.json && (this.$$('json', data.json));
 			}
-
+	
 			update() {
 				try {
 					let v = JSON.parse(this.inJSON.value);
@@ -107,7 +83,7 @@
 					this.Section('pretty').Disable();
 				}
 			}
-
+	
 			prettyPrint(v) {
 				if (v) {
 					let indent = "\t";
@@ -116,18 +92,18 @@
 							indent = r.value;
 						}
 					}
-
+	
 					this.outPretty.value = JSON.stringify(v, null, indent);
 					this.outPretty.rows = this.outPretty.value.split("\n").length;
 				}
 			}
-
+	
 			oneliner(v) {
 				if (v) {
 					this.out1liner.value = JSON1Liner(undefined, v, this.quoteCheck.checked, this.escapeQuotesCheck.checked);
 				}
 			}
-
+	
 			import(data) {
 				if (data.input) {
 					this.inJSON.value = data.input;
@@ -135,20 +111,20 @@
 				}
 			}
 		}
-
+	
 		function JSON1Liner(name, v, quoteNames, escapeQuotes) {
 			let quote = (s) => escapeQuotes ? `\\"${s}\\"` : `"${s}"`;
 			let namePrefix = '';
 			name && (namePrefix = name) && quoteNames && (namePrefix = quote(namePrefix));
 			namePrefix && (namePrefix += ':');
-
+	
 			switch (typeof v) {
 				case 'string':
 					return namePrefix + quote(v);
-
+	
 				case 'number':
 					return namePrefix + v.toString();
-
+	
 				case 'object':
 					if (v instanceof Array) {
 						return `${namePrefix}[` + v.map((vv) => JSON1Liner(undefined, vv, quoteNames, escapeQuotes)).join(',') + "]";
@@ -158,13 +134,15 @@
 					break
 			}
 		}
+	
+		let comp = Component.New('json');
+		window.tools.appendChild(comp);
+		bench.add(new TJSON(comp));
+	})()
+</script>
 
-		bench.add(new TJSON('json'));
-	</script>
-
-	<style>
-		#json .subcontrols {
-			width: 1000px;
-		}
-	</style>
-</div>
+<style>
+	#json .subcontrols {
+		width: 1000px;
+	}
+</style>

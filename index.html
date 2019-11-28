@@ -187,6 +187,157 @@
 
 
 
+<tool _id="json" data-tag="json format" name="Format JSON">
+	<section _id="input">
+		<input type="area" autofocus spellcheck="false" rows="5" label="JSON input">
+		<undercontrols error="true">
+			<reuse>
+				<jsonyaml json="#input">Convert it to YAML</jsonyaml>
+				<base64 ascii="#input">Base64-encode it</base64>
+			</reuse>
+		</undercontrols>
+	</section>
+	
+	<section _id="1liner" class="disabled">
+		<overcontrols>
+			<checkbox _id="quote-identifiers" checked >Quote names</checkbox>
+			<checkbox _id="escape-quotes" >Escape the quotes</checkbox>
+		</overcontrols>
+		<input type="text" spellcheck="false" disabled label="One-liner JSON">
+		<undercontrols>
+			<copy from="#1liner">
+		</undercontrols>
+	</section>
+	
+	<section _id="pretty" class="disabled">
+		<overcontrols>
+			<label for="">Indent with</label>
+			<radio name="indent" _id="tabs" value="	">tabs</radio>
+			<radio name="indent" _id="4spaces" value="    ">4 spaces</radio>
+			<radio name="indent" _id="2spaces" value="  ">2 spaces</radio>
+		</overcontrols>
+		<input type="area" rows="8" spellcheck="false" disabled label="Pretty JSON">
+		<undercontrols>
+			<reuse>
+				<jsonyaml json="#pretty">Convert it to YAML</jsonyaml>
+				<base64 ascii="#pretty">Base64-encode it</base64>
+			</reuse>
+			<copy from="#pretty">
+		</undercontrols>
+	</section>
+</tool>
+	
+<script>
+	(()=>{
+		class TJSON extends Tool {
+			constructor(id) {
+				super(id);
+	
+				this.inJSON = this.Section('input').Input();
+				this.outPretty = this.Section('pretty').Input();
+				this.out1liner = this.Section('1liner').Input();
+	
+				this.indentRadios = this.$('input[name=json-pretty-indent]');
+				this.quoteCheck = this.Section('1liner').$$('quote-identifiers');
+				this.escapeQuotesCheck = this.Section('1liner').$$('escape-quotes');
+	
+				let update = () => {
+					this.update();
+				}
+				
+				let switches = this.$('input[type=radio],input[type=checkbox]');
+				for (let s of switches) {
+					s.onchange = update;
+				}
+	
+				this.inJSON.oninput = update;
+			}
+	
+			import(data) {
+				data.json && (this.$$('json', data.json));
+			}
+	
+			update() {
+				try {
+					let v = JSON.parse(this.inJSON.value);
+					this.Section('input').Error(undefined);
+					this.prettyPrint(v);
+					this.oneliner(v);
+					this.Section('1liner').Enable();
+					this.Section('pretty').Enable();
+				} catch (e) {
+					this.Section('input').Error(e.message);
+					this.outPretty.value = this.out1liner.value = '¯\\_(ツ)_/¯';
+					this.Section('1liner').Disable();
+					this.Section('pretty').Disable();
+				}
+			}
+	
+			prettyPrint(v) {
+				if (v) {
+					let indent = "\t";
+					for (let r of this.indentRadios) {
+						if (r.checked) {
+							indent = r.value;
+						}
+					}
+	
+					this.outPretty.value = JSON.stringify(v, null, indent);
+					this.outPretty.rows = this.outPretty.value.split("\n").length;
+				}
+			}
+	
+			oneliner(v) {
+				if (v) {
+					this.out1liner.value = JSON1Liner(undefined, v, this.quoteCheck.checked, this.escapeQuotesCheck.checked);
+				}
+			}
+	
+			import(data) {
+				if (data.input) {
+					this.inJSON.value = data.input;
+					this.update();
+				}
+			}
+		}
+	
+		function JSON1Liner(name, v, quoteNames, escapeQuotes) {
+			let quote = (s) => escapeQuotes ? `\\"${s}\\"` : `"${s}"`;
+			let namePrefix = '';
+			name && (namePrefix = name) && quoteNames && (namePrefix = quote(namePrefix));
+			namePrefix && (namePrefix += ':');
+	
+			switch (typeof v) {
+				case 'string':
+					return namePrefix + quote(v);
+	
+				case 'number':
+					return namePrefix + v.toString();
+	
+				case 'object':
+					if (v instanceof Array) {
+						return `${namePrefix}[` + v.map((vv) => JSON1Liner(undefined, vv, quoteNames, escapeQuotes)).join(',') + "]";
+					} else {
+						return `${namePrefix}{` + Object.keys(v).map((vk) => JSON1Liner(vk, v[vk], quoteNames, escapeQuotes)) + "}";
+					}
+					break
+			}
+		}
+	
+		let comp = Component.New('json');
+		window.tools.appendChild(comp);
+		bench.add(new TJSON(comp));
+	})()
+</script>
+
+<style>
+	#json .subcontrols {
+		width: 1000px;
+	}
+</style>
+
+
+
 <tool _id="jsonyaml" data-tag="json yaml" name="JSON &#x2942 YAML">
 	<section _id="json">
 		<div class="overcontrols">

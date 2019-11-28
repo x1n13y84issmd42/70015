@@ -156,7 +156,7 @@ let CompUtils = {
 	},
 
 	id: function() {
-		return Array.from(arguments).filter(v=>!!v).join('-');
+		return Array.from(arguments).map(v=>v.value||v).filter(v=>!!v).join('-');
 	}
 };
 
@@ -219,11 +219,22 @@ let Comp = {
 	radio: CompUtils.newConstructor('label', [], (labelE, srcE, args, ctx) => {
 		let radioE = document.createElement("input");
 		radioE.type = "radio";
-		radioE.name = CompUtils.id(ctx.get('parentID'), srcE.attributes.name.value);
+		srcE.attributes.name && (radioE.name = CompUtils.id(ctx.get('parentID'), srcE.attributes.name));
 		radioE.value = srcE.attributes.value.value;
 		labelE.appendChild(radioE);
 		labelE.appendChild(document.createTextNode(srcE.innerText));
-		radioE.id = labelE.htmlFor = CompUtils.id(radioE.name, srcE.attributes._id.value);
+		radioE.id = labelE.htmlFor = CompUtils.id(ctx.get('parentID'), srcE.attributes.name, srcE.attributes._id);
+		labelE.removeAttribute('id');
+	}, false, ['name', 'value']),
+
+	checkbox: CompUtils.newConstructor('label', [], (labelE, srcE, args, ctx) => {
+		let checkE = document.createElement("input");
+		checkE.type = "checkbox";
+		srcE.attributes.name && (checkE.name = CompUtils.id(ctx.get('parentID'), srcE.attributes.name.value));
+		srcE.attributes.value && (checkE.value = srcE.attributes.value.value);
+		labelE.appendChild(checkE);
+		labelE.appendChild(document.createTextNode(srcE.innerText));
+		checkE.id = labelE.htmlFor = CompUtils.id(ctx.get('parentID'), srcE.attributes._id);
 		labelE.removeAttribute('id');
 	}, false, ['name', 'value']),
 
