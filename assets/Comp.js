@@ -209,16 +209,8 @@ let Comp = {
 		let inputE = document.createElement('input');
 		inputE.type = 'text';
 
-		if (srcE.attributes.type) {
-			switch (srcE.attributes.type.nodeValue) {
-				case 'area':
-					inputE = document.createElement('textarea');
-				break;
-				
-				default:
-					inputE.type = 'radio';
-				break;
-			}
+		if (srcE.getAttribute('type') === 'area') {
+			inputE = document.createElement('textarea');
 		}
 
 		if (srcE.attributes.value) {
@@ -436,7 +428,7 @@ class CompContext {
 	 * @param {HTMLElement} E A parent element, corresponding to the child context being created.
 	 */
 	child(E) {
-		let data = {...this.data, reattachChildrenTo: null};
+		let data = {...this.data, reattachChildrenTo: null, root: null};
 		if (E.id) {
 			data.parentID = E.id;
 		}
