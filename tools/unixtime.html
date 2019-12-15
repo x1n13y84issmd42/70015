@@ -37,9 +37,9 @@
 					d.setTime(this.inTS.value.trim() + "000")
 	
 					this.typographyDate(d);
-					this.dates.appendChild(this.Component("kvsection", {label: "Formatted"}))
-					this.dates.appendChild(this.Component("kv", {k: "ISO 8601", v: d.toISOString()}))
-					this.dates.appendChild(this.Component("kv", {k: "Date.toString()", v: d.toString()}))
+					this.dates.appendChild(Comp.kvSection({label: "Formatted"}))
+					this.dates.appendChild(Comp.kvPair({k: "ISO 8601", v: d.toISOString()}))
+					this.dates.appendChild(Comp.kvPair({k: "Date.toString()", v: d.toString()}))
 
 					this.Section('ts').Error(undefined);
 					this.Section('formatted').Show();
@@ -105,7 +105,7 @@
 </script>
 
 <style>
-	#unixtime .dates .kvpair > .label {
+	#unixtime .dates .kvpair > .key {
 		padding-bottom: 2em;
 	}
 

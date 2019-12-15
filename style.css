@@ -370,7 +370,6 @@ input[type=radio]:checked {
 	font-size: 22pt;
 }
 
-.kvpair.kvsection > .label,
 .kvpair.kvsection > .key {
 	padding-top: 20px;
 }
@@ -379,7 +378,6 @@ input[type=radio]:checked {
 	margin-left: 50px;
 }
 
-.kvpair > .label,
 .kvpair > .key  {
 	display: inline-block;
     min-width: 100px;

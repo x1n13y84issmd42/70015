@@ -45,8 +45,10 @@ let CompUtils = {
 	 */
 	newConstructor: function(tag, classes, ctorFn, container, ignoredAttributes) {
 		return function(srcE, args, ctx) {
-			//	When calling Comp.someComp({...})
-			if (arguments.length === 1) {
+			if (!srcE) {
+				srcE = document.createElement('div');
+			} else if (arguments.length === 1) {
+				//	When calling Comp.someComp({...args...})
 				args = srcE;
 				srcE = document.createElement('div');
 				ctx = new CompContext({})
@@ -430,7 +432,7 @@ let Comp = {
 		};
 	}),
 
-	kvpair: CompUtils.newConstructor('div', ['kvpair', 'kv'], (kvE, srcE, args, ctx) => {
+	kvPair: CompUtils.newConstructor('div', ['kvpair', 'kv'], (kvE, srcE, args, ctx) => {
 		let kE = CompUtils.create('span', ['key']);
 		let vE = CompUtils.create('span', ['value']);
 		kE.innerHTML = args.k;
@@ -446,6 +448,12 @@ let Comp = {
 				copiedFloater(e.pageX, e.pageY);
 			}
 		}
+	}),
+	
+	kvSection: CompUtils.newConstructor('div', ['kvpair', 'kvsection'], (kvsE, srcE, args, ctx) => {
+		let kE = CompUtils.create('span', ['key']);
+		kE.innerHTML = args.label;
+		kvsE.appendChild(kE);
 	}),
 };
 

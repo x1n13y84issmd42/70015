@@ -32,33 +32,33 @@
 						return;
 					}
 					
-					fields.appendChild(this.Component("kvsection", {label: "URL"}));
-					url.protocol && fields.appendChild(this.Component("kv", {k: "Protocol", v: url.protocol}));
-					url.hostname && fields.appendChild(this.Component("kv", {k: "Domain", v: url.hostname}));
-					url.username && fields.appendChild(this.Component("kv", {k: "Username", v: url.username}));
-					url.password && fields.appendChild(this.Component("kv", {k: "Password", v: url.password}));
+					fields.appendChild(Comp.kvSection({label: "URL"}));
+					url.protocol && fields.appendChild(Comp.kvPair({k: "Protocol", v: url.protocol}));
+					url.hostname && fields.appendChild(Comp.kvPair({k: "Domain", v: url.hostname}));
+					url.username && fields.appendChild(Comp.kvPair({k: "Username", v: url.username}));
+					url.password && fields.appendChild(Comp.kvPair({k: "Password", v: url.password}));
 
 					if (url.path) {
-						fields.appendChild(this.Component("kv", {k: "Path", v: url.path}));
+						fields.appendChild(Comp.kvPair({k: "Path", v: url.path}));
 					} else if (url.pathname) {
-						fields.appendChild(this.Component("kv", {k: "Path", v: url.pathname}));
+						fields.appendChild(Comp.kvPair({k: "Path", v: url.pathname}));
 					}
 
-					url.port && fields.appendChild(this.Component("kv", {k: "Port", v: url.port}));
-					url.hash && fields.appendChild(this.Component("kv", {k: "Hash", v: url.hash}));
+					url.port && fields.appendChild(Comp.kvPair({k: "Port", v: url.port}));
+					url.hash && fields.appendChild(Comp.kvPair({k: "Hash", v: url.hash}));
 
 					if (url.search && url.searchParams) {
-						fields.appendChild(this.Component("kvsection", {label: "Query"}));
+						fields.appendChild(Comp.kvSection({label: "Query"}));
 						let sp = this.improveSearchParams(url.searchParams);
 						for (let spn in sp) {
 							let spv = sp[spn];
 							if (spv instanceof Array) {
 								let t = true;
 								for (let spvv of spv) {
-									fields.appendChild(this.Component("kv", {k: t ? (t = false, spn) : "", v: spvv}));
+									fields.appendChild(Comp.kvPair({k: t ? (t = false, spn) : "", v: spvv}));
 								}
 							} else {
-								fields.appendChild(this.Component("kv", {k: spn, v: spv}));
+								fields.appendChild(Comp.kvPair({k: spn, v: spv}));
 							}
 						}
 					}

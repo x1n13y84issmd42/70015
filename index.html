@@ -88,22 +88,6 @@
 			</undercontrols>
 		</section>
 	</dialog>
-
-	<div class="kvpair kvsection" _id="kv-section">
-		<span class="label">${label}</span>
-	</div>
-
-	<div class="kvpair kv" _id="kv-pair">
-		<span class="label">${k}</span>
-		<span class="value copy">${v}</span>
-	</div>
-
-	<kvpair _id="kvpair">
-
-	</kvpair>
-
-	<h1 class="sectionLabel">${label}</h1>
-
 </div>
 
 <div id="toolshed">
@@ -202,19 +186,19 @@
 				let results = this.$(".results")[0];
 				this.removeChildren(results);
 
-				results.appendChild(this.Component('kvsection', {label: "Checksums"}));
-				results.appendChild(this.Component('kv', {k: "CRC16", v: crc16(this.input.value)}));
-				results.appendChild(this.Component('kv', {k: "CRC32", v: crc32(this.input.value)}));
-				results.appendChild(Comp.kvpair({k: "CRC16", v: crc16(this.input.value)}));
-				results.appendChild(Comp.kvpair({k: "CRC32", v: crc32(this.input.value)}));
+				results.appendChild(Comp.kvSection({label: "Checksums"}));
+				results.appendChild(Comp.kvPair({k: "CRC16", v: crc16(this.input.value)}));
+				results.appendChild(Comp.kvPair({k: "CRC32", v: crc32(this.input.value)}));
+				results.appendChild(Comp.kvPair({k: "CRC16", v: crc16(this.input.value)}));
+				results.appendChild(Comp.kvPair({k: "CRC32", v: crc32(this.input.value)}));
 				
-				results.appendChild(this.Component('kvsection', {label: "Hashes"}));
-				results.appendChild(this.Component('kv', {k: "MD5", v: '' + CryptoJS.MD5(this.input.value)}));
-				results.appendChild(this.Component('kv', {k: "SHA1", v: '' + CryptoJS.SHA1(this.input.value)}));
-				results.appendChild(this.Component('kv', {k: "SHA3", v: '' + CryptoJS.SHA3(this.input.value)}));
-				results.appendChild(this.Component('kv', {k: "SHA256", v: '' + CryptoJS.SHA256(this.input.value)}));
+				results.appendChild(Comp.kvSection({label: "Hashes"}));
+				results.appendChild(Comp.kvPair({k: "MD5", v: '' + CryptoJS.MD5(this.input.value)}));
+				results.appendChild(Comp.kvPair({k: "SHA1", v: '' + CryptoJS.SHA1(this.input.value)}));
+				results.appendChild(Comp.kvPair({k: "SHA3", v: '' + CryptoJS.SHA3(this.input.value)}));
+				results.appendChild(Comp.kvPair({k: "SHA256", v: '' + CryptoJS.SHA256(this.input.value)}));
 				
-				results.appendChild(this.Component('kvsection', {label: "Ciphers"}));
+				results.appendChild(Comp.kvSection({label: "Ciphers"}));
 				let aes = CryptoJS.AES.encrypt(this.input.value, this.keyInput.value, {keySize: 128});
 				let des = CryptoJS.DES.encrypt(this.input.value, this.keyInput.value, {keySize: 128});
 				// console.log(aes);
@@ -224,8 +208,8 @@
 				// console.log(aes.key);
 				// console.log(aes.iv);
 				// console.log(aes.ciphertext);
-				results.appendChild(this.Component('kv', {k: "AES", v: aes.ciphertext.toString()}));
-				results.appendChild(this.Component('kv', {k: "DES", v: des.ciphertext.toString()}));
+				results.appendChild(Comp.kvPair({k: "AES", v: aes.ciphertext.toString()}));
+				results.appendChild(Comp.kvPair({k: "DES", v: des.ciphertext.toString()}));
 			};
 
 			import(data) {
@@ -543,9 +527,9 @@
 					d.setTime(this.inTS.value.trim() + "000")
 	
 					this.typographyDate(d);
-					this.dates.appendChild(this.Component("kvsection", {label: "Formatted"}))
-					this.dates.appendChild(this.Component("kv", {k: "ISO 8601", v: d.toISOString()}))
-					this.dates.appendChild(this.Component("kv", {k: "Date.toString()", v: d.toString()}))
+					this.dates.appendChild(Comp.kvSection({label: "Formatted"}))
+					this.dates.appendChild(Comp.kvPair({k: "ISO 8601", v: d.toISOString()}))
+					this.dates.appendChild(Comp.kvPair({k: "Date.toString()", v: d.toString()}))
 
 					this.Section('ts').Error(undefined);
 					this.Section('formatted').Show();
@@ -611,7 +595,7 @@
 </script>
 
 <style>
-	#unixtime .dates .kvpair > .label {
+	#unixtime .dates .kvpair > .key {
 		padding-bottom: 2em;
 	}
 
@@ -796,33 +780,33 @@
 						return;
 					}
 					
-					fields.appendChild(this.Component("kvsection", {label: "URL"}));
-					url.protocol && fields.appendChild(this.Component("kv", {k: "Protocol", v: url.protocol}));
-					url.hostname && fields.appendChild(this.Component("kv", {k: "Domain", v: url.hostname}));
-					url.username && fields.appendChild(this.Component("kv", {k: "Username", v: url.username}));
-					url.password && fields.appendChild(this.Component("kv", {k: "Password", v: url.password}));
+					fields.appendChild(Comp.kvSection({label: "URL"}));
+					url.protocol && fields.appendChild(Comp.kvPair({k: "Protocol", v: url.protocol}));
+					url.hostname && fields.appendChild(Comp.kvPair({k: "Domain", v: url.hostname}));
+					url.username && fields.appendChild(Comp.kvPair({k: "Username", v: url.username}));
+					url.password && fields.appendChild(Comp.kvPair({k: "Password", v: url.password}));
 
 					if (url.path) {
-						fields.appendChild(this.Component("kv", {k: "Path", v: url.path}));
+						fields.appendChild(Comp.kvPair({k: "Path", v: url.path}));
 					} else if (url.pathname) {
-						fields.appendChild(this.Component("kv", {k: "Path", v: url.pathname}));
+						fields.appendChild(Comp.kvPair({k: "Path", v: url.pathname}));
 					}
 
-					url.port && fields.appendChild(this.Component("kv", {k: "Port", v: url.port}));
-					url.hash && fields.appendChild(this.Component("kv", {k: "Hash", v: url.hash}));
+					url.port && fields.appendChild(Comp.kvPair({k: "Port", v: url.port}));
+					url.hash && fields.appendChild(Comp.kvPair({k: "Hash", v: url.hash}));
 
 					if (url.search && url.searchParams) {
-						fields.appendChild(this.Component("kvsection", {label: "Query"}));
+						fields.appendChild(Comp.kvSection({label: "Query"}));
 						let sp = this.improveSearchParams(url.searchParams);
 						for (let spn in sp) {
 							let spv = sp[spn];
 							if (spv instanceof Array) {
 								let t = true;
 								for (let spvv of spv) {
-									fields.appendChild(this.Component("kv", {k: t ? (t = false, spn) : "", v: spvv}));
+									fields.appendChild(Comp.kvPair({k: t ? (t = false, spn) : "", v: spvv}));
 								}
 							} else {
-								fields.appendChild(this.Component("kv", {k: spn, v: spv}));
+								fields.appendChild(Comp.kvPair({k: spn, v: spv}));
 							}
 						}
 					}
