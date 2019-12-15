@@ -15,6 +15,10 @@ class Workbench {
 		tool.reconfigure(this.config.get(tool.ID));
 		this.toolsE.appendChild(tool.E);
 	}
+
+	get(id) {
+		return this.tools[id];
+	}
 	
 	focus(id) {
 		let tool = this.tools[id];

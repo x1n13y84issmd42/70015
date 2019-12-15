@@ -45,8 +45,11 @@ let CompUtils = {
 	 */
 	newConstructor: function(tag, classes, ctorFn, container, ignoredAttributes) {
 		return function(srcE, args, ctx) {
-			if (! srcE) {
+			//	When calling Comp.someComp({...})
+			if (arguments.length === 1) {
+				args = srcE;
 				srcE = document.createElement('div');
+				ctx = new CompContext({})
 			}
 
 			let E = CompUtils.create(tag, classes);
@@ -114,10 +117,10 @@ let CompUtils = {
 		let srcEName = srcE.nodeName.toLowerCase();
 
 		if (Comp[srcEName]) {
-			console.log(`Creating a '${srcEName}' component.`);
+			// console.log(`Creating a '${srcEName}' component.`);
 			return Comp[srcEName](srcE, args, ctx);
 		} else {
-			console.warn(`Component '${srcEName}' not found.`);
+			// console.warn(`Component '${srcEName}' not found.`);
 			return CompUtils.clone(srcE, args, ctx);
 		}
 	},
@@ -182,15 +185,31 @@ let CompUtils = {
 	},
 
 	attributeValue: function(attrE, ctx) {
-		let v = attrE.nodeValue;
-		if (v[0] === '#') {
-			v = ctx.iid(v.substr(1));
+		if (attrE) {
+			let v = attrE.nodeValue;
+			if (v[0] === '#') {
+				v = ctx.iid(v.substr(1));
+			}
+			return v;
 		}
-		return v;
+		return '';
 	},
 
 	id: function() {
 		return Array.from(arguments).map(v=>v.value||v).filter(v=>!!v).join('-');
+	},
+
+	chooseHandler: function(E, args, n) {
+		if (args[n] && typeof args[n] === 'function') {
+			return args[n];
+		} else if (E.attributes[n]) {
+			let hn = E.attributes[n].value;
+			if (window[hn] && typeof window[hn] === 'function') {
+				return window[hn];
+			} else {
+				throw new Error(`The handler '${hn}' from attributes does not exist in the window object or is not a function.`);
+			}
+		}
 	}
 };
 
@@ -200,13 +219,14 @@ let CompUtils = {
  * which builds a piece of actual HTML DOM based on the information in the component markup.
  */
 let Comp = {
-	dialog: CompUtils.newConstructor('div', ['dialog', 'controls'], (dialogE, srcE, args) => {
+	dialog: CompUtils.newConstructor('div', ['dialog', 'controls'], (dialogE, srcE, args, ctx) => {
 		if (srcE.attributes.title) {
 			let titleE = document.createElement('h1');
 			titleE.innerHTML = srcE.attributes.title.nodeValue;
 			CompUtils.applyArgs(titleE, args);
 			dialogE.appendChild(titleE);
 		}
+		ctx.set('toolID', dialogE.id);
 	}),
 	
 	section: CompUtils.newConstructor('section'),
@@ -287,6 +307,10 @@ let Comp = {
 	copy: CompUtils.newConstructor('a', ['copy'], (aE, srcE, args, ctx) => {
 		srcE.attributes.from && (aE.dataset.from = CompUtils.attributeValue(srcE.attributes.from, ctx));
 		aE.innerHTML = '<span>Copy</span><i class="far fa-copy"></i>';
+		aE.onclick = (e) => {
+			let handler = srcE.getAttribute('handler');
+			handler && eval(handler);
+		}
 	}),
 	
 	reuse: CompUtils.newConstructor('div', ['menu', 'switch'], (menuE, srcE, args, ctx) => {
@@ -335,8 +359,93 @@ let Comp = {
 		
 		let controlsE = CompUtils.create('div', ['controls', 'smaller']);
 		toolE.appendChild(controlsE);
+
+		let sidebarE = CompUtils.create('div', ['sidebar']);
+		let onclose = CompUtils.chooseHandler(srcE, args, 'onclose');
+		let onshare = CompUtils.chooseHandler(srcE, args, 'onshare');
+
+		if (onclose) {
+			sidebarE.appendChild(Comp.close(undefined, {id: toolE.id, handler: onclose}, ctx));
+		}
+
+		if (onshare) {
+			sidebarE.appendChild(Comp.share(undefined, {id: toolE.id, handler: onshare}, ctx));
+		}
+		
+		toolE.appendChild(sidebarE);
+
 		ctx.set('reattachChildrenTo', controlsE);
 		ctx.set('toolID', toolE.id);
+	}),
+
+	closeIcon: CompUtils.newConstructor('a', ['close'], (closeE, srcE, args, ctx) => {
+		closeE.innerHTML = '<i class="far fa-times-circle"></i><span>CLOSE</span>';
+		closeE.onclick = (e) => {
+			args.handler(args.id);
+			
+			e.preventDefault();
+			e.cancelBubble=true;
+		};
+	}),
+	
+	shareIcon: CompUtils.newConstructor('a', ['share'], (shareE, srcE, args, ctx) => {
+		shareE.innerHTML = '<i class="far fa-share-square"></i><span>SHARE</span>';
+		shareE.onclick = (e) => {
+			args.handler(args.id);
+			
+			e.preventDefault();
+			e.cancelBubble=true;
+		};
+	}),
+
+	back: CompUtils.newConstructor('a', ['close'], (closeE, srcE, args, ctx) => {
+		closeE.innerHTML = "<i>&#x1F860;</i><span>BACK</span>";
+		closeE.onclick = (e) => {
+			args.handler(args.id);
+			
+			e.preventDefault();
+			e.cancelBubble=true;
+		};
+	}),
+
+	close: CompUtils.newConstructor('a', ['close'], (closeE, srcE, args, ctx) => {
+		closeE.innerHTML = "<i>&#x1f7a9;</i><span>CLOSE</span>";
+		closeE.onclick = (e) => {
+			args.handler(args.id);
+			
+			e.preventDefault();
+			e.cancelBubble=true;
+		};
+	}),
+	
+	share: CompUtils.newConstructor('a', ['share'], (shareE, srcE, args, ctx) => {
+		// shareE.innerHTML = "<i>&#x1f861;</i><i>&#x2610;</i><span>CLOSE</span>";
+		// shareE.innerHTML = "<i>&#x1f861;</i><i>&#x2423;</i><span>SHARE</span>";
+		shareE.innerHTML = "<i>#</i><span>SHARE</span>";
+		shareE.onclick = (e) => {
+			args.handler(args.id, e);
+			
+			e.preventDefault();
+			e.cancelBubble=true;
+		};
+	}),
+
+	kvpair: CompUtils.newConstructor('div', ['kvpair', 'kv'], (kvE, srcE, args, ctx) => {
+		let kE = CompUtils.create('span', ['key']);
+		let vE = CompUtils.create('span', ['value']);
+		kE.innerHTML = args.k;
+		vE.innerHTML = args.v;
+		kvE.appendChild(kE);
+		kvE.appendChild(vE);
+
+		vE.onclick = (e) => {
+			let from = e.currentTarget;
+			if (from) {
+				Clipboard.copy(from.innerHTML);
+				tmpStyle(from, 'copied', 200);
+				copiedFloater(e.pageX, e.pageY);
+			}
+		}
 	}),
 };
 
@@ -373,7 +482,7 @@ class CompContext {
 	}
 
 	/**
-	 * Input ID, i.e. ID of a section's main input field.
+	 * Input ID, i.e. ID of a section's main input field. Contains a tool ID, a section ID, and a special input "in" ID.
 	 * @param {string} id A section id.
 	 */
 	iid(id) {
@@ -409,7 +518,11 @@ let Component = {
 		if (typeof id === 'string') {
 			srcCompE = document.querySelector(`[_id=${id}]`);
 		}
-		return CompUtils.transform(srcCompE, args, new CompContext({parentID: undefined}));
+		return CompUtils.transform(srcCompE, args || {}, new CompContext({}));
+	},
+
+	NewElement: function(tag, classes, args) {
+		return CompUtils.create(tag, classes);
 	},
 };
 
@@ -529,7 +642,7 @@ class DOMOps {
 /**
  * Gives general control over a UI section.
  * A UI section usually includes an input field and few associated extra controls, has some kind of state,
- * and this class provides an onterface to control it.
+ * and this class provides an interface to control it.
  */
 class Section extends DOMOps {
 	constructor(node) {
@@ -607,6 +720,8 @@ class Tool extends DOMOps {
 		}
 
 		super(E);
+
+		this.C = this.$('.controls')[0];
 	
 		E.querySelector('.preview').onclick = () => {
 			focus(this.ID);
@@ -614,36 +729,8 @@ class Tool extends DOMOps {
 
 		this.configuration = {};
 	
-		let ctrls = E.querySelector(".controls");
-
-		//	Creating a "Close" link.
-		let eClose = document.createElement("a");
-		eClose.innerHTML = "<i>&#x1F860</i><span>CLOSE</span>";
-		eClose.classList.add("close");
-		eClose.onclick = (e) => {
-			unfocus(this.ID);
-			e.preventDefault();
-			e.cancelBubble=true;
-		};
-
-		ctrls.append(eClose);
-
 		//	Selecting all the checkboxes & radio buttons.
 		this.switches = this.$('input[type=radio],input[type=checkbox]');
-
-		//	Wiring the "Reuse" menu.
-		let eSwitches = this.$('.switch');
-		for (let eSw of eSwitches) {
-			let as = eSw.querySelectorAll('a');
-			for (let a of as) {
-				a.onclick = () => {
-					let data = {...a.dataset};
-					delete data.to;
-					data = Object.fromEntries(Object.entries(data).map(e=>[e[0],document.getElementById(e[1]).value]))
-					this.bench.switch(a.dataset.to, data)
-				};
-			}
-		}
 	}
 
 	config(k, v) {
@@ -720,6 +807,10 @@ class Workbench {
 		tool.setBench(this);
 		tool.reconfigure(this.config.get(tool.ID));
 		this.toolsE.appendChild(tool.E);
+	}
+
+	get(id) {
+		return this.tools[id];
 	}
 	
 	focus(id) {

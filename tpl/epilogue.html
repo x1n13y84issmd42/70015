@@ -1,16 +1,9 @@
 		<!-- opened in components.html -->
 		</div>
 
-		<script>
-			function focus(id) {
-				bench.focus(id);
-			}
+		<div id="uiStash"></div>
 
-			function unfocus(id) {
-				bench.unfocus(id);
-				window.location.hash = '';
-				filter.focus();
-			}
+		<script>
 
 			/**
 			 * Temporarily applies a class to an element. The class is removed after the specified amount of time passes.

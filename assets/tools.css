@@ -32,6 +32,16 @@
 	padding: 5% 20%;
     width: 60%;
     /* min-height: 80%; */
+	transition: transform 200ms ease-in-out,
+}
+
+.controls.bg {
+	transform: scale(0.95);
+	opacity: 0.5;
+	filter: blur(5px);
+	transition: transform 200ms ease-in-out,
+				opacity 200ms ease-in-out,
+				filter 200ms ease-in-out;
 }
 
 /* .controls > section .error.inset {
@@ -87,7 +97,10 @@
 	/* min-height: 80%; */
 	opacity: 1;
 	background-color: white;
-	transition: opacity 200ms ease-in-out, background-color 200ms ease-in-out;
+	transition: opacity 200ms ease-in-out,
+				background-color 200ms ease-in-out,
+				transform 200ms ease-in-out,
+				filter 200ms ease-in-out;
 }
 
 .controls .error {
@@ -182,43 +195,46 @@
 	margin-right: 20px;
 }
 
-.controls a.close {
+.sidebar {
 	font-family: Quicksand;
 	font-size: 24pt;
 	position: absolute;
 	left: 2%;
 	top: 2%;
 	color: #00BBFF;
-	cursor: pointer;
 }
 
-.controls a.close > * {
+.sidebar > a {
+	cursor: pointer;
+	display: block;
+	margin-bottom: 1em;
+}
+
+.sidebar a > * {
 	line-height: 24pt;
 	vertical-align: middle;
 }
 
-.controls a.close > i {
+.sidebar a > i {
 	font-style: normal;
-	font-size: 32pt;
+	/* font-size: 32pt; */
 	margin-right: 5px;
+	position: absolute;
+	width: 32px;
+    text-align: center;
 }
 
-.controls a.close > span {
+.sidebar > a > span {
 	font-size: 12pt;
 	opacity: 0;
 	transition: all 100ms ease-in-out;
-	-webkit-transition: all 100ms ease-in-out;
-	-moz-transition: all 100ms ease-in-out;
-	-o-transition: all 100ms ease-in-out;
+	margin-left: 42px;
 }
 
-.controls a.close:hover > span {
+.sidebar > a:hover > span {
 	font-size: 12pt;
 	opacity: 1;
 	transition: all 100ms ease-in-out;
-	-webkit-transition: all 100ms ease-in-out;
-	-moz-transition: all 100ms ease-in-out;
-	-o-transition: all 100ms ease-in-out;
 }
 
 .tool > .components {
@@ -234,7 +250,8 @@
 	font-size: 22pt;
 }
 
-.kvpair.kvsection > .label{
+.kvpair.kvsection > .label,
+.kvpair.kvsection > .key {
 	padding-top: 20px;
 }
 
@@ -242,7 +259,8 @@
 	margin-left: 50px;
 }
 
-.kvpair > .label {
+.kvpair > .label,
+.kvpair > .key  {
 	display: inline-block;
     min-width: 100px;
     padding-right: 20px;
@@ -262,18 +280,18 @@
 	display: inline-block;
 }
 
-.kvpair .value.copy {
+.kvpair .value {
 	cursor: pointer;
 	transition: all 100ms ease-in-out;
 }
 
-.kvpair .value.copy:hover {
+.kvpair .value:hover {
 	color: #00BBFF;
 	transform: scale(1.05);
 	transition: all 100ms ease-in-out;
 }
 
-.kvpair .value.copy.copied {
+.kvpair .value.copied {
 	animation: scale-up-center 0.2s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
 }
 

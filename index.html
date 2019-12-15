@@ -23,29 +23,84 @@
 		<script>
 			let config = new LSConfig();
 			let bench = new Workbench(config);
+
+			function focus(id) {
+				bench.focus(id);
+			}
+
+			function unfocus(id) {
+				bench.unfocus(id);
+				window.location.hash = '';
+				filter.focus();
+			}
+
+			function offset(e) {
+				let res = {
+					left: e.offsetLeft,
+					top: e.offsetTop,
+				};
+
+				let p = e.parentNode;
+
+				while(p) {
+					res.left += ~~p.offsetLeft;
+					res.top += ~~p.offsetTop;
+
+					p = p.parentNode;
+				}
+
+				return res;
+			}
+
+			function share(id, e) {
+				console.log(`Sharing the #${id} tool!`);
+				let tool = bench.get(id);
+				tool.C.classList.add('bg');
+				
+				let value = `A shareable URL is expected here`;
+				let dlgBGE = Component.NewElement('div', ['dialog-bg', 'out']);
+				let shareC = Component.New('share', {title: `Share ${id}`, value: value});
+				dlgBGE.appendChild(shareC);
+				dlgBGE.onclick = (e) => {
+					if (e.target === e.currentTarget) {
+						document.body.removeChild(dlgBGE);
+						tool.C.classList.remove('bg');
+					}
+				};
+
+				document.body.appendChild(dlgBGE);
+				
+				setTimeout(() => {
+					dlgBGE.classList.remove('out');
+					dlgBGE.classList.add('in');
+				}, 0);
+			}
 		</script>
 
 
 
 <div id="components">
-
-	<dialog data-purpose="social" id="share" title="${title}">
-		<section id="link">
-			<input type="text" label="<<${title} a link>>" value="${value}" />
+	<dialog data-purpose="social" _id="share" title="${title}">
+		<section _id="link">
+			<input type="text" value="${value}" />
 			<undercontrols>
-				<copy from="link"></copy>
+				<copy from="#link" handler="onclickCopyToClipboard(e)"></copy>
 			</undercontrols>
 		</section>
 	</dialog>
 
-	<div class="kvpair kvsection">
+	<div class="kvpair kvsection" _id="kv-section">
 		<span class="label">${label}</span>
 	</div>
 
-	<div class="kvpair kv">
+	<div class="kvpair kv" _id="kv-pair">
 		<span class="label">${k}</span>
 		<span class="value copy">${v}</span>
 	</div>
+
+	<kvpair _id="kvpair">
+
+	</kvpair>
 
 	<h1 class="sectionLabel">${label}</h1>
 
@@ -55,7 +110,7 @@
 	<!-- it continues in epilogue.html -->
 
 
-<tool _id="base64" data-tag="base64" name="Base64">
+<tool _id="base64" data-tag="base64" name="Base64" onclose="unfocus" onshare="share">
 	<section _id="base64">
 		<input type="area" rows="8" label="Base64-encoded string">
 		<undercontrols>
@@ -150,6 +205,8 @@
 				results.appendChild(this.Component('kvsection', {label: "Checksums"}));
 				results.appendChild(this.Component('kv', {k: "CRC16", v: crc16(this.input.value)}));
 				results.appendChild(this.Component('kv', {k: "CRC32", v: crc32(this.input.value)}));
+				results.appendChild(Comp.kvpair({k: "CRC16", v: crc16(this.input.value)}));
+				results.appendChild(Comp.kvpair({k: "CRC32", v: crc32(this.input.value)}));
 				
 				results.appendChild(this.Component('kvsection', {label: "Hashes"}));
 				results.appendChild(this.Component('kv', {k: "MD5", v: '' + CryptoJS.MD5(this.input.value)}));
@@ -338,7 +395,7 @@
 
 
 
-<tool _id="jsonyaml" data-tag="json yaml" name="JSON &#x2942 YAML">
+<tool _id="jsonyaml" data-tag="json yaml" name="JSON &#x2942; YAML">
 	<section _id="json">
 		<div class="overcontrols">
 			<label for="">Indent with</label>
@@ -433,7 +490,7 @@
 			}
 		}
 	
-		let comp = Component.New('jsonyaml');
+		let comp = Component.New('jsonyaml', {onshare: function(){alert("Sharing is caring \\o/")}});
 		window.tools.appendChild(comp);
 		bench.add(new TJSONYAML(comp));
 	})()
@@ -489,6 +546,7 @@
 					this.dates.appendChild(this.Component("kvsection", {label: "Formatted"}))
 					this.dates.appendChild(this.Component("kv", {k: "ISO 8601", v: d.toISOString()}))
 					this.dates.appendChild(this.Component("kv", {k: "Date.toString()", v: d.toString()}))
+
 					this.Section('ts').Error(undefined);
 					this.Section('formatted').Show();
 				} catch (err) {
@@ -1123,16 +1181,9 @@
 		<!-- opened in components.html -->
 		</div>
 
-		<script>
-			function focus(id) {
-				bench.focus(id);
-			}
+		<div id="uiStash"></div>
 
-			function unfocus(id) {
-				bench.unfocus(id);
-				window.location.hash = '';
-				filter.focus();
-			}
+		<script>
 
 			/**
 			 * Temporarily applies a class to an element. The class is removed after the specified amount of time passes.

@@ -1,22 +1,25 @@
 <div id="components">
-
-	<dialog data-purpose="social" id="share" title="${title}">
-		<section id="link">
-			<input type="text" label="<<${title} a link>>" value="${value}" />
+	<dialog data-purpose="social" _id="share" title="${title}">
+		<section _id="link">
+			<input type="text" value="${value}" />
 			<undercontrols>
-				<copy from="link"></copy>
+				<copy from="#link" handler="onclickCopyToClipboard(e)"></copy>
 			</undercontrols>
 		</section>
 	</dialog>
 
-	<div class="kvpair kvsection">
+	<div class="kvpair kvsection" _id="kv-section">
 		<span class="label">${label}</span>
 	</div>
 
-	<div class="kvpair kv">
+	<div class="kvpair kv" _id="kv-pair">
 		<span class="label">${k}</span>
 		<span class="value copy">${v}</span>
 	</div>
+
+	<kvpair _id="kvpair">
+
+	</kvpair>
 
 	<h1 class="sectionLabel">${label}</h1>
 

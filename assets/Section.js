@@ -1,7 +1,7 @@
 /**
  * Gives general control over a UI section.
  * A UI section usually includes an input field and few associated extra controls, has some kind of state,
- * and this class provides an onterface to control it.
+ * and this class provides an interface to control it.
  */
 class Section extends DOMOps {
 	constructor(node) {

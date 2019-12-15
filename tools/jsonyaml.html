@@ -1,4 +1,4 @@
-<tool _id="jsonyaml" data-tag="json yaml" name="JSON &#x2942 YAML">
+<tool _id="jsonyaml" data-tag="json yaml" name="JSON &#x2942; YAML">
 	<section _id="json">
 		<div class="overcontrols">
 			<label for="">Indent with</label>
@@ -93,7 +93,7 @@
 			}
 		}
 	
-		let comp = Component.New('jsonyaml');
+		let comp = Component.New('jsonyaml', {onshare: function(){alert("Sharing is caring \\o/")}});
 		window.tools.appendChild(comp);
 		bench.add(new TJSONYAML(comp));
 	})()

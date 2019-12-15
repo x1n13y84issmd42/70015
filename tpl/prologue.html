@@ -22,4 +22,56 @@
 		<script>
 			let config = new LSConfig();
 			let bench = new Workbench(config);
+
+			function focus(id) {
+				bench.focus(id);
+			}
+
+			function unfocus(id) {
+				bench.unfocus(id);
+				window.location.hash = '';
+				filter.focus();
+			}
+
+			function offset(e) {
+				let res = {
+					left: e.offsetLeft,
+					top: e.offsetTop,
+				};
+
+				let p = e.parentNode;
+
+				while(p) {
+					res.left += ~~p.offsetLeft;
+					res.top += ~~p.offsetTop;
+
+					p = p.parentNode;
+				}
+
+				return res;
+			}
+
+			function share(id, e) {
+				console.log(`Sharing the #${id} tool!`);
+				let tool = bench.get(id);
+				tool.C.classList.add('bg');
+				
+				let value = `A shareable URL is expected here`;
+				let dlgBGE = Component.NewElement('div', ['dialog-bg', 'out']);
+				let shareC = Component.New('share', {title: `Share ${id}`, value: value});
+				dlgBGE.appendChild(shareC);
+				dlgBGE.onclick = (e) => {
+					if (e.target === e.currentTarget) {
+						document.body.removeChild(dlgBGE);
+						tool.C.classList.remove('bg');
+					}
+				};
+
+				document.body.appendChild(dlgBGE);
+				
+				setTimeout(() => {
+					dlgBGE.classList.remove('out');
+					dlgBGE.classList.add('in');
+				}, 0);
+			}
 		</script>

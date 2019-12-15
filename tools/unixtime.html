@@ -40,6 +40,7 @@
 					this.dates.appendChild(this.Component("kvsection", {label: "Formatted"}))
 					this.dates.appendChild(this.Component("kv", {k: "ISO 8601", v: d.toISOString()}))
 					this.dates.appendChild(this.Component("kv", {k: "Date.toString()", v: d.toString()}))
+
 					this.Section('ts').Error(undefined);
 					this.Section('formatted').Show();
 				} catch (err) {

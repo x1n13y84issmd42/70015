@@ -19,3 +19,4 @@ A small set of utility functions often useful in development, with clean interfa
 * [x] Tool: XML/XPath.
 * [ ] JSON mapper?
 * [ ] Feature: sharing (base64 encode some JSON and read it from `#`).
+* [ ] Feature: tool sequencing (think the "reuse" menu) with proper "close"/"back" buttons on the tool sidebar. Ideally so the browser "back" button works as well.

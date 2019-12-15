@@ -27,6 +27,8 @@
 				results.appendChild(this.Component('kvsection', {label: "Checksums"}));
 				results.appendChild(this.Component('kv', {k: "CRC16", v: crc16(this.input.value)}));
 				results.appendChild(this.Component('kv', {k: "CRC32", v: crc32(this.input.value)}));
+				results.appendChild(Comp.kvpair({k: "CRC16", v: crc16(this.input.value)}));
+				results.appendChild(Comp.kvpair({k: "CRC32", v: crc32(this.input.value)}));
 				
 				results.appendChild(this.Component('kvsection', {label: "Hashes"}));
 				results.appendChild(this.Component('kv', {k: "MD5", v: '' + CryptoJS.MD5(this.input.value)}));
