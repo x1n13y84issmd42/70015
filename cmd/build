@@ -31,6 +31,7 @@ function build {
 	log "$OUTFILE is ready.\n"
 }
 
-build index.html tpl/prologue.html tpl/components.html tools/*.html tpl/epilogue.html
+# build index.html tpl/prologue.html tpl/components.html comp/*.html tpl/toolshed.html tools/*.html tpl/epilogue.html
+build index.html tpl/prologue.html tpl/components.html comp/*.html tpl/toolshed.html tpl/epilogue.html
 build style.css assets/*.css
 build app.js assets/*.js

@@ -1,0 +1,9 @@
+<!-- An <in> component structure. -->
+<div _comp="in">
+	<label for="unixtime-ts-in">{comp.label}</label>
+	<input xui-if="comp.type==='text'" type="text" id="unixtime-ts-in" autofocus="" value="{comp.value||args.value}">
+</div>
+
+<script>
+	XUI.register('in');
+</script>
