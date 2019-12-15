@@ -116,7 +116,7 @@
 <!-- A <tool> component structure. -->
 <div _comp="tool" class="tool focused" id="{comp._id}" data-tag="{comp.tag}">
 	<div class="preview">
-		<h1>{comp.name}</h1>
+		<h1>{comp.name} (The value from args is "{args.theValue}")</h1>
 	</div>
 	<div class="controls smaller" xui-root></div>
 </div>
@@ -141,14 +141,14 @@
 
 		<tool _id="unixtime" tag="unixtime" name="Unixtime">
 			<section _id="ts">
-				<in type="text" autofocus label="Unixtime">
+				<in type="text" autofocus label="Unixtime (also {args.theValue})">
 				<undercontrols error="true"></undercontrols>
 			</section>
 		</tool>
 
 		<script>
 			let toolInst = document.querySelector('[_id=unixtime]')
-			let toolComp = XUIC.tool(toolInst, {k: "A key", v: "A value"});
+			let toolComp = XUIC.tool(toolInst, {k: "A key", theValue: "T3H VALYOOO"});
 			document.body.appendChild(toolComp);
 
 			/**

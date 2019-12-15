@@ -5,14 +5,14 @@
 
 		<tool _id="unixtime" tag="unixtime" name="Unixtime">
 			<section _id="ts">
-				<in type="text" autofocus label="Unixtime">
+				<in type="text" autofocus label="Unixtime (also {args.theValue})">
 				<undercontrols error="true"></undercontrols>
 			</section>
 		</tool>
 
 		<script>
 			let toolInst = document.querySelector('[_id=unixtime]')
-			let toolComp = XUIC.tool(toolInst, {k: "A key", v: "A value"});
+			let toolComp = XUIC.tool(toolInst, {k: "A key", theValue: "T3H VALYOOO"});
 			document.body.appendChild(toolComp);
 
 			/**
