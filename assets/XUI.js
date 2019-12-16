@@ -1,8 +1,8 @@
 let XUI = {
 	register: function(compName, ctor) {
 		XUIC[compName] = function(instE, args, ctx) {
-			if (arguments.length === 1) {
-				args = instE;
+			if (arguments.length < 1) {
+				args = instE || {};
 				instE = document.createElement('div');
 			}
 
@@ -10,19 +10,19 @@ let XUI = {
 				ctx = new CompContext({});
 			}
 
-			let nodes = {};
+			let compNodes = {};
 			let srcE = document.querySelector(`[_comp=${compName}]`);
 			let instAttrs = Object.fromEntries(Array.from(instE.attributes).map(attr => [attr.name, attr.value]))
 
 			//	Building the component itself from the component source markup.
-			let compE = XUI.transform(srcE, instAttrs, args, nodes, ctx);
-			XUI.enrich(compE, instAttrs, args, nodes, ctx);
+			let compE = XUI.transform(srcE, instAttrs, args, compNodes, ctx);
+			XUI.enrich(compE, instAttrs, args, compNodes, ctx);
 			
-			ctor && ctor(compE, nodes, args);
+			ctor && ctor(compE, compNodes, instAttrs, args);
 			
 			//	Appending possible child nodes of the component instance.
 			for (let instEChild of instE.children) {
-				(ctx.get('root') || compE).appendChild(XUI.transform(instEChild, instAttrs, args, nodes, ctx.child(compE)));
+				(ctx.get('root') || compE).appendChild(XUI.transform(instEChild, instAttrs, args, compNodes, ctx.child(compE)));
 			}
 			
 			return compE;
@@ -35,28 +35,28 @@ let XUI = {
 	 * @param {Object} args Arguments.
 	 * @param {CompContext} ctx A context.
 	 */
-	transform: function(srcE, instAttrs, args, nodes, ctx) {
+	transform: function(srcE, instAttrs, args, compNodes, ctx) {
 		let srcEName = srcE.nodeName.toLowerCase();
 
 		if (XUIC[srcEName]) {
 			return XUIC[srcEName](srcE, args, ctx);
 		} else {
-			return XUI.clone(srcE, instAttrs, args, nodes, ctx);
+			return XUI.clone(srcE, instAttrs, args, compNodes, ctx);
 		}
 	},
 	
-	clone: function(srcE, instAttrs, args, nodes, ctx) {
+	clone: function(srcE, instAttrs, args, compNodes, ctx) {
 		let compE = srcE.cloneNode();
 		
 		if (srcE.children && srcE.children.length) {
 			for (let srcECN of srcE.children) {
-				compE.appendChild(XUI.transform(srcECN, instAttrs, args, nodes, ctx));
+				compE.appendChild(XUI.transform(srcECN, instAttrs, args, compNodes, ctx));
 			}
 		} else {
 			compE.innerHTML = srcE.innerHTML;
 		}
 
-		XUI.enrich(compE, instAttrs, args, nodes, ctx);
+		XUI.enrich(compE, instAttrs, args, compNodes, ctx);
 		
 		return compE;
 	},
@@ -70,10 +70,10 @@ let XUI = {
 	 * @param {HTMLElement} compE A newly created component element.
 	 * @param {Object} comp An object containing all the attributes from the component instance.
 	 * @param {Object} args Arguments.
-	 * @param {Object} nodes An object to keep the nodes available in the ctor function later.
+	 * @param {Object} compNodes An object to keep specific component nodes (those with 'xui-as' attribute) available in the ctor function later.
 	 * @param {CompContext} ctx A composition context.
 	 */
-	enrich: function(compE, comp, args, nodes, ctx) {
+	enrich: function(compE, comp, args, compNodes, ctx) {
 		function xeval(s) {
 			function repl() {
 				return s.replace(/\{(.*?)\}/gi, (a, g1) => eval(g1));
@@ -104,7 +104,7 @@ let XUI = {
 
 		//	Saving the node for later if requested
 		if (compE.hasAttribute('xui-as')) {
-			nodes[compE.getAttribute('xui-as')] = compE;
+			compNodes[compE.getAttribute('xui-as')] = compE;
 		}
 
 		//	Saving the node as root for the possible instance children.

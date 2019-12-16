@@ -92,6 +92,14 @@
 	<!-- continues in toolshed.html -->
 
 
+<p _comp="error" class="error"><i class="fas fa-exclamation-circle"></i><span>{args.error||"&nbsp;"}</span></p>
+
+<script>
+	XUI.register("error");
+</script>
+
+
+
 <!-- An <in> component structure. -->
 <div _comp="in">
 	<label for="unixtime-ts-in">{comp.label}</label>
@@ -123,6 +131,18 @@
 
 <script>
 	XUI.register('tool');
+</script>
+
+
+
+<div _comp="undercontrols" class="undercontrols"></div>
+
+<script>
+	XUI.register("undercontrols", (compE, n, comp, args) => {
+		if (comp.error) {
+			compE.appendChild(XUIC.error())
+		}
+	});
 </script>
 
 
