@@ -92,7 +92,7 @@
 	<!-- continues in toolshed.html -->
 
 
-<p _comp="error" class="error"><i class="fas fa-exclamation-circle"></i><span>{args.error||"&nbsp;"}</span></p>
+<p _comp="error" class="error"><i class="fas fa-exclamation-circle"></i><span>{inst.$||args.error||"&nbsp;"}</span></p>
 
 <script>
 	XUI.register("error");
@@ -102,8 +102,8 @@
 
 <!-- An <in> component structure. -->
 <div _comp="in">
-	<label for="unixtime-ts-in">{comp.label}</label>
-	<input xui-if="comp.type==='text'" type="text" id="unixtime-ts-in" autofocus="" value="{comp.value||args.value}">
+	<label for="unixtime-ts-in">{inst.label}</label>
+	<input xui-if="comp.type==='text'" type="text" id="unixtime-ts-in" autofocus="" value="{inst.value||args.value}">
 </div>
 
 <script>
@@ -113,7 +113,7 @@
 
 
 <!-- A <section> component structure. -->
-<div _comp="section" id="{comp._id}" class="section"></div>
+<div _comp="section" id="{inst._id}" class="section"></div>
 
 <script>
 	XUI.register('section');
@@ -122,9 +122,9 @@
 
 
 <!-- A <tool> component structure. -->
-<div _comp="tool" class="tool focused" id="{comp._id}" data-tag="{comp.tag}">
+<div _comp="tool" class="tool focused" id="{inst._id}" data-tag="{inst.tag}">
 	<div class="preview">
-		<h1>{comp.name} (The value from args is "{args.theValue}")</h1>
+		<h1>{inst.name} (The value from args is "{args.theValue}")</h1>
 	</div>
 	<div class="controls smaller" xui-root></div>
 </div>
@@ -135,7 +135,9 @@
 
 
 
-<div _comp="undercontrols" class="undercontrols"></div>
+<div _comp="undercontrols" class="undercontrols">
+	<error>INLINE ERR</error>
+</div>
 
 <script>
 	XUI.register("undercontrols", (compE, n, comp, args) => {

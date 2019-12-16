@@ -900,7 +900,7 @@ class Workbench {
 let XUI = {
 	register: function(compName, ctor) {
 		XUIC[compName] = function(instE, args, ctx) {
-			if (arguments.length < 1) {
+			if (arguments.length < 2) {
 				args = instE || {};
 				instE = document.createElement('div');
 			}
@@ -911,7 +911,8 @@ let XUI = {
 
 			let compNodes = {};
 			let srcE = document.querySelector(`[_comp=${compName}]`);
-			let instAttrs = Object.fromEntries(Array.from(instE.attributes).map(attr => [attr.name, attr.value]))
+			let instAttrs = Object.fromEntries(Array.from(instE.attributes).map(attr => [attr.name, attr.value]));
+			instAttrs.$ = instE.innerText;
 
 			//	Building the component itself from the component source markup.
 			let compE = XUI.transform(srcE, instAttrs, args, compNodes, ctx);
@@ -946,13 +947,13 @@ let XUI = {
 	
 	clone: function(srcE, instAttrs, args, compNodes, ctx) {
 		let compE = srcE.cloneNode();
-		
+
 		if (srcE.children && srcE.children.length) {
 			for (let srcECN of srcE.children) {
 				compE.appendChild(XUI.transform(srcECN, instAttrs, args, compNodes, ctx));
 			}
-		} else {
-			compE.innerHTML = srcE.innerHTML;
+		} else if (srcE.innerText) {
+			compE.innerText = srcE.innerText;
 		}
 
 		XUI.enrich(compE, instAttrs, args, compNodes, ctx);
@@ -972,7 +973,7 @@ let XUI = {
 	 * @param {Object} compNodes An object to keep specific component nodes (those with 'xui-as' attribute) available in the ctor function later.
 	 * @param {CompContext} ctx A composition context.
 	 */
-	enrich: function(compE, comp, args, compNodes, ctx) {
+	enrich: function(compE, inst, args, compNodes, ctx) {
 		function xeval(s) {
 			function repl() {
 				return s.replace(/\{(.*?)\}/gi, (a, g1) => eval(g1));
@@ -988,30 +989,41 @@ let XUI = {
 			return s1;
 		}
 
-		//	Replacing text content
-		if (compE.innerText && !compE.children.length) {
-			compE.innerText = xeval(compE.innerText, args);
-		}
+		switch (compE.nodeType) {
+			case Node.TEXT_NODE:
+				compE.nodeValue = xeval(compE.nodeValue);
+			break;
 
-		if (compE.value) {
-			compE.value = xeval(compE.value, args);
-		}
+			case Node.ELEMENT_NODE:
+				//	Replacing text content
+				if (compE.innerText && !compE.children.length) {
+					compE.innerText = xeval(compE.innerText);
+				}
+		
+				if (compE.value) {
+					compE.value = xeval(compE.value);
+				}
+		
+				//	Attributes
+				for (let EAttr of compE.attributes) {
+					EAttr.nodeValue = xeval(EAttr.nodeValue);
+				}
 
-		for (let EAttr of compE.attributes) {
-			EAttr.nodeValue = xeval(EAttr.nodeValue, args);
-		}
+				//TODO: dataset
 
-		//	Saving the node for later if requested
-		if (compE.hasAttribute('xui-as')) {
-			compNodes[compE.getAttribute('xui-as')] = compE;
+				//	Saving the node for later if requested
+				if (compE.hasAttribute('xui-as')) {
+					compNodes[compE.getAttribute('xui-as')] = compE;
+				}
+		
+				//	Saving the node as root for the possible instance children.
+				if (compE.hasAttribute('xui-root')) {
+					ctx.set('root', compE);
+				}
+		
+				compE.removeAttribute('_comp');
+			break;
 		}
-
-		//	Saving the node as root for the possible instance children.
-		if (compE.hasAttribute('xui-root')) {
-			ctx.set('root', compE);
-		}
-
-		compE.removeAttribute('_comp');
 	}
 };
 
