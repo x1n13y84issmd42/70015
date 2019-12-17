@@ -18,15 +18,16 @@ let XUI = {
 			//	Building the component itself from the component source markup.
 			let compE = XUI.transform(srcE, instAttrs, args, compNodes, ctx);
 			XUI.enrich(compE, instAttrs, args, compNodes, ctx);
-			
+
 			ctor && ctor(compE, compNodes, instAttrs, args);
 			
 			//	Appending possible child nodes of the component instance.
 			for (let instEChild of instE.children) {
-				(ctx.get('root') || compE).appendChild(XUI.transform(instEChild, instAttrs, args, compNodes, ctx.child(compE)));
+				let compEChild = XUI.transform(instEChild, instAttrs, args, compNodes, ctx.child(compE));
+				compEChild && (ctx.get('root') || compE).appendChild(compEChild);
 			}
-			
-			return compE;
+
+			return XUI.condition(compE, instAttrs, args);
 		};
 	},
 
@@ -51,7 +52,8 @@ let XUI = {
 
 		if (srcE.children && srcE.children.length) {
 			for (let srcECN of srcE.children) {
-				compE.appendChild(XUI.transform(srcECN, instAttrs, args, compNodes, ctx));
+				let compECN = XUI.transform(srcECN, instAttrs, args, compNodes, ctx);
+				compECN && compE.appendChild(compECN);
 			}
 		} else if (srcE.innerText) {
 			compE.innerText = srcE.innerText;
@@ -59,14 +61,14 @@ let XUI = {
 
 		XUI.enrich(compE, instAttrs, args, compNodes, ctx);
 		
-		return compE;
+		return XUI.condition(compE, instAttrs, args);
 	},
 	
 	/**
 	 * Enrichment is when we put various values from either the instance attributes or from the args object into the new component.
 	 * When a node or an attribute has a special value in braces {}, that value will be evaluated as JavaScript code,
 	 * executed in a context where a couple of objects are available:
-	 * 		comp: Attributes from the component instance.
+	 * 		inst: Attributes from the component instance.
 	 * 		args: Values from the arguments object.
 	 * @param {HTMLElement} compE A newly created component element.
 	 * @param {Object} comp An object containing all the attributes from the component instance.
@@ -110,21 +112,37 @@ let XUI = {
 					EAttr.nodeValue = xeval(EAttr.nodeValue);
 				}
 
-				//TODO: dataset
+				//TODO: enrich dataset
 
 				//	Saving the node for later if requested
 				if (compE.hasAttribute('xui-as')) {
 					compNodes[compE.getAttribute('xui-as')] = compE;
+					compE.removeAttribute('xui-as');
 				}
 		
 				//	Saving the node as root for the possible instance children.
 				if (compE.hasAttribute('xui-root')) {
 					ctx.set('root', compE);
+					compE.removeAttribute('xui-root');
 				}
 		
 				compE.removeAttribute('_comp');
 			break;
 		}
+	},
+
+	condition: function(compE, inst, args) {
+		if (compE.hasAttribute('xui-if')) {
+			let cond = compE.getAttribute('xui-if');
+			compE.removeAttribute('xui-if');
+			if (!!eval(cond)) {
+				return compE;
+			}
+
+			return undefined;
+		}
+
+		return compE;
 	}
 };
 

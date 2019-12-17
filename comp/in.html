@@ -1,7 +1,8 @@
 <!-- An <in> component structure. -->
 <div _comp="in">
 	<label for="unixtime-ts-in">{inst.label}</label>
-	<input xui-if="comp.type==='text'" type="text" id="unixtime-ts-in" autofocus="" value="{inst.value||args.value}">
+	<input xui-if="inst.type==='text'" type="text" id="unixtime-ts-in" autofocus="" value="{inst.$||args.value}">
+	<textarea xui-if="inst.type==='area'" name="{inst.name}" id="" cols="{inst.cols||30}" rows="{inst.rows||10}">{inst.$}</textarea>
 </div>
 
 <script>
