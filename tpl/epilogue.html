@@ -6,7 +6,15 @@
 		<tool _id="unixtime" tag="unixtime" name="Unixtime">
 			<block _id="ts">
 				<in type="text" autofocus label="Unixtime (also {args.theValue})"></in>
-				<undercontrols error="true"></undercontrols>
+				<undercontrols error="true">
+					<reuse>
+						<jsonyaml json="#input">Convert it to YAML</jsonyaml>
+						<base64 ascii="#input">Base64-encode it</base64>
+					</reuse>
+				</undercontrols>
+				<kvpair key="F00">B4RRR! (from $)</kvpair>
+				<kvpair key="F00" value="B4RRR! (from value)"></kvpair>
+				<kvpair k="F00" v="B4RRR! (from v)"></kvpair>
 			</block>
 		</tool>
 

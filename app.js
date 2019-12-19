@@ -897,8 +897,21 @@ class Workbench {
 
 
 
+/**
+ * An exercise in component UI frameworks. Inspired by React, based on XHTML.
+ */
 let XUI = {
-	register: function(compName, ctor) {
+	/**
+	 * Registers a component and makes it available for use.
+	 * There is must be an element in the DOM with a _comp attribute value the same as the passed compValue,
+	 * which will be used as a component structure markup.
+	 * @param {string} compName A component name.
+	 * @param {Function} ctor A constructor function (compE, elements, inst, args)
+	 * @param {boolean} container Set to true if you want child nodes of an instance to be autoappended to the root.
+	 */
+	register: function(compName, ctor, container) {
+		container === undefined && (container = true);
+
 		XUIC[compName] = function(instE, args, ctx) {
 			if (arguments.length < 2) {
 				args = instE || {};
@@ -911,20 +924,26 @@ let XUI = {
 
 			let compNodes = {};
 			let srcE = document.querySelector(`[_comp=${compName}]`);
-			let instAttrs = Object.fromEntries(Array.from(instE.attributes).map(attr => [attr.name, attr.value]));
-			instAttrs.$ = instE.innerText;
+			let instAttrs = XUI.attributes(instE);
 
 			//	Building the component itself from the component source markup.
 			let compE = XUI.transform(srcE, instAttrs, args, compNodes, ctx);
 			XUI.enrich(compE, instAttrs, args, compNodes, ctx);
+			// compNodes.$root = compNodes.$comp = compE;
+			compNodes.$comp = compE;
 
-			ctor && ctor(compE, compNodes, instAttrs, args);
-			
+			//	Constructor
+			ctor && ctor(compE, compNodes, instAttrs, args, instE);
+
 			//	Appending possible child nodes of the component instance.
-			for (let instEChild of instE.children) {
-				let compEChild = XUI.transform(instEChild, instAttrs, args, compNodes, ctx.child(compE));
-				compEChild && (ctx.get('root') || compE).appendChild(compEChild);
+			if (container) {
+				for (let instEChild of instE.children) {
+					let compEChild = XUI.transform(instEChild, instAttrs, args, compNodes, ctx.child(compE));
+					compEChild && (ctx.get('root') || compE).appendChild(compEChild);
+				}
 			}
+
+			compNodes.$root || (compNodes.$root = compE);
 
 			return XUI.condition(compE, instAttrs, args);
 		};
@@ -945,17 +964,20 @@ let XUI = {
 			return XUI.clone(srcE, instAttrs, args, compNodes, ctx);
 		}
 	},
-	
+
+	/**
+	 * Performs a deep copy & transformation of the given srcE element.
+	 * @param {HTMLElement} srcE An element to clone.
+	 * @param {Object} args Arguments.
+	 */
 	clone: function(srcE, instAttrs, args, compNodes, ctx) {
 		let compE = srcE.cloneNode();
 
-		if (srcE.children && srcE.children.length) {
-			for (let srcECN of srcE.children) {
+		if (srcE.childNodes && srcE.childNodes.length) {
+			for (let srcECN of srcE.childNodes) {
 				let compECN = XUI.transform(srcECN, instAttrs, args, compNodes, ctx);
 				compECN && compE.appendChild(compECN);
 			}
-		} else if (srcE.innerText) {
-			compE.innerText = srcE.innerText;
 		}
 
 		XUI.enrich(compE, instAttrs, args, compNodes, ctx);
@@ -976,12 +998,13 @@ let XUI = {
 	 * @param {CompContext} ctx A composition context.
 	 */
 	enrich: function(compE, inst, args, compNodes, ctx) {
+		//	Replaces occurences of {}-expressions (JS code) with their evaluated results.
 		function xeval(s) {
 			function repl() {
 				return s.replace(/\{(.*?)\}/gi, (a, g1) => eval(g1));
 			}
 
-			//	Doing it in a loop for transitive evaluations.
+			//	Doing it in a loop for transitive evaluations, i.e. when a replacement value is a {}-expression itself.
 			let s1 = repl(s);
 			while (s1 != s) {
 				s = s1;
@@ -1018,10 +1041,11 @@ let XUI = {
 					compNodes[compE.getAttribute('xui-as')] = compE;
 					compE.removeAttribute('xui-as');
 				}
-		
+				
 				//	Saving the node as root for the possible instance children.
 				if (compE.hasAttribute('xui-root')) {
 					ctx.set('root', compE);
+					compNodes.$root = compE;
 					compE.removeAttribute('xui-root');
 				}
 		
@@ -1030,8 +1054,14 @@ let XUI = {
 		}
 	},
 
+	/**
+	 * Evaluates the 'xui-if' attribute and discards the compE in case it's false.
+	 * @param {HTMLElement} compE A component DOM node.
+	 * @param {Object} inst Instance attributes.
+	 * @param {Object} args Arguments.
+	 */
 	condition: function(compE, inst, args) {
-		if (compE.hasAttribute('xui-if')) {
+		if (compE.nodeType === Node.ELEMENT_NODE && compE.hasAttribute('xui-if')) {
 			let cond = compE.getAttribute('xui-if');
 			compE.removeAttribute('xui-if');
 			if (!!eval(cond)) {
@@ -1042,9 +1072,19 @@ let XUI = {
 		}
 
 		return compE;
+	},
+
+	attributes: function(E) {
+		return {
+			... Object.fromEntries(Array.from(E.attributes).map(attr => [attr.name, attr.value])),
+			$: E.innerText,
+		};
 	}
 };
 
+/**
+ * Components live here.
+ */
 let XUIC = {};
 
 

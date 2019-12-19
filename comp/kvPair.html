@@ -1,0 +1,10 @@
+<div _comp="kvpair" class="kvpair kv">
+	<span class="key">{inst.key||inst.k||args.k}</span>
+	<span class="value" xui-as="v">{inst.value||inst.v||args.v||inst.$}</span>
+</div>
+
+<script>
+	XUI.register('kvpair', (compE, elements, inst, args) => {
+		elements.v.onclick = onclickCopyToClipboard;
+	});
+</script>
