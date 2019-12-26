@@ -1,6 +1,6 @@
 <tool _id="hasher" data-tag="hash md5 sha des" name="Hashes &amp; ciphers">
-	<input type="text" _id="input" autofocus tabindex="21" label="Input"/>
-	<input type="text" class="hasherKeyInput" _id="key" autofocus tabindex="21" label="Encryption key" />
+	<in type="text" _id="input" autofocus tabindex="21" label="Input"></in>
+	<in type="text" class="hasherKeyInput" _id="key" autofocus tabindex="21" label="Encryption key" ></in>
 
 	<div class="results subsection"></div>
 </tool>
@@ -58,7 +58,7 @@
 			}
 		}
 
-		let comp = Component.New('hasher');
+		let comp = XUIC.tool('hasher', {});
 		window.tools.appendChild(comp);
 		bench.add(new THasher(comp));
 	})()

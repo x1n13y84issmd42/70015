@@ -324,6 +324,140 @@
 <!-- continues in epilogue.html -->
 
 
+<tool _id="base64" data-tag="base64" name="Base64" onclose="unfocus" onshare="share">
+	<block _id="base64">
+		<in type="area" rows="8" label="Base64-encoded string"></in>
+		<undercontrols>
+			<reuse>
+				<hasher input="{Δ('base64')}">Hash it</hasher>
+			</reuse>
+			<copy from="{Δ('base64')}"></copy>
+		</undercontrols>
+	</block>
+
+	<div class="bothways">It works ⇃both↾ ways.</div>
+
+	<block _id="ascii">
+		<in type="area" rows="8" label="ASCII string"></in>
+		<undercontrols>
+			<reuse>
+				<hasher input="{Δ('ascii')}">Hash it</hasher>
+			</reuse>
+			<copy from="{Δ('ascii')}"></copy>
+		</undercontrols>
+	</block>
+</tool>
+
+<script>
+	(() => {
+		class TBase64 extends Tool {
+			constructor(id) {
+				super(id);
+
+				this.inBase64 = this.Section('base64').Input();
+				this.inAscii = this.Section('ascii').Input();
+
+				this.inBase64.oninput = () => this.decode();
+				this.inAscii.oninput = () => this.encode();
+			}
+
+			decode() {
+				this.inAscii.value = atob(this.inBase64.value);
+			};
+			
+			encode() {
+				this.inBase64.value = btoa(this.inAscii.value);
+			};
+
+			import(data) {
+				if (data.ascii) {
+					this.inAscii.value = data.ascii;
+					this.encode();
+				}
+				
+				if (data.base64) {
+					this.base64.value = data.base64;
+					this.decode();
+				}
+			}
+		}
+
+		let comp = XUIC.tool('base64', {});
+		window.tools.appendChild(comp);
+		bench.add(new TBase64(comp));
+	})()
+</script>
+
+
+
+<tool _id="hasher" data-tag="hash md5 sha des" name="Hashes &amp; ciphers">
+	<in type="text" _id="input" autofocus tabindex="21" label="Input"></in>
+	<in type="text" class="hasherKeyInput" _id="key" autofocus tabindex="21" label="Encryption key" ></in>
+
+	<div class="results subsection"></div>
+</tool>
+
+<script src="./node_modules/crypto-js/crypto-js.js?dontcachemepls"></script>
+<script src="./node_modules/js-crc/build/crc.min.js?dontcachemepls"></script>
+
+<script>
+	(() => {
+		class THasher extends Tool {
+			constructor(id) {
+				super(id);
+
+				this.input = this.$$('input');
+				this.keyInput = this.$$('key');
+
+				this.keyInput.oninput = this.input.oninput = () => this.hash();
+			}
+
+			hash() {
+				let results = this.$(".results")[0];
+				this.removeChildren(results);
+
+				results.appendChild(Comp.kvSection({label: "Checksums"}));
+				results.appendChild(Comp.kvPair({k: "CRC16", v: crc16(this.input.value)}));
+				results.appendChild(Comp.kvPair({k: "CRC32", v: crc32(this.input.value)}));
+				results.appendChild(Comp.kvPair({k: "CRC16", v: crc16(this.input.value)}));
+				results.appendChild(Comp.kvPair({k: "CRC32", v: crc32(this.input.value)}));
+				
+				results.appendChild(Comp.kvSection({label: "Hashes"}));
+				results.appendChild(Comp.kvPair({k: "MD5", v: '' + CryptoJS.MD5(this.input.value)}));
+				results.appendChild(Comp.kvPair({k: "SHA1", v: '' + CryptoJS.SHA1(this.input.value)}));
+				results.appendChild(Comp.kvPair({k: "SHA3", v: '' + CryptoJS.SHA3(this.input.value)}));
+				results.appendChild(Comp.kvPair({k: "SHA256", v: '' + CryptoJS.SHA256(this.input.value)}));
+				
+				results.appendChild(Comp.kvSection({label: "Ciphers"}));
+				let aes = CryptoJS.AES.encrypt(this.input.value, this.keyInput.value, {keySize: 128});
+				let des = CryptoJS.DES.encrypt(this.input.value, this.keyInput.value, {keySize: 128});
+				// console.log(aes);
+				// console.log(aes.key.toString());
+				// console.log(aes.iv.toString());
+				// console.log(aes.ciphertext.toString());
+				// console.log(aes.key);
+				// console.log(aes.iv);
+				// console.log(aes.ciphertext);
+				results.appendChild(Comp.kvPair({k: "AES", v: aes.ciphertext.toString()}));
+				results.appendChild(Comp.kvPair({k: "DES", v: des.ciphertext.toString()}));
+			};
+
+			import(data) {
+				if (data.input) {
+					this.T(this.$$('input'), data.input);
+					this.hash();
+				}
+			}
+		}
+
+		let comp = XUIC.tool('hasher', {});
+		window.tools.appendChild(comp);
+		bench.add(new THasher(comp));
+	})()
+</script>
+
+
+
 <tool _id="json" data-tag="json format" name="Format JSON">
 	<block _id="input">
 		<in type="area" autofocus spellcheck="false" rows="5" label="JSON input"></in>
@@ -469,6 +603,115 @@
 
 <style>
 	#json .subcontrols {
+		width: 1000px;
+	}
+</style>
+
+
+
+<tool _id="jsonyaml" data-tag="json yaml" name="JSON &#x2942; YAML">
+	<block _id="json">
+		<div class="overcontrols">
+			<label for="">Indent with</label>
+
+			<radio name="indent" _id="tabs" value="	">tabs</radio>
+			<radio name="indent" _id="4spaces" value="    ">4 spaces</radio>
+			<radio name="indent" _id="2spaces" value="  ">2 spaces</radio>
+		</div>
+		
+		<in type="area" rows="9" label="JSON"></in>
+		
+		<undercontrols>
+			<reuse>
+				<json input="{Δ('json')}">Format it</json>
+			</reuse>
+			<copy from="{Δ('json')}"></copy>
+		</undercontrols>
+	</block>
+	
+	<div class="bothways">It works ⇃both↾ ways.</div>
+	
+	<block _id="yaml">
+		<in type="area" rows="9" label="YAML"></in>
+		<undercontrols error="true">
+			<copy from="{Δ('yaml')}"></copy>
+		</undercontrols>
+	</block>
+</tool>
+
+<script src="./node_modules/js-yaml/dist/js-yaml.min.js"></script>
+
+<script>
+	(()=>{
+		class TJSONYAML extends Tool {
+			constructor(id) {
+				super(id);
+	
+				this.json = this.Section('json').Input();
+				this.yaml = this.Section('yaml').Input();
+	
+				this.json.oninput = () => this.toYAML();
+				this.yaml.oninput = () => this.toJSON();
+	
+				this.indentRadios = this.$('input[name=jsonyaml-json-indent]');
+	
+				for (let s of this.switches) {
+					s.onchange = () => this.toJSON();
+				}
+			}
+	
+			toYAML() {
+				try {
+					this.yaml.value = jsyaml.safeDump(JSON.parse(this.json.value));
+					this.Section('json').Error(undefined).Enable();
+					this.Section('yaml').Error(undefined).Enable();
+				} catch (e) {
+					this.Section('json').Error(e.message);
+					this.yaml.value = '¯\\_(ツ)_/¯';
+					this.Section('yaml').Disable();
+				}
+			}
+			
+			toJSON() {
+				let indent = "\t";
+				for (let r of this.indentRadios) {
+					if (r.checked) {
+						indent = r.value;
+					}
+				}
+				
+				try {
+					this.json.value = JSON.stringify(jsyaml.safeLoad(this.yaml.value), undefined, indent);
+					this.Section('json').Error(undefined).Enable();
+					this.Section('yaml').Error(undefined).Enable();
+				} catch (e) {
+					this.Section('yaml').Error(e.message);
+					this.json.value = '¯\\_(ツ)_/¯';
+					this.Section('json').Disable();
+				}
+			}
+	
+			import(data) {
+				if (data.json) {
+					this.json.value = data.json;
+					this.toYAML();
+				}
+				
+				if (data.yaml) {
+					this.yaml.value = data.yaml;
+					this.toJSON();
+				}
+			}
+		}
+	
+		let comp = XUIC.tool('jsonyaml', {onshare: function(){alert("Sharing is caring \\o/")}});
+		window.tools.appendChild(comp);
+		bench.add(new TJSONYAML(comp));
+	})()
+</script>
+
+<style>
+	#jsonyaml .subcontrols {
 		width: 1000px;
 	}
 </style>
@@ -680,6 +923,471 @@
 	#unixtime .typographyDate > .l48 {font-size: 10.42pt;}
 	#unixtime .typographyDate > .l49 {font-size: 10.20pt;}
 	#unixtime .typographyDate > .l50 {font-size: 10.00pt;}
+</style>
+
+
+
+<tool _id="urldecode" data-tag="url trans encode decode" name="Transcode URL">
+	<block _id="encoded">
+		<in type="text" autofocus tabindex="11" label="URL-encoded string"></in>
+		<undercontrols>
+			<copy from="{Δ('encoded')}"></copy>
+		</undercontrols>
+	</block>
+
+	<div class="bothways">It works ⇃both↾ ways.</div>
+
+	<block _id="decoded" >
+		<label for="urldecode-encinput"></label>		
+		<in type="text" label="ASCII string" tabindex="12" onFocus="this.tabIndex=10;" onBlur="this.tabIndex=12;"></in>
+		<undercontrols>
+			<copy from="{Δ('decoded')}"></copy>
+		</undercontrols>
+	</block>
+</tool>
+
+<script>
+	(() => {
+		class TURLTranscoder extends Tool {
+			constructor(id) {
+				super(id)
+				
+				this.encoded = this.Section('encoded').Input();
+				this.decoded = this.Section('decoded').Input();
+				this.encoded.oninput = () => this.decode();
+				this.decoded.oninput = () => this.encode();
+			}
+			
+			decode() {
+				this.decoded.value = decodeURIComponent(this.encoded.value);
+			};
+			
+			encode() {
+				this.encoded.value = encodeURIComponent(this.decoded.value);
+			};
+			
+		}
+		
+		let comp = XUIC.tool('urldecode', {});
+		window.tools.appendChild(comp);
+		bench.add(new TURLTranscoder(comp));
+	})()
+</script>
+
+
+
+<tool _id="urlparse" name="Parse URL" data-tag="urlparse">
+	<block _id="url">
+		<in type="text" label="URL"></in>
+		<undercontrols error="true"></undercontrols>
+	</block>
+
+	<block _id="fields">
+		<div class="fields"></div>
+	</block>
+</tool>
+
+<script>
+	(() => {
+		class TURLParser extends Tool {
+			constructor(id) {
+				super(id);
+				this.URL = this.Section("url").Input();
+
+				this.URL.oninput = () => {
+					let fields = this.$(".fields")[0];
+					this.removeChildren(fields);
+
+					let url;
+
+					try {
+						url = new URL(this.URL.value);
+						this.Section("url").Error(undefined);
+						this.Section('fields').Show();
+					} catch (err) {
+						this.Section("url").Error(err.message);
+						this.Section('fields').Hide();
+						return;
+					}
+					
+					fields.appendChild(Comp.kvSection({label: "URL"}));
+					url.protocol && fields.appendChild(Comp.kvPair({k: "Protocol", v: url.protocol}));
+					url.hostname && fields.appendChild(Comp.kvPair({k: "Domain", v: url.hostname}));
+					url.username && fields.appendChild(Comp.kvPair({k: "Username", v: url.username}));
+					url.password && fields.appendChild(Comp.kvPair({k: "Password", v: url.password}));
+
+					if (url.path) {
+						fields.appendChild(Comp.kvPair({k: "Path", v: url.path}));
+					} else if (url.pathname) {
+						fields.appendChild(Comp.kvPair({k: "Path", v: url.pathname}));
+					}
+
+					url.port && fields.appendChild(Comp.kvPair({k: "Port", v: url.port}));
+					url.hash && fields.appendChild(Comp.kvPair({k: "Hash", v: url.hash}));
+
+					if (url.search && url.searchParams) {
+						fields.appendChild(Comp.kvSection({label: "Query"}));
+						let sp = this.improveSearchParams(url.searchParams);
+						for (let spn in sp) {
+							let spv = sp[spn];
+							if (spv instanceof Array) {
+								let t = true;
+								for (let spvv of spv) {
+									fields.appendChild(Comp.kvPair({k: t ? (t = false, spn) : "", v: spvv}));
+								}
+							} else {
+								fields.appendChild(Comp.kvPair({k: spn, v: spv}));
+							}
+						}
+					}
+				};
+			}
+			
+			/**
+			 * Stores array values as arrays.
+			 */
+			improveSearchParams(urlsp) {
+				let res = {};
+				for (let e of urlsp.entries()) {
+					let qspn = e[0];
+					let qspv = e[1];
+
+					if (qspn.substr(-2) == '[]') {
+						qspn = qspn.substr(0, qspn.length - 2);
+						res[qspn] || (res[qspn] = []);
+						res[qspn].push(qspv);
+					} else {
+						res[qspn] = qspv;
+					}
+				}
+
+				return res;
+			}
+		}
+
+		let comp = XUIC.tool('urlparse', {});
+		window.tools.appendChild(comp);
+		bench.add(new TURLParser(comp));
+	})()
+</script>
+
+
+
+<tool _id="xml" data-tag="xml xpath" name="XML &amp; Xpath">
+	<block _id="xml">
+		<in type="area" autofocus spellcheck="false" rows="5" label="XML input"></in>
+		<undercontrols error="true">
+			<reuse>
+				<base64 ascii="{Δ('xml')}">Base64-encode it</base64>
+			</reuse>
+		</undercontrols>
+	</block>
+
+	<block _id="xpath">
+		<in type="text" id="xml-xpath-in" spellcheck="false" label="XPath query"></in>
+		<undercontrols error="true">
+			<copy from="{Δ('xpath')}"></copy>
+		</undercontrols>
+	</block>
+	
+	<block _id="nice" class="hidden">
+		<label>XML structure</label>
+		<div id="xml-nice-root"></div>
+	</block>
+</tool>
+
+<script>
+	class TXML extends Tool {
+		constructor(id) {
+			super(id)
+
+			this.xml = this.Section('xml').Input();
+			this.xpath = this.Section('xpath').Input();
+			this.xmlNice = this.Section('nice').$$('root');
+
+			this.xml.oninput = () => this.update();
+			this.xpath.oninput = () => this.update();
+		}
+
+		parseXML(s) {
+			let parser = new DOMParser();
+			let xml = parser.parseFromString(s, "text/xml");
+
+			this.checkXMLParserErrors(xml);
+
+			return xml;
+		}
+
+		//	DOMParser.parseFromString() won't throw or report errors in any other way.
+		//	Instead it creates a document with a markup in it, where an information about error is stored.
+		//	Wat.
+		checkXMLParserErrors(xml) {
+			let parserError = xml.getElementsByTagName("parsererror")[0];
+
+			if (parserError) {
+				let errors = parserError.getElementsByTagName("div");
+				if (errors.length) {
+					throw Array.from(errors).map(en => en.innerText).join('<br/>');
+				}
+			}
+		}
+
+		update() {
+			let xml;
+			let found = [];
+
+			try {
+				xml = this.parseXML(this.xml.value);
+				this.Section('xml').Error();
+				this.Section('xpath').Enable();
+				this.Section('nice').Show();
+			} catch(err) {
+				this.Section('xml').Error(err);
+				this.Section('xpath').Disable();
+				this.Section('nice').Hide();
+			}
+			
+			try {
+				found = this.queryXPath(xml, this.xpath.value);
+				this.Section('xpath').Error();
+				this.Section('nice').Show();
+			} catch(err) {
+				this.Section('xpath').Error(err.message);
+				this.Section('nice').Hide();
+			}
+
+			while(this.xmlNice.firstChild) {
+				this.xmlNice.removeChild(this.xmlNice.firstChild)
+			}
+
+			this.renderXML(xml, this.xmlNice, found);
+		}
+
+		queryXPath(doc, xpath) {
+			var found = [];
+
+			if (doc && xpath) {
+				var xpe = new XPathEvaluator();
+				var result = xpe.evaluate(xpath, doc);
+				var res;
+				while (res = result.iterateNext()) {
+					found.push(res);
+				}
+				
+				console.log("Found XML nodes: ", found);
+			}
+
+			return found;
+		}
+
+		nodeStr(node) {
+			let str = node.nodeName;
+			let attributes = '';
+			let position = 0;
+
+			if (node.attributes) {
+				let attrs = [];
+				for (let aI = 0; aI < node.attributes.length; aI++) {
+					let a = node.attributes[aI];
+					attrs.push(`${a.name}=${a.nodeValue}`);
+				}
+
+				attributes = `(${attrs.join(',')})`;
+			}
+
+			let n = node;
+			while (n.previousSibling) {
+				n = n.previousSibling;
+				position++;
+			}
+
+			return `${str}#${position}${attributes}`;
+		}
+
+		isFound(node, foundNodes) {
+			let nodePath = this.getNodePath(node);
+
+			for (let fn of foundNodes) {
+				let fnPath = this.getNodePath(fn);
+
+				if (nodePath === fnPath) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		getNodePath(xmlNode) {
+			let p = [];
+			let n = xmlNode;
+			while (n) {
+				p.push(this.nodeStr(n));
+				n = n.parentNode || n.ownerElement;
+			}
+			return p.join(',');
+		}
+
+		createXMLNode(classes, value) {
+			let n = document.createElement('div');
+			classes && (n.className = classes.join(' '));
+			value && (n.innerHTML = value);
+			return n;
+		}
+
+		renderXML(xml, E, foundXML) {
+			if (! xml) {
+				return
+			}
+
+			let xmlE = document.createElement('div');
+			xmlE.classList.add("xml-node");
+
+			switch (xml.nodeType) {
+				case Node.ELEMENT_NODE:
+					let xattrs = [];
+
+					let xt = this.createXMLNode(['tag']);
+					let xto = this.createXMLNode(['opening']);
+					let xtn = this.createXMLNode(['name'], xml.nodeName);
+
+					xt.appendChild(xto);
+					xt.appendChild(xtn);
+
+					for (let attrI = 0; attrI < xml.attributes.length; attrI++) {
+						let attr = xml.attributes[attrI];
+
+						let xattrName = this.createXMLNode(['name'], attr.name);
+						let xattrEq = this.createXMLNode(['eq']);
+						let xattrValue = this.createXMLNode(['value'], `"${attr.nodeValue}"`);
+						let xattr = this.createXMLNode(['attr']);
+						xattr.appendChild(xattrName);
+						xattr.appendChild(xattrEq);
+						xattr.appendChild(xattrValue);
+
+						if (this.isFound(attr, foundXML)) {
+							// console.log("Found an attribute!", attr);
+							xattr.classList.add('found');
+						}
+
+						xt.appendChild(xattr);
+					}
+
+					if (xml.childNodes.length) {
+						xt.appendChild(this.createXMLNode(['closing']))
+					} else {
+						xt.appendChild(this.createXMLNode(['closing-short']))
+					}
+
+					xmlE.appendChild(xt);
+					xmlE.dataset.xmlName = xml.nodeName;
+				break;
+
+				case Node.TEXT_NODE:
+					xmlE.classList.add('text');
+					xmlE.innerHTML = xml.nodeValue;
+				break;
+				
+				case Node.CDATA_SECTION_NODE:
+				break;
+			}
+
+			if (this.isFound(xml, foundXML)) {
+				// console.log("Found the node!", xml)
+				xmlE.classList.add('found');
+			}
+			
+			E.appendChild(xmlE);
+			
+			for (let xmlCN of xml.childNodes) {
+				this.renderXML(xmlCN, xmlE, foundXML);
+			}
+			
+			if (xml.nodeType === 1 && xml.childNodes.length) {
+				
+				let xt = this.createXMLNode(['tag']);
+				xt.appendChild(this.createXMLNode(['opening-closing']));
+				xt.appendChild(this.createXMLNode(['name'], xml.nodeName));
+				xt.appendChild(this.createXMLNode(['closing']));
+				xmlE.appendChild(xt)
+			}
+		}
+	}
+
+	let comp = XUIC.tool('xml', {});
+	window.tools.appendChild(comp);
+	bench.add(new TXML(comp));
+
+</script>
+
+<style>
+	#xml-nice .found,
+	#xml-nice .found * {
+		color: white !important;
+		background: #00BBFF !important;
+	}
+
+	.xml-node {
+		position: relative;
+		left: 20px;
+		float: left;
+		clear: left;
+	}
+	
+	.xml-node.text {
+		font-style: italic;
+	}
+
+	.xml-node > .tag {
+		clear: both;
+	}
+
+	.xml-node > .tag > * {
+		display: inline-block;
+	}
+	
+	.xml-node > .tag > .name {
+		color: #062873;
+		font-weight: bold;
+	}
+	
+	.xml-node > .tag > .opening::after {
+		content: "<";
+	}
+	
+	.xml-node > .tag > .opening-closing::after {
+		content: "</";
+	}
+	
+	.xml-node > .tag > .closing::after {
+		content: ">";
+	}
+	
+	.xml-node > .tag > .closing-short::after {
+		content: " />";
+	}
+	
+	.xml-node > .tag > .attr {
+		margin-left: 10px;
+	}
+	
+	.xml-node > .tag > .attr > * {
+		display: inline-block;
+	}
+	
+	.xml-node > .tag > .attr > .name {
+		color: #062873;
+	}
+
+	.xml-node > .tag > .attr > .eq:after {
+		content: "="
+	}
+
+	.xml-node > .tag > .attr > .value {
+		font-weight: bold;
+		color: #444;
+		font-style: italic;
+	}
 </style>
 
 

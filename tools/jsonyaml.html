@@ -1,5 +1,5 @@
 <tool _id="jsonyaml" data-tag="json yaml" name="JSON &#x2942; YAML">
-	<section _id="json">
+	<block _id="json">
 		<div class="overcontrols">
 			<label for="">Indent with</label>
 
@@ -8,24 +8,24 @@
 			<radio name="indent" _id="2spaces" value="  ">2 spaces</radio>
 		</div>
 		
-		<input type="area" rows="9" label="JSON"></input>
+		<in type="area" rows="9" label="JSON"></in>
 		
 		<undercontrols>
 			<reuse>
-				<json input="#json">Format it</json>
+				<json input="{Δ('json')}">Format it</json>
 			</reuse>
-			<copy from="#json"></copy>
+			<copy from="{Δ('json')}"></copy>
 		</undercontrols>
-	</section>
+	</block>
 	
 	<div class="bothways">It works ⇃both↾ ways.</div>
 	
-	<section _id="yaml">
-		<input type="area" rows="9" label="YAML"></input>
+	<block _id="yaml">
+		<in type="area" rows="9" label="YAML"></in>
 		<undercontrols error="true">
-			<copy from="#yaml"></copy>
+			<copy from="{Δ('yaml')}"></copy>
 		</undercontrols>
-	</section>
+	</block>
 </tool>
 
 <script src="./node_modules/js-yaml/dist/js-yaml.min.js"></script>
@@ -93,7 +93,7 @@
 			}
 		}
 	
-		let comp = Component.New('jsonyaml', {onshare: function(){alert("Sharing is caring \\o/")}});
+		let comp = XUIC.tool('jsonyaml', {onshare: function(){alert("Sharing is caring \\o/")}});
 		window.tools.appendChild(comp);
 		bench.add(new TJSONYAML(comp));
 	})()

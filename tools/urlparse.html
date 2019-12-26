@@ -1,12 +1,12 @@
 <tool _id="urlparse" name="Parse URL" data-tag="urlparse">
-	<section _id="url">
-		<input type="text" label="URL">
+	<block _id="url">
+		<in type="text" label="URL"></in>
 		<undercontrols error="true"></undercontrols>
-	</section>
+	</block>
 
-	<section _id="fields">
+	<block _id="fields">
 		<div class="fields"></div>
-	</section>
+	</block>
 </tool>
 
 <script>
@@ -18,7 +18,7 @@
 
 				this.URL.oninput = () => {
 					let fields = this.$(".fields")[0];
-					this.removeChidren(fields);
+					this.removeChildren(fields);
 
 					let url;
 
@@ -87,7 +87,7 @@
 			}
 		}
 
-		let comp = Component.New('urlparse');
+		let comp = XUIC.tool('urlparse', {});
 		window.tools.appendChild(comp);
 		bench.add(new TURLParser(comp));
 	})()
