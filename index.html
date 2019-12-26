@@ -102,13 +102,15 @@
 
 
 <!-- The <checkbox> component structure. -->
-<label _comp="checkbox" checked="" for="{Σ(inst._id)}">
-	<input type="checkbox" id="{Σ(inst._id)}">
+<label _comp="checkbox" for="{Σ(inst._id)}">
+	<input type="checkbox" id="{Σ(inst._id)}" xui-as="in">
 	<span>{inst.$||args.label}</span>
 </label>
 
 <script>
-	XUI.register('checkbox');
+	XUI.register('checkbox', (elements, inst, args, ctx) => {
+		(inst.checked != undefined) && (elements.in.checked = true);
+	});
 </script>
 
 
@@ -181,13 +183,15 @@
 
 
 <!-- The <radio> component structure. -->
-<label _comp="radio" checked="" for="{Σ(inst._id)}">
-	<input type="radio" name="{Σ(inst.name)}" id="{Σ(inst._id)}">
+<label _comp="radio" for="{Σ(inst._id)}">
+	<input type="radio" name="{Σ(inst.name)}" id="{Σ(inst._id)}" xui-as="in">
 	<span>{inst.$||args.label}</span>
 </label>
 
 <script>
-	XUI.register('radio');
+	XUI.register('radio', (elements, inst, args, ctx) => {
+		(inst.checked != undefined) && (elements.in.checked = true);
+	});
 </script>
 
 
@@ -285,9 +289,10 @@
 			<block _id="ts">
 				<overcontrols>
 					<radio name="daname" _id="daidScuko" value="--">Scuko</radio>
-					<radio name="daname" _id="daidBljad" value="--">Bljad</radio>
+					<radio name="daname" _id="daidBljad" value="--" checked>Bljad</radio>
+					<radio name="daname" _id="daidNahuy" value="--">Nahuy</radio>
 					<checkbox _id="checkie-norm" value="--">Checkie 1</checkbox>
-					<checkbox _id="checkie-yeet" value="--">Checkie 2</checkbox>
+					<checkbox _id="checkie-yeet" value="--" checked>Checkie 2</checkbox>
 				</overcontrols>
 				<in type="text" autofocus label="Unixtime (also {args.theValue})"></in>
 				<undercontrols error="true">

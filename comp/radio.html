@@ -1,9 +1,11 @@
 <!-- The <radio> component structure. -->
-<label _comp="radio" checked="" for="{Σ(inst._id)}">
-	<input type="radio" name="{Σ(inst.name)}" id="{Σ(inst._id)}">
+<label _comp="radio" for="{Σ(inst._id)}">
+	<input type="radio" name="{Σ(inst.name)}" id="{Σ(inst._id)}" xui-as="in">
 	<span>{inst.$||args.label}</span>
 </label>
 
 <script>
-	XUI.register('radio');
+	XUI.register('radio', (elements, inst, args, ctx) => {
+		(inst.checked != undefined) && (elements.in.checked = true);
+	});
 </script>
