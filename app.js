@@ -961,8 +961,41 @@ let XUI = {
 		if (XUIC[srcEName]) {
 			return XUIC[srcEName](srcE, args, ctx);
 		} else {
-			return XUI.clone(srcE, instAttrs, args, compNodes, ctx);
+			if (XUI.isHTML5Tag(srcE)) {
+				return XUI.clone(srcE, instAttrs, args, compNodes, ctx);
+			} else {
+				throw new Error(`The element <${srcEName}> is undefined and is not standard.`);
+			}
 		}
+	},
+
+	/**
+	 * Checks if a given element name is a standard HTML5 tag.
+	 * @param {HTMLElement} e A DOM node to check.
+	 */
+	isHTML5Tag: function(e) {
+		return (e.nodeType === Node.TEXT_NODE) || [
+			"a", "abbr", "acronym", "address", "applet", "area", "article", "aside", "audio",
+			"b", "base", "basefont", "bdi", "bdo", "big", "blockquote", "body", "br", "button",
+			"canvas", "caption", "center", "cite", "code", "col", "colgroup",
+			"data", "datalist", "dd", "del", "details", "dfn", "dialog", "dir", "div", "dl", "dt",
+			"em", "embed",
+			"fieldset", "figcaption", "figure", "font", "footer", "form", "frame", "frameset",
+			"h1", "h2", "h3", "h4", "h5", "h6", "head", "header", "hr", "html",
+			"i", "iframe", "img", "input", "ins",
+			"kbd",
+			"label", "legend", "li", "link",
+			"main", "map", "mark", "meta", "meter",
+			"nav", "noframes", "noscript",
+			"object", "ol", "optgroup", "option", "output",
+			"p", "param", "picture", "pre", "progress",
+			"q",
+			"rp", "rt", "ruby",
+			"s", "samp", "script", "section", "select", "small", "source", "span", "strike", "strong", "style", "sub", "summary", "sup", "svg",
+			"table", "tbody", "td", "template", "textarea", "tfoot", "th", "thead", "time", "title", "tr", "track", "tt",
+			"u", "ul",
+			"var", "video", "wbr"
+		].includes(e.nodeName.toLowerCase());
 	},
 
 	/**
@@ -987,12 +1020,12 @@ let XUI = {
 	
 	/**
 	 * Enrichment is when we put various values from either the instance attributes or from the args object into the new component.
-	 * When a node or an attribute has a special value in braces {}, that value will be evaluated as JavaScript code,
+	 * When a node or an attribute has a special value in braces {}, that value will be evaluated as a JavaScript code,
 	 * executed in a context where a couple of objects are available:
 	 * 		inst: Attributes from the component instance.
 	 * 		args: Values from the arguments object.
 	 * @param {HTMLElement} compE A newly created component element.
-	 * @param {Object} comp An object containing all the attributes from the component instance.
+	 * @param {Object} inst An object containing all the attributes from the component instance.
 	 * @param {Object} args Arguments.
 	 * @param {Object} compNodes An object to keep specific component nodes (those with 'xui-as' attribute) available in the ctor function later.
 	 * @param {CompContext} ctx A composition context.
@@ -1074,6 +1107,11 @@ let XUI = {
 		return compE;
 	},
 
+	/**
+	 * Collects attributes from a DOM node into an objet.
+	 * Puts the element's innerText value under the '$' key.
+	 * @param {HTMLElement} E An HTML element to grab attributes from.
+	 */
 	attributes: function(E) {
 		return {
 			... Object.fromEntries(Array.from(E.attributes).map(attr => [attr.name, attr.value])),

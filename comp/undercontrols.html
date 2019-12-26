@@ -1,10 +1,11 @@
+<!-- The <undercontrols> component structure. -->
 <div _comp="undercontrols" class="undercontrols">
 	<error>INLINE ERR</error>
 </div>
 
 <script>
-	XUI.register("undercontrols", (compE, n, comp, args) => {
-		if (comp.error) {
+	XUI.register("undercontrols", (compE, n, inst, args) => {
+		if (inst.error) {
 			compE.appendChild(XUIC.error())
 		}
 	});

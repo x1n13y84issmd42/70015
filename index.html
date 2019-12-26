@@ -92,7 +92,7 @@
 	<!-- continues in toolshed.html -->
 
 
-<!-- A <section> component structure. -->
+<!-- The <block> component structure - a group of controls usually built around an <in> input component. -->
 <section _comp="block" id="{inst._id}"></section>
 
 <script>
@@ -101,6 +101,7 @@
 
 
 
+<!-- The <error> component structure - a general error reporting element under inputs. -->
 <p _comp="error" class="error"><i class="fas fa-exclamation-circle"></i><span>{inst.$||args.error||"&nbsp;"}</span></p>
 
 <script>
@@ -109,7 +110,7 @@
 
 
 
-<!-- An <in> component structure. -->
+<!-- The <in> component structure - a flexible input field. -->
 <div _comp="in">
 	<label for="unixtime-ts-in">{inst.label}</label>
 	<input xui-if="inst.type==='text'" type="text" id="unixtime-ts-in" autofocus="" value="{inst.$||args.value}">
@@ -123,6 +124,7 @@
 
 
 
+<!-- The <kvpair> component structure. -->
 <div _comp="kvpair" class="kvpair kv">
 	<span class="key">{inst.key||inst.k||args.k}</span>
 	<span class="value" xui-as="v">{inst.value||inst.v||args.v||inst.$}</span>
@@ -135,6 +137,7 @@
 </script>
 
 
+<!-- The <reuse> component structure - a menu to transfer data pieces between tools. -->
 <div _comp="reuse" class="menu switch">
 	<span>{inst.title||"Reuse"}<i class="fas fa-recycle"></i></span>
 	<div xui-root></div>
@@ -178,7 +181,7 @@
 </script>
 
 
-<!-- A <tool> component structure. -->
+<!-- The <tool> component structure. -->
 <div _comp="tool" class="tool focused" id="{inst._id}" data-tag="{inst.tag}">
 	<div class="preview">
 		<h1>{inst.name} (The value from args is "{args.theValue}")</h1>
@@ -192,13 +195,14 @@
 
 
 
+<!-- The <undercontrols> component structure. -->
 <div _comp="undercontrols" class="undercontrols">
 	<error>INLINE ERR</error>
 </div>
 
 <script>
-	XUI.register("undercontrols", (compE, n, comp, args) => {
-		if (comp.error) {
+	XUI.register("undercontrols", (compE, n, inst, args) => {
+		if (inst.error) {
 			compE.appendChild(XUIC.error())
 		}
 	});
