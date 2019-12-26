@@ -141,6 +141,14 @@
 
 
 
+<div _comp="bothways" class="bothways">It works ⇃both↾ ways.</div>
+
+<script>
+	XUI.register('bothways');
+</script>
+
+
+
 <!-- The <checkbox> component structure. -->
 <label _comp="checkbox" for="{Σ(inst._id)}">
 	<input type="checkbox" id="{Σ(inst._id)}" xui-as="in">
@@ -335,7 +343,7 @@
 		</undercontrols>
 	</block>
 
-	<div class="bothways">It works ⇃both↾ ways.</div>
+	<bothways></bothways>
 
 	<block _id="ascii">
 		<in type="area" rows="8" label="ASCII string"></in>
@@ -629,7 +637,7 @@
 		</undercontrols>
 	</block>
 	
-	<div class="bothways">It works ⇃both↾ ways.</div>
+	<bothways></bothways>
 	
 	<block _id="yaml">
 		<in type="area" rows="9" label="YAML"></in>
@@ -935,7 +943,7 @@
 		</undercontrols>
 	</block>
 
-	<div class="bothways">It works ⇃both↾ ways.</div>
+	<bothways></bothways>
 
 	<block _id="decoded" >
 		<label for="urldecode-encinput"></label>		
