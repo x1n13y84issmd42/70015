@@ -441,7 +441,8 @@ class CompContext {
 	 * @param {string} id An ID.
 	 */
 	id(id) {
-		return [...(this.data.stack || []), id].join('-');
+		// return [...(this.data.stack || []), id].join('-');
+		return [this.data.parentID, id].filter(v=>!!v).join('-');
 	}
 
 	/**

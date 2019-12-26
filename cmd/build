@@ -32,6 +32,7 @@ function build {
 }
 
 # build index.html tpl/prologue.html tpl/components.html comp/*.html tpl/toolshed.html tools/*.html tpl/epilogue.html
-build index.html tpl/prologue.html tpl/components.html comp/*.html tpl/toolshed.html tpl/epilogue.html
+# build index.html tpl/prologue.html tpl/components.html comp/*.html tpl/toolshed.html tpl/epilogue.html
+build index.html tpl/prologue.html tpl/components.html comp/*.html tpl/toolshed.html tools/json.html tpl/epilogue.html
 build style.css assets/*.css
 build app.js assets/*.js

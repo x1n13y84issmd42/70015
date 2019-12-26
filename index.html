@@ -75,6 +75,46 @@
 					dlgBGE.classList.add('in');
 				}, 0);
 			}
+
+			function onclickCopyToClipboard(e) {
+				let from = e.currentTarget;
+
+				//	Looking for a disabled parent.
+				let pn = from.parentNode;
+				while (pn) {
+					if (pn.classList && pn.classList.contains('disabled')) {
+						return;
+					}
+					pn = pn.parentNode;
+				}
+
+				if (from.dataset.value) {
+					Clipboard.copy(from.dataset.value);
+					tmpStyle(from, 'copied', 200);
+					copiedFloater(e.pageX, e.pageY);
+					return;
+				}
+				
+				if (from.dataset.from) {
+					from = document.getElementById(from.dataset.from);
+				}
+				
+				if (from) {	
+					switch (from.tagName) {
+						case "INPUT":
+						case "TEXTAREA":
+							Clipboard.copy(from.value);
+							break;
+							
+						default:
+							Clipboard.copy(from.innerHTML);
+							break;
+					}
+
+					tmpStyle(from, 'copied', 200);
+					copiedFloater(e.pageX, e.pageY);
+				}
+			}
 		</script>
 
 
@@ -93,7 +133,7 @@
 
 
 <!-- The <block> component structure - a group of controls usually built around an <in> input component. -->
-<section _comp="block" id="{inst._id}"></section>
+<section _comp="block" id="{Σ(inst._id)}"></section>
 
 <script>
 	XUI.register('block');
@@ -189,7 +229,7 @@
 
 <!-- The <radio> component structure. -->
 <label _comp="radio" for="{Σ(inst._id)}">
-	<input type="radio" name="{Σ(inst.name)}" id="{Σ(inst._id)}" xui-as="in">
+	<input type="radio" name="{Σ(inst.name)}" id="{Σ(inst._id)}" xui-as="in" value="{inst.value}">
 	<span>{inst.$||args.label}</span>
 </label>
 
@@ -249,7 +289,7 @@
 
 
 <!-- The <tool> component structure. -->
-<div _comp="tool" class="tool focused" id="{inst._id}" data-tag="{inst.tag}">
+<div _comp="tool" class="tool unfocused" id="{inst._id}" data-tag="{inst.tag}">
 	<div class="preview">
 		<h1>{inst.name}</h1>
 	</div>
@@ -284,12 +324,163 @@
 <!-- continues in epilogue.html -->
 
 
+<tool _id="json" data-tag="json format" name="Format JSON">
+	<block _id="input">
+		<in type="area" autofocus spellcheck="false" rows="5" label="JSON input"></in>
+		<undercontrols error="true">
+			<reuse>
+				<jsonyaml json="{Δ('input')}">Convert it to YAML</jsonyaml>
+				<base64 ascii="{Δ('input')}">Base64-encode it</base64>
+			</reuse>
+		</undercontrols>
+	</block>
+	
+	<block _id="1liner" class="disabled">
+		<overcontrols>
+			<checkbox _id="quote-identifiers" checked >Quote names</checkbox>
+			<checkbox _id="escape-quotes" >Escape the quotes</checkbox>
+		</overcontrols>
+		<in type="text" spellcheck="false" disabled label="One-liner JSON"></in>
+		<undercontrols>
+			<copy from="{Δ('1liner')}"></copy>
+		</undercontrols>
+	</block>
+	
+	<block _id="pretty" class="disabled">
+		<overcontrols>
+			<label for="">Indent with</label>
+			<radio name="indent" _id="tabs" value="	" checked>tabs</radio>
+			<radio name="indent" _id="4spaces" value="    ">4 spaces</radio>
+			<radio name="indent" _id="2spaces" value="  ">2 spaces</radio>
+		</overcontrols>
+		<in type="area" rows="8" spellcheck="false" disabled label="Pretty JSON"></in>
+		<undercontrols>
+			<reuse>
+				<jsonyaml json="{Δ('pretty')}">Convert it to YAML</jsonyaml>
+				<base64 ascii="{Δ('pretty')}">Base64-encode it</base64>
+			</reuse>
+			<copy from="{Δ('pretty')}"></copy>
+		</undercontrols>
+	</block>
+</tool>
+	
+<script>
+	(()=>{
+		class TJSON extends Tool {
+			constructor(id) {
+				super(id);
+	
+				this.inJSON = this.Section('input').Input();
+				this.outPretty = this.Section('pretty').Input();
+				this.out1liner = this.Section('1liner').Input();
+	
+				this.indentRadios = this.$('input[name=json-pretty-indent]');
+				this.quoteCheck = this.Section('1liner').$$('quote-identifiers');
+				this.escapeQuotesCheck = this.Section('1liner').$$('escape-quotes');
+	
+				let update = () => {
+					this.update();
+				}
+				
+				let switches = this.$('input[type=radio],input[type=checkbox]');
+				for (let s of switches) {
+					s.onchange = update;
+				}
+	
+				this.inJSON.oninput = update;
+			}
+	
+			import(data) {
+				data.json && (this.$$('json', data.json));
+			}
+	
+			update() {
+				try {
+					let v = JSON.parse(this.inJSON.value);
+					this.Section('input').Error(undefined);
+					this.prettyPrint(v);
+					this.oneliner(v);
+					this.Section('1liner').Enable();
+					this.Section('pretty').Enable();
+				} catch (e) {
+					this.Section('input').Error(e.message);
+					this.outPretty.value = this.out1liner.value = '¯\\_(ツ)_/¯';
+					this.Section('1liner').Disable();
+					this.Section('pretty').Disable();
+				}
+			}
+	
+			prettyPrint(v) {
+				if (v) {
+					let indent = "\t";
+					for (let r of this.indentRadios) {
+						if (r.checked) {
+							indent = r.value;
+						}
+					}
+	
+					this.outPretty.value = JSON.stringify(v, null, indent);
+					this.outPretty.rows = this.outPretty.value.split("\n").length;
+				}
+			}
+	
+			oneliner(v) {
+				if (v) {
+					this.out1liner.value = JSON1Liner(undefined, v, this.quoteCheck.checked, this.escapeQuotesCheck.checked);
+				}
+			}
+	
+			import(data) {
+				if (data.input) {
+					this.inJSON.value = data.input;
+					this.update();
+				}
+			}
+		}
+	
+		function JSON1Liner(name, v, quoteNames, escapeQuotes) {
+			let quote = (s) => escapeQuotes ? `\\"${s}\\"` : `"${s}"`;
+			let namePrefix = '';
+			name && (namePrefix = name) && quoteNames && (namePrefix = quote(namePrefix));
+			namePrefix && (namePrefix += ':');
+	
+			switch (typeof v) {
+				case 'string':
+					return namePrefix + quote(v);
+	
+				case 'number':
+					return namePrefix + v.toString();
+	
+				case 'object':
+					if (v instanceof Array) {
+						return `${namePrefix}[` + v.map((vv) => JSON1Liner(undefined, vv, quoteNames, escapeQuotes)).join(',') + "]";
+					} else {
+						return `${namePrefix}{` + Object.keys(v).map((vk) => JSON1Liner(vk, v[vk], quoteNames, escapeQuotes)) + "}";
+					}
+					break
+			}
+		}
+	
+		let comp = XUIC.tool('json', {});
+		window.tools.appendChild(comp);
+		bench.add(new TJSON(comp));
+	})()
+</script>
+
+<style>
+	#json .subcontrols {
+		width: 1000px;
+	}
+</style>
+
+
+
 		</div>
 		<!-- #toolshed, opened in toolshed.html -->
 
 		<div id="uiStash"></div>
 
-		<tool _id="unixtime" tag="unixtime" name="Unixtime">
+		<!-- <tool _id="unixtime" tag="unixtime" name="Unixtime">
 			<block _id="ts">
 				<overcontrols>
 					<radio name="daname" _id="daidScuko" value="--">Scuko</radio>
@@ -315,11 +506,11 @@
 				<kvpair k="F00" v="B4RRR! (from v)"></kvpair>
 				<kvpair k="F00" v="B4RRR! (from v) with {args.theValue}"></kvpair>
 			</block>
-		</tool>
+		</tool> -->
 
 		<script>
-			let toolComp = XUIC.tool('unixtime', {k: "A key", theValue: "T3H VALYOOO"});
-			document.body.appendChild(toolComp);
+			// let toolComp = XUIC.tool('unixtime', {k: "A key", theValue: "T3H VALYOOO"});
+			// document.body.appendChild(toolComp);
 
 			/**
 			 * Temporarily applies a class to an element. The class is removed after the specified amount of time passes.
@@ -349,46 +540,6 @@
 				setTimeout(() => {
 					document.body.removeChild(fltr);
 				}, 1000);
-			}
-
-			function onclickCopyToClipboard(e) {
-				let from = e.currentTarget;
-
-				//	Looking for a disabled parent.
-				let pn = from.parentNode;
-				while (pn) {
-					if (pn.classList && pn.classList.contains('disabled')) {
-						return;
-					}
-					pn = pn.parentNode;
-				}
-
-				if (from.dataset.value) {
-					Clipboard.copy(from.dataset.value);
-					tmpStyle(from, 'copied', 200);
-					copiedFloater(e.pageX, e.pageY);
-					return;
-				}
-				
-				if (from.dataset.from) {
-					from = document.getElementById(from.dataset.from);
-				}
-				
-				if (from) {	
-					switch (from.tagName) {
-						case "INPUT":
-						case "TEXTAREA":
-							Clipboard.copy(from.value);
-							break;
-							
-						default:
-							Clipboard.copy(from.innerHTML);
-							break;
-					}
-
-					tmpStyle(from, 'copied', 200);
-					copiedFloater(e.pageX, e.pageY);
-				}
 			}
 
 			document.body.onload = () => {

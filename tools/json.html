@@ -1,41 +1,41 @@
 <tool _id="json" data-tag="json format" name="Format JSON">
-	<section _id="input">
-		<input type="area" autofocus spellcheck="false" rows="5" label="JSON input">
+	<block _id="input">
+		<in type="area" autofocus spellcheck="false" rows="5" label="JSON input"></in>
 		<undercontrols error="true">
 			<reuse>
-				<jsonyaml json="#input">Convert it to YAML</jsonyaml>
-				<base64 ascii="#input">Base64-encode it</base64>
+				<jsonyaml json="{Δ('input')}">Convert it to YAML</jsonyaml>
+				<base64 ascii="{Δ('input')}">Base64-encode it</base64>
 			</reuse>
 		</undercontrols>
-	</section>
+	</block>
 	
-	<section _id="1liner" class="disabled">
+	<block _id="1liner" class="disabled">
 		<overcontrols>
 			<checkbox _id="quote-identifiers" checked >Quote names</checkbox>
 			<checkbox _id="escape-quotes" >Escape the quotes</checkbox>
 		</overcontrols>
-		<input type="text" spellcheck="false" disabled label="One-liner JSON">
+		<in type="text" spellcheck="false" disabled label="One-liner JSON"></in>
 		<undercontrols>
-			<copy from="#1liner">
+			<copy from="{Δ('1liner')}"></copy>
 		</undercontrols>
-	</section>
+	</block>
 	
-	<section _id="pretty" class="disabled">
+	<block _id="pretty" class="disabled">
 		<overcontrols>
 			<label for="">Indent with</label>
-			<radio name="indent" _id="tabs" value="	">tabs</radio>
+			<radio name="indent" _id="tabs" value="	" checked>tabs</radio>
 			<radio name="indent" _id="4spaces" value="    ">4 spaces</radio>
 			<radio name="indent" _id="2spaces" value="  ">2 spaces</radio>
 		</overcontrols>
-		<input type="area" rows="8" spellcheck="false" disabled label="Pretty JSON">
+		<in type="area" rows="8" spellcheck="false" disabled label="Pretty JSON"></in>
 		<undercontrols>
 			<reuse>
-				<jsonyaml json="#pretty">Convert it to YAML</jsonyaml>
-				<base64 ascii="#pretty">Base64-encode it</base64>
+				<jsonyaml json="{Δ('pretty')}">Convert it to YAML</jsonyaml>
+				<base64 ascii="{Δ('pretty')}">Base64-encode it</base64>
 			</reuse>
-			<copy from="#pretty">
+			<copy from="{Δ('pretty')}"></copy>
 		</undercontrols>
-	</section>
+	</block>
 </tool>
 	
 <script>
@@ -135,7 +135,7 @@
 			}
 		}
 	
-		let comp = Component.New('json');
+		let comp = XUIC.tool('json', {});
 		window.tools.appendChild(comp);
 		bench.add(new TJSON(comp));
 	})()

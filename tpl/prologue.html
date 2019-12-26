@@ -74,4 +74,44 @@
 					dlgBGE.classList.add('in');
 				}, 0);
 			}
+
+			function onclickCopyToClipboard(e) {
+				let from = e.currentTarget;
+
+				//	Looking for a disabled parent.
+				let pn = from.parentNode;
+				while (pn) {
+					if (pn.classList && pn.classList.contains('disabled')) {
+						return;
+					}
+					pn = pn.parentNode;
+				}
+
+				if (from.dataset.value) {
+					Clipboard.copy(from.dataset.value);
+					tmpStyle(from, 'copied', 200);
+					copiedFloater(e.pageX, e.pageY);
+					return;
+				}
+				
+				if (from.dataset.from) {
+					from = document.getElementById(from.dataset.from);
+				}
+				
+				if (from) {	
+					switch (from.tagName) {
+						case "INPUT":
+						case "TEXTAREA":
+							Clipboard.copy(from.value);
+							break;
+							
+						default:
+							Clipboard.copy(from.innerHTML);
+							break;
+					}
+
+					tmpStyle(from, 'copied', 200);
+					copiedFloater(e.pageX, e.pageY);
+				}
+			}
 		</script>
