@@ -431,20 +431,17 @@ class CompContext {
 		let data = {...this.data, reattachChildrenTo: null, root: null};
 		if (E.id) {
 			data.parentID = E.id;
+			data.stack = [...(this.data.stack || []), E.id];
 		}
 		return new CompContext(data);
 	}
 
 	/**
-	 * Creates a hierarchical ID by prepending the given id with the 'parentID' value when possible.
+	 * Creates a hierarchical ID by joining whatever is in the data.stack array.
 	 * @param {string} id An ID.
 	 */
 	id(id) {
-		if (this.data.parentID) {
-			return this.data.parentID + '-' + id;
-		}
-
-		return id;
+		return [...(this.data.stack || []), id].join('-');
 	}
 
 	/**

@@ -1,0 +1,9 @@
+<!-- The <checkbox> component structure. -->
+<label _comp="checkbox" checked="" for="{Σ(inst._id)}">
+	<input type="checkbox" id="{Σ(inst._id)}">
+	<span>{inst.$||args.label}</span>
+</label>
+
+<script>
+	XUI.register('checkbox');
+</script>

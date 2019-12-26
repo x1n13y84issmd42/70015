@@ -5,6 +5,12 @@
 
 		<tool _id="unixtime" tag="unixtime" name="Unixtime">
 			<block _id="ts">
+				<overcontrols>
+					<radio name="daname" _id="daidScuko" value="--">Scuko</radio>
+					<radio name="daname" _id="daidBljad" value="--">Bljad</radio>
+					<checkbox _id="checkie-norm" value="--">Checkie 1</checkbox>
+					<checkbox _id="checkie-yeet" value="--">Checkie 2</checkbox>
+				</overcontrols>
 				<in type="text" autofocus label="Unixtime (also {args.theValue})"></in>
 				<undercontrols error="true">
 					<reuse>
@@ -19,6 +25,7 @@
 
 				<kvsection>Moar</kvsection>
 				<kvpair k="F00" v="B4RRR! (from v)"></kvpair>
+				<kvpair k="F00" v="B4RRR! (from v) with {args.theValue}"></kvpair>
 			</block>
 		</tool>
 

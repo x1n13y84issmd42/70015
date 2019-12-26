@@ -101,6 +101,29 @@
 
 
 
+<!-- The <checkbox> component structure. -->
+<label _comp="checkbox" checked="" for="{Σ(inst._id)}">
+	<input type="checkbox" id="{Σ(inst._id)}">
+	<span>{inst.$||args.label}</span>
+</label>
+
+<script>
+	XUI.register('checkbox');
+</script>
+
+
+
+<!-- The <copy> component structure. -->
+<a _comp="copy" class="copy" data-from="{inst.from}">
+	<span>{inst.label||"Copy"}</span><i class="far fa-copy"></i>
+</a>
+
+<script>
+	XUI.register('copy');
+</script>
+
+
+
 <!-- The <error> component structure - a general error reporting element under inputs. -->
 <p _comp="error" class="error"><i class="fas fa-exclamation-circle"></i><span>{inst.$||args.error||"&nbsp;"}</span></p>
 
@@ -137,6 +160,7 @@
 </script>
 
 
+
 <!-- The <kvsection> component structure. -->
 <div _comp="kvsection" class="kvpair kvsection">
 	<span class="key">{inst.$||args.label}</span>
@@ -145,6 +169,33 @@
 <script>
 	XUI.register('kvsection');
 </script>
+
+
+<!-- The <overcontrols> component structure. -->
+<div _comp="overcontrols" class="overcontrols"></div>
+
+<script>
+	XUI.register("overcontrols");
+</script>
+
+
+
+<!-- The <radio> component structure. -->
+<label _comp="radio" checked="" for="{Σ(inst._id)}">
+	<input type="radio" name="{Σ(inst.name)}" id="{Σ(inst._id)}">
+	<span>{inst.$||args.label}</span>
+</label>
+
+<!--
+<label for="json-pretty-indent-tabs">
+	<input type="radio" name="json-pretty-indent" value="	" id="json-pretty-indent-tabs">
+	<span>tabs</span>
+</label> -->
+
+<script>
+	XUI.register('radio');
+</script>
+
 
 
 <!-- The <reuse> component structure - a menu to transfer data pieces between tools. -->
@@ -234,6 +285,12 @@
 
 		<tool _id="unixtime" tag="unixtime" name="Unixtime">
 			<block _id="ts">
+				<overcontrols>
+					<radio name="daname" _id="daidScuko" value="--">Scuko</radio>
+					<radio name="daname" _id="daidBljad" value="--">Bljad</radio>
+					<checkbox _id="checkie-norm" value="--">Checkie 1</checkbox>
+					<checkbox _id="checkie-yeet" value="--">Checkie 2</checkbox>
+				</overcontrols>
 				<in type="text" autofocus label="Unixtime (also {args.theValue})"></in>
 				<undercontrols error="true">
 					<reuse>
@@ -248,6 +305,7 @@
 
 				<kvsection>Moar</kvsection>
 				<kvpair k="F00" v="B4RRR! (from v)"></kvpair>
+				<kvpair k="F00" v="B4RRR! (from v) with {args.theValue}"></kvpair>
 			</block>
 		</tool>
 

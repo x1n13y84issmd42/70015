@@ -134,6 +134,10 @@ let XUI = {
 	enrich: function(compE, inst, args, compNodes, ctx) {
 		//	Replaces occurences of {}-expressions (JS code) with their evaluated results.
 		function xeval(s) {
+			//	This is available in components to generate hierarchical ids.
+			//	Other cool symbols to use: 𐐏 𐐍 𐐝 𐐦 𝛺 𝜴 𝝙 Δ 𝝣 𝝨 𝝮 Ω Σ 
+			let Σ = (v) => ctx.id(v);
+
 			function repl() {
 				return s.replace(/\{(.*?)\}/gi, (a, g1) => eval(g1));
 			}
@@ -215,7 +219,7 @@ let XUI = {
 	 */
 	attributes: function(E) {
 		return {
-			... Object.fromEntries(Array.from(E.attributes).map(attr => [attr.name, attr.value])),
+			...Object.fromEntries(Array.from(E.attributes).map(attr => [attr.name, attr.value])),
 			$: E.innerText,
 		};
 	}

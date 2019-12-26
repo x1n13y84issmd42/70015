@@ -465,20 +465,17 @@ class CompContext {
 		let data = {...this.data, reattachChildrenTo: null, root: null};
 		if (E.id) {
 			data.parentID = E.id;
+			data.stack = [...(this.data.stack || []), E.id];
 		}
 		return new CompContext(data);
 	}
 
 	/**
-	 * Creates a hierarchical ID by prepending the given id with the 'parentID' value when possible.
+	 * Creates a hierarchical ID by joining whatever is in the data.stack array.
 	 * @param {string} id An ID.
 	 */
 	id(id) {
-		if (this.data.parentID) {
-			return this.data.parentID + '-' + id;
-		}
-
-		return id;
+		return [...(this.data.stack || []), id].join('-');
 	}
 
 	/**
@@ -1033,6 +1030,10 @@ let XUI = {
 	enrich: function(compE, inst, args, compNodes, ctx) {
 		//	Replaces occurences of {}-expressions (JS code) with their evaluated results.
 		function xeval(s) {
+			//	This is available in components to generate hierarchical ids.
+			//	Other cool symbols to use: 𐐏 𐐍 𐐝 𐐦 𝛺 𝜴 𝝙 Δ 𝝣 𝝨 𝝮 Ω Σ 
+			let Σ = (v) => ctx.id(v);
+
 			function repl() {
 				return s.replace(/\{(.*?)\}/gi, (a, g1) => eval(g1));
 			}
@@ -1114,7 +1115,7 @@ let XUI = {
 	 */
 	attributes: function(E) {
 		return {
-			... Object.fromEntries(Array.from(E.attributes).map(attr => [attr.name, attr.value])),
+			...Object.fromEntries(Array.from(E.attributes).map(attr => [attr.name, attr.value])),
 			$: E.innerText,
 		};
 	}
