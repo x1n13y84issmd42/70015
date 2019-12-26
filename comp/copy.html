@@ -4,5 +4,7 @@
 </a>
 
 <script>
-	XUI.register('copy');
+	XUI.register('copy', (elements, ints, args, ctx) => {
+		elements.$comp.onclick = args.onclick || onclickCopyToClipboard;
+	});
 </script>
