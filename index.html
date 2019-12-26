@@ -137,6 +137,16 @@
 </script>
 
 
+<!-- The <kvsection> component structure. -->
+<div _comp="kvsection" class="kvpair kvsection">
+	<span class="key">{inst.$||args.label}</span>
+</div>
+
+<script>
+	XUI.register('kvsection');
+</script>
+
+
 <!-- The <reuse> component structure - a menu to transfer data pieces between tools. -->
 <div _comp="reuse" class="menu switch">
 	<span>{inst.title||"Reuse"}<i class="fas fa-recycle"></i></span>
@@ -231,8 +241,12 @@
 						<base64 ascii="#input">Base64-encode it</base64>
 					</reuse>
 				</undercontrols>
+
+				<kvsection>Valyos</kvsection>
 				<kvpair key="F00">B4RRR! (from $)</kvpair>
 				<kvpair key="F00" value="B4RRR! (from value)"></kvpair>
+
+				<kvsection>Moar</kvsection>
 				<kvpair k="F00" v="B4RRR! (from v)"></kvpair>
 			</block>
 		</tool>
