@@ -13,9 +13,10 @@
 				</overcontrols>
 				<in type="text" autofocus label="Unixtime (also {args.theValue})"></in>
 				<undercontrols error="true">
+					<copy from="{Δ('ts')}"></copy>
 					<reuse>
-						<jsonyaml json="#input">Convert it to YAML</jsonyaml>
-						<base64 ascii="#input">Base64-encode it</base64>
+						<jsonyaml json="{Δ('ts')}">Convert it to YAML</jsonyaml>
+						<base64 ascii="{Δ('ts')}">Base64-encode it</base64>
 					</reuse>
 				</undercontrols>
 

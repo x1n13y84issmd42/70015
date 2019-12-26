@@ -919,28 +919,29 @@ let XUI = {
 				ctx = new CompContext({});
 			}
 
-			let compNodes = {};
+			let elements = {};
 			let srcE = document.querySelector(`[_comp=${compName}]`);
 			let instAttrs = XUI.attributes(instE);
 
 			//	Building the component itself from the component source markup.
-			let compE = XUI.transform(srcE, instAttrs, args, compNodes, ctx);
-			XUI.enrich(compE, instAttrs, args, compNodes, ctx);
-			// compNodes.$root = compNodes.$comp = compE;
-			compNodes.$comp = compE;
+			let compE = XUI.transform(srcE, instAttrs, args, elements, ctx);
+			XUI.enrich(compE, instAttrs, args, elements, ctx);
+
+			elements.$comp = compE;
+			elements.$inst = instE;
 
 			//	Constructor
-			ctor && ctor(compE, compNodes, instAttrs, args, instE);
+			ctor && ctor(elements, instAttrs, args, ctx);
 
 			//	Appending possible child nodes of the component instance.
 			if (container) {
 				for (let instEChild of instE.children) {
-					let compEChild = XUI.transform(instEChild, instAttrs, args, compNodes, ctx.child(compE));
+					let compEChild = XUI.transform(instEChild, instAttrs, args, elements, ctx.child(compE));
 					compEChild && (ctx.get('root') || compE).appendChild(compEChild);
 				}
 			}
 
-			compNodes.$root || (compNodes.$root = compE);
+			elements.$root || (elements.$root = compE);
 
 			return XUI.condition(compE, instAttrs, args);
 		};
@@ -952,14 +953,14 @@ let XUI = {
 	 * @param {Object} args Arguments.
 	 * @param {CompContext} ctx A context.
 	 */
-	transform: function(srcE, instAttrs, args, compNodes, ctx) {
+	transform: function(srcE, instAttrs, args, elements, ctx) {
 		let srcEName = srcE.nodeName.toLowerCase();
 
 		if (XUIC[srcEName]) {
 			return XUIC[srcEName](srcE, args, ctx);
 		} else {
 			if (XUI.isHTML5Tag(srcE)) {
-				return XUI.clone(srcE, instAttrs, args, compNodes, ctx);
+				return XUI.clone(srcE, instAttrs, args, elements, ctx);
 			} else {
 				throw new Error(`The element <${srcEName}> is undefined and is not standard.`);
 			}
@@ -1000,17 +1001,17 @@ let XUI = {
 	 * @param {HTMLElement} srcE An element to clone.
 	 * @param {Object} args Arguments.
 	 */
-	clone: function(srcE, instAttrs, args, compNodes, ctx) {
+	clone: function(srcE, instAttrs, args, elements, ctx) {
 		let compE = srcE.cloneNode();
 
 		if (srcE.childNodes && srcE.childNodes.length) {
 			for (let srcECN of srcE.childNodes) {
-				let compECN = XUI.transform(srcECN, instAttrs, args, compNodes, ctx);
+				let compECN = XUI.transform(srcECN, instAttrs, args, elements, ctx);
 				compECN && compE.appendChild(compECN);
 			}
 		}
 
-		XUI.enrich(compE, instAttrs, args, compNodes, ctx);
+		XUI.enrich(compE, instAttrs, args, elements, ctx);
 		
 		return XUI.condition(compE, instAttrs, args);
 	},
@@ -1024,15 +1025,16 @@ let XUI = {
 	 * @param {HTMLElement} compE A newly created component element.
 	 * @param {Object} inst An object containing all the attributes from the component instance.
 	 * @param {Object} args Arguments.
-	 * @param {Object} compNodes An object to keep specific component nodes (those with 'xui-as' attribute) available in the ctor function later.
+	 * @param {Object} elements An object to keep specific component nodes (those with 'xui-as' attribute) available in the ctor function later.
 	 * @param {CompContext} ctx A composition context.
 	 */
-	enrich: function(compE, inst, args, compNodes, ctx) {
+	enrich: function(compE, inst, args, elements, ctx) {
 		//	Replaces occurences of {}-expressions (JS code) with their evaluated results.
 		function xeval(s) {
-			//	This is available in components to generate hierarchical ids.
+			//	These are available in components to generate ids.
 			//	Other cool symbols to use: 𐐏 𐐍 𐐝 𐐦 𝛺 𝜴 𝝙 Δ 𝝣 𝝨 𝝮 Ω Σ 
 			let Σ = (v) => ctx.id(v);
+			let Δ = (v) => ctx.iid(v);
 
 			function repl() {
 				return s.replace(/\{(.*?)\}/gi, (a, g1) => eval(g1));
@@ -1072,14 +1074,14 @@ let XUI = {
 
 				//	Saving the node for later if requested
 				if (compE.hasAttribute('xui-as')) {
-					compNodes[compE.getAttribute('xui-as')] = compE;
+					elements[compE.getAttribute('xui-as')] = compE;
 					compE.removeAttribute('xui-as');
 				}
 				
 				//	Saving the node as root for the possible instance children.
 				if (compE.hasAttribute('xui-root')) {
 					ctx.set('root', compE);
-					compNodes.$root = compE;
+					elements.$root = compE;
 					compE.removeAttribute('xui-root');
 				}
 		

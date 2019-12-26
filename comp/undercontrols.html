@@ -4,9 +4,9 @@
 </div>
 
 <script>
-	XUI.register("undercontrols", (compE, n, inst, args) => {
+	XUI.register("undercontrols", (elements, inst, args, ctx) => {
 		if (inst.error) {
-			compE.appendChild(XUIC.error())
+			elements.$comp.appendChild(XUIC.error())
 		}
 	});
 </script>

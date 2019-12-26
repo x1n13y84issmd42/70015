@@ -115,7 +115,7 @@
 
 <!-- The <copy> component structure. -->
 <a _comp="copy" class="copy" data-from="{inst.from}">
-	<span>{inst.label||"Copy"}</span><i class="far fa-copy"></i>
+	<span>{inst.$||"Copy"}</span><i class="far fa-copy"></i>
 </a>
 
 <script>
@@ -154,7 +154,7 @@
 </div>
 
 <script>
-	XUI.register('kvpair', (compE, elements, inst, args) => {
+	XUI.register('kvpair', (elements, inst, args, ctx) => {
 		elements.v.onclick = onclickCopyToClipboard;
 	});
 </script>
@@ -186,12 +186,6 @@
 	<span>{inst.$||args.label}</span>
 </label>
 
-<!--
-<label for="json-pretty-indent-tabs">
-	<input type="radio" name="json-pretty-indent" value="	" id="json-pretty-indent-tabs">
-	<span>tabs</span>
-</label> -->
-
 <script>
 	XUI.register('radio');
 </script>
@@ -205,13 +199,13 @@
 </div>
 
 <script>
-	XUI.register('reuse', (compE, elements, inst, args, instE) => {
+	XUI.register('reuse', (elements, inst, args, ctx) => {
 		//	Building the menu items.
 		//	Things like
 		//		<hasher input="json">Hash it</hasher>
 		//	become
 		//		<a data-to="hasher" data-input="json">Hash it</a>
-		for (let instChildE of instE.children) {
+		for (let instChildE of elements.$inst.children) {
 			let aE = document.createElement('a');
 			aE.dataset.to = instChildE.nodeName.toLowerCase();
 
@@ -221,7 +215,9 @@
 			}
 			
 			aE.innerText = instChildE.innerText;
-			
+
+			XUI.enrich(aE, inst, args, {}, ctx);
+
 			aE.onclick = (e) => {
 				let aSwitchData = {};
 				for (let eDN in e.target.dataset) {
@@ -251,7 +247,9 @@
 </div>
 
 <script>
-	XUI.register('tool');
+	XUI.register('tool', (elements, inst, comp, ctx) => {
+		ctx.set("toolID", elements.$comp.id);
+	});
 </script>
 
 
@@ -262,9 +260,9 @@
 </div>
 
 <script>
-	XUI.register("undercontrols", (compE, n, inst, args) => {
+	XUI.register("undercontrols", (elements, inst, args, ctx) => {
 		if (inst.error) {
-			compE.appendChild(XUIC.error())
+			elements.$comp.appendChild(XUIC.error())
 		}
 	});
 </script>
@@ -293,9 +291,10 @@
 				</overcontrols>
 				<in type="text" autofocus label="Unixtime (also {args.theValue})"></in>
 				<undercontrols error="true">
+					<copy from="{Δ('ts')}"></copy>
 					<reuse>
-						<jsonyaml json="#input">Convert it to YAML</jsonyaml>
-						<base64 ascii="#input">Base64-encode it</base64>
+						<jsonyaml json="{Δ('ts')}">Convert it to YAML</jsonyaml>
+						<base64 ascii="{Δ('ts')}">Base64-encode it</base64>
 					</reuse>
 				</undercontrols>
 

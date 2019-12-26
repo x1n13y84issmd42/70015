@@ -7,5 +7,7 @@
 </div>
 
 <script>
-	XUI.register('tool');
+	XUI.register('tool', (elements, inst, comp, ctx) => {
+		ctx.set("toolID", elements.$comp.id);
+	});
 </script>
