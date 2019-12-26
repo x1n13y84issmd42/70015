@@ -23,6 +23,10 @@ let XUI = {
 				ctx = new CompContext({});
 			}
 
+			if (typeof instE == 'string') {
+				instE = document.querySelector(`[_id=${instE}]`)
+			}
+
 			let elements = {};
 			let srcE = document.querySelector(`[_comp=${compName}]`);
 			let instAttrs = XUI.attributes(instE);
