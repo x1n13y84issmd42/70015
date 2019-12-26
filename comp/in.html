@@ -1,11 +1,10 @@
 <!-- The <in> component structure - a flexible input field. -->
 <div _comp="in">
-	<label for="unixtime-ts-in">{inst.label}</label>
-	<input xui-if="inst.type==='text'" type="text" id="unixtime-ts-in" autofocus="" value="{inst.$||args.value}">
+	<label for="{Σ(inst._id)}">{inst.label}</label>
+	<input xui-if="inst.type==='text'" type="text" id="{Σ(inst._id)}" autofocus="" value="{inst.$||args.value}">
 	<textarea xui-if="inst.type==='area'" name="{inst.name}" id="" cols="{inst.cols||30}" rows="{inst.rows||10}">{inst.$}</textarea>
 </div>
 
 <script>
-	//TODO: figure out input IDs!
 	XUI.register('in');
 </script>
