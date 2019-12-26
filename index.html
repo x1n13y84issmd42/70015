@@ -475,6 +475,215 @@
 
 
 
+<tool _id="unixtime" data-tag="unixtime" name="Unixtime">
+	<block _id="ts">
+		<in type="text" autofocus label="Unixtime"></in>
+		<undercontrols error="true"></undercontrols>
+	</block>
+
+	<block _id="formatted">
+		<div class="left l35">
+			<div class="typographyDate copy">
+				<p class="l10">&nbsp;</p>
+			</div>
+		</div>
+		
+		<div class="right r65">
+			<div class="dates"></div>
+		</div>
+	</block>
+</tool>
+
+<script>
+	(()=>{
+		class TUnixtime extends Tool {
+			constructor(id) {
+				super(id);
+	
+				this.inTS = this.Section('ts').Input();
+				this.dates = this.$('.dates')[0];
+	
+				this.inTS.oninput = () => this.convert();
+			}
+	
+			convert() {
+				this.removeChildren(this.dates);
+	
+				try {
+					let d = new Date();
+					d.setTime(this.inTS.value.trim() + "000")
+	
+					this.typographyDate(d);
+					this.dates.appendChild(Comp.kvSection({label: "Formatted"}))
+					this.dates.appendChild(Comp.kvPair({k: "ISO 8601", v: d.toISOString()}))
+					this.dates.appendChild(Comp.kvPair({k: "Date.toString()", v: d.toString()}))
+
+					this.Section('ts').Error(undefined);
+					this.Section('formatted').Show();
+				} catch (err) {
+					this.Section('ts').Error(err.message);
+					this.Section('formatted').Hide();
+				}
+			}
+	
+			typographyDate(d) {
+				let timezone = undefined;
+				let eTZT = document.createElement("p");
+				let opts = {
+					timezone,
+					weekday: "long",
+					month: "long",
+					year: "numeric",
+					day: "numeric",
+					hour: "numeric",
+					minute: "numeric",
+					second: "numeric",
+				};
+	
+				let locale = "en-US";
+				let weekday = d.toLocaleDateString(locale, {timezone, weekday: "long"});
+				let weekdayClass = "l" + weekday.length;
+				let weekdayE = document.createElement("p");
+				let month = d.toLocaleDateString(locale, {timezone, month: "long", day: "numeric"});
+				let monthClass = "l" + month.length;
+				let monthE = document.createElement("p");
+				let year = d.toLocaleDateString(locale, {timezone, year: "numeric"});
+				let yearClass = "l" + year.length;
+				let yearE = document.createElement("p");
+				let time = d.toLocaleDateString(locale, {timezone, hour: "numeric", minute: "numeric", second: "numeric"}).split(', ')[1] || "00";
+				let timeClass = "l" + time.length;
+				let timeE = document.createElement("p");
+	
+				weekdayE.classList.add("weekday", weekdayClass);
+				weekdayE.innerHTML = weekday;
+				monthE.classList.add("month", monthClass);
+				monthE.innerHTML = month;
+				yearE.classList.add("year", yearClass);
+				yearE.innerHTML = year;
+				timeE.classList.add("time", timeClass);
+				timeE.innerHTML = time;
+	
+				let tdE = this.$(".typographyDate")[0];
+				this.removeChildren(tdE)
+	
+				tdE.dataset.value = `${weekday}, ${month} ${year}, ${time}`;
+	
+				tdE.appendChild(weekdayE);
+				tdE.appendChild(monthE);
+				tdE.appendChild(yearE);
+				tdE.appendChild(timeE);
+			}
+		}
+	
+		let comp = XUIC.tool('unixtime', {});
+		window.tools.appendChild(comp);
+		bench.add(new TUnixtime(comp));
+	})()
+</script>
+
+<style>
+	#unixtime .dates .kvpair > .key {
+		padding-bottom: 2em;
+	}
+
+	.timezones > p {
+		opacity: 0;
+		font-family: Quicksand;
+	}
+
+	.timezones > p.v {
+		opacity: 1;
+		font-family: Quicksand;
+		transition: all 400ms ease-in-out;
+		-webkit-transition: all 400ms ease-in-out;
+		-moz-transition: all 400ms ease-in-out;
+		-o-transition: all 400ms ease-in-out;
+	}
+								
+	.timezones > p > i {
+		margin-right: 20px;
+		font-family: inherit;
+		display: inline-block;
+		width: 110px;
+		font-style: normal;
+	}
+
+	.timezones > p > span {
+		font-family: inherit;
+		font-size: 125%;
+	}
+
+	#unixtime .typographyDate {
+		font-family: Share Tech Mono;
+		width: 370px;
+	}
+	
+	#unixtime .typographyDate:hover {
+		transform: scale(1.05);
+		color: #00BBFF;
+		transition: all 100ms ease-in-out;
+	}
+
+	#unixtime .typographyDate > * {
+		font-family: inherit;
+		line-height: 90%;
+		cursor: pointer;
+	}
+
+	#unixtime .typographyDate > .l1 {font-size: 500.00pt;}
+	#unixtime .typographyDate > .l2 {font-size: 250.00pt;}
+	#unixtime .typographyDate > .l3 {font-size: 166.67pt;}
+	#unixtime .typographyDate > .l4 {font-size: 125.00pt;}
+	#unixtime .typographyDate > .l5 {font-size: 100.00pt;}
+	#unixtime .typographyDate > .l6 {font-size: 83.33pt;}
+	#unixtime .typographyDate > .l7 {font-size: 71.43pt;}
+	#unixtime .typographyDate > .l8 {font-size: 62.50pt;}
+	#unixtime .typographyDate > .l9 {font-size: 55.56pt;}
+	#unixtime .typographyDate > .l10 {font-size: 50.00pt;}
+	#unixtime .typographyDate > .l11 {font-size: 45.45pt;}
+	#unixtime .typographyDate > .l12 {font-size: 41.67pt;}
+	#unixtime .typographyDate > .l13 {font-size: 38.46pt;}
+	#unixtime .typographyDate > .l14 {font-size: 35.71pt;}
+	#unixtime .typographyDate > .l15 {font-size: 33.33pt;}
+	#unixtime .typographyDate > .l16 {font-size: 31.25pt;}
+	#unixtime .typographyDate > .l17 {font-size: 29.41pt;}
+	#unixtime .typographyDate > .l18 {font-size: 27.78pt;}
+	#unixtime .typographyDate > .l19 {font-size: 26.32pt;}
+	#unixtime .typographyDate > .l20 {font-size: 25.00pt;}
+	#unixtime .typographyDate > .l21 {font-size: 23.81pt;}
+	#unixtime .typographyDate > .l22 {font-size: 22.73pt;}
+	#unixtime .typographyDate > .l23 {font-size: 21.74pt;}
+	#unixtime .typographyDate > .l24 {font-size: 20.83pt;}
+	#unixtime .typographyDate > .l25 {font-size: 20.00pt;}
+	#unixtime .typographyDate > .l26 {font-size: 19.23pt;}
+	#unixtime .typographyDate > .l27 {font-size: 18.52pt;}
+	#unixtime .typographyDate > .l28 {font-size: 17.86pt;}
+	#unixtime .typographyDate > .l29 {font-size: 17.24pt;}
+	#unixtime .typographyDate > .l30 {font-size: 16.67pt;}
+	#unixtime .typographyDate > .l31 {font-size: 16.13pt;}
+	#unixtime .typographyDate > .l32 {font-size: 15.63pt;}
+	#unixtime .typographyDate > .l33 {font-size: 15.15pt;}
+	#unixtime .typographyDate > .l34 {font-size: 14.71pt;}
+	#unixtime .typographyDate > .l35 {font-size: 14.29pt;}
+	#unixtime .typographyDate > .l36 {font-size: 13.89pt;}
+	#unixtime .typographyDate > .l37 {font-size: 13.51pt;}
+	#unixtime .typographyDate > .l38 {font-size: 13.16pt;}
+	#unixtime .typographyDate > .l39 {font-size: 12.82pt;}
+	#unixtime .typographyDate > .l40 {font-size: 12.50pt;}
+	#unixtime .typographyDate > .l41 {font-size: 12.20pt;}
+	#unixtime .typographyDate > .l42 {font-size: 11.90pt;}
+	#unixtime .typographyDate > .l43 {font-size: 11.63pt;}
+	#unixtime .typographyDate > .l44 {font-size: 11.36pt;}
+	#unixtime .typographyDate > .l45 {font-size: 11.11pt;}
+	#unixtime .typographyDate > .l46 {font-size: 10.87pt;}
+	#unixtime .typographyDate > .l47 {font-size: 10.64pt;}
+	#unixtime .typographyDate > .l48 {font-size: 10.42pt;}
+	#unixtime .typographyDate > .l49 {font-size: 10.20pt;}
+	#unixtime .typographyDate > .l50 {font-size: 10.00pt;}
+</style>
+
+
+
 		</div>
 		<!-- #toolshed, opened in toolshed.html -->
 

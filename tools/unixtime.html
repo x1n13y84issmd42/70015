@@ -1,10 +1,10 @@
 <tool _id="unixtime" data-tag="unixtime" name="Unixtime">
-	<section _id="ts">
-		<input type="text" autofocus label="Unixtime">
+	<block _id="ts">
+		<in type="text" autofocus label="Unixtime"></in>
 		<undercontrols error="true"></undercontrols>
-	</section>
+	</block>
 
-	<section _id="formatted">
+	<block _id="formatted">
 		<div class="left l35">
 			<div class="typographyDate copy">
 				<p class="l10">&nbsp;</p>
@@ -14,7 +14,7 @@
 		<div class="right r65">
 			<div class="dates"></div>
 		</div>
-	</section>
+	</block>
 </tool>
 
 <script>
@@ -98,7 +98,7 @@
 			}
 		}
 	
-		let comp = Component.New('unixtime');
+		let comp = XUIC.tool('unixtime', {});
 		window.tools.appendChild(comp);
 		bench.add(new TUnixtime(comp));
 	})()
