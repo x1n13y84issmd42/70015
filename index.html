@@ -118,7 +118,6 @@
 		</script>
 
 
-
 <div id="components">
 	<dialog data-purpose="social" _id="share" title="${title}">
 		<section _id="link">
@@ -131,7 +130,6 @@
 
 	<!-- continues in toolshed.html -->
 
-
 <!-- The <block> component structure - a group of controls usually built around an <in> input component. -->
 <section _comp="block" id="{Σ(inst._id)}"></section>
 
@@ -140,13 +138,12 @@
 </script>
 
 
-
+<!-- The glorious <bothways> component structure. -->
 <div _comp="bothways" class="bothways">It works ⇃both↾ ways.</div>
 
 <script>
 	XUI.register('bothways');
 </script>
-
 
 
 <!-- The <checkbox> component structure. -->
@@ -162,7 +159,6 @@
 </script>
 
 
-
 <!-- The <copy> component structure. -->
 <a _comp="copy" class="copy" data-from="{inst.from}">
 	<span>{inst.$||"Copy"}</span><i class="far fa-copy"></i>
@@ -173,7 +169,6 @@
 		elements.$comp.onclick = args.onclick || onclickCopyToClipboard;
 	});
 </script>
-
 
 
 <!-- The <error> component structure - a general error reporting element under inputs. -->
@@ -187,7 +182,6 @@
 </script>
 
 
-
 <!-- The <in> component structure - a flexible input field. -->
 <div _comp="in">
 	<label for="{Σ(inst._id||'in')}">{inst.label}</label>
@@ -198,7 +192,6 @@
 <script>
 	XUI.register('in');
 </script>
-
 
 
 <!-- The <kvpair> component structure - a key-value pair, values get copied to clipboard when clicked. -->
@@ -214,7 +207,6 @@
 </script>
 
 
-
 <!-- The <kvsection> component structure. -->
 <div _comp="kvsection" class="kvpair kvsection">
 	<span class="key">{inst.$||args.label}</span>
@@ -225,14 +217,12 @@
 </script>
 
 
-
 <!-- The <overcontrols> component structure. -->
 <div _comp="overcontrols" class="overcontrols"></div>
 
 <script>
 	XUI.register("overcontrols");
 </script>
-
 
 
 <!-- The <radio> component structure. -->
@@ -246,7 +236,6 @@
 		(inst.checked != undefined) && (elements.in.checked = true);
 	});
 </script>
-
 
 
 <!-- The <reuse> component structure - a menu to transfer data pieces between tools. -->
@@ -295,7 +284,6 @@
 </script>
 
 
-
 <!-- The <tool> component structure. -->
 <div _comp="tool" class="tool unfocused" id="{inst._id}" data-tag="{inst.tag}">
 	<div class="preview">
@@ -311,7 +299,6 @@
 </script>
 
 
-
 <!-- The <undercontrols> component structure. -->
 <div _comp="undercontrols" class="undercontrols"></div>
 
@@ -324,13 +311,11 @@
 </script>
 
 
-
 </div>
 <!-- #components, opened in components.html -->
 
 <div id="toolshed">
 <!-- continues in epilogue.html -->
-
 
 <tool _id="base64" data-tag="base64" name="Base64" onclose="unfocus" onshare="share">
 	<block _id="base64">
@@ -395,7 +380,6 @@
 		bench.add(new TBase64(comp));
 	})()
 </script>
-
 
 
 <tool _id="hasher" data-tag="hash md5 sha des" name="Hashes &amp; ciphers">
@@ -463,7 +447,6 @@
 		bench.add(new THasher(comp));
 	})()
 </script>
-
 
 
 <tool _id="json" data-tag="json format" name="Format JSON">
@@ -616,7 +599,6 @@
 </style>
 
 
-
 <tool _id="jsonyaml" data-tag="json yaml" name="JSON &#x2942; YAML">
 	<block _id="json">
 		<div class="overcontrols">
@@ -723,7 +705,6 @@
 		width: 1000px;
 	}
 </style>
-
 
 
 <tool _id="unixtime" data-tag="unixtime" name="Unixtime">
@@ -934,7 +915,6 @@
 </style>
 
 
-
 <tool _id="urldecode" data-tag="url trans encode decode" name="Transcode URL">
 	<block _id="encoded">
 		<in type="text" autofocus tabindex="11" label="URL-encoded string"></in>
@@ -981,7 +961,6 @@
 		bench.add(new TURLTranscoder(comp));
 	})()
 </script>
-
 
 
 <tool _id="urlparse" name="Parse URL" data-tag="urlparse">
@@ -1078,7 +1057,6 @@
 		bench.add(new TURLParser(comp));
 	})()
 </script>
-
 
 
 <tool _id="xml" data-tag="xml xpath" name="XML &amp; Xpath">
@@ -1399,43 +1377,12 @@
 </style>
 
 
-
 		</div>
 		<!-- #toolshed, opened in toolshed.html -->
 
 		<div id="uiStash"></div>
 
-		<!-- <tool _id="unixtime" tag="unixtime" name="Unixtime">
-			<block _id="ts">
-				<overcontrols>
-					<radio name="daname" _id="daidScuko" value="--">Scuko</radio>
-					<radio name="daname" _id="daidBljad" value="--" checked>Bljad</radio>
-					<radio name="daname" _id="daidNahuy" value="--">Nahuy</radio>
-					<checkbox _id="checkie-norm" value="--">Checkie 1</checkbox>
-					<checkbox _id="checkie-yeet" value="--" checked>Checkie 2</checkbox>
-				</overcontrols>
-				<in type="text" autofocus label="Unixtime (also {args.theValue})"></in>
-				<undercontrols error="true">
-					<copy from="{Δ('ts')}"></copy>
-					<reuse>
-						<jsonyaml json="{Δ('ts')}">Convert it to YAML</jsonyaml>
-						<base64 ascii="{Δ('ts')}">Base64-encode it</base64>
-					</reuse>
-				</undercontrols>
-
-				<kvsection>Valyos</kvsection>
-				<kvpair key="F00">B4RRR! (from $)</kvpair>
-				<kvpair key="F00" value="B4RRR! (from value)"></kvpair>
-
-				<kvsection>Moar</kvsection>
-				<kvpair k="F00" v="B4RRR! (from v)"></kvpair>
-				<kvpair k="F00" v="B4RRR! (from v) with {args.theValue}"></kvpair>
-			</block>
-		</tool> -->
-
 		<script>
-			// let toolComp = XUIC.tool('unixtime', {k: "A key", theValue: "T3H VALYOOO"});
-			// document.body.appendChild(toolComp);
 
 			/**
 			 * Temporarily applies a class to an element. The class is removed after the specified amount of time passes.
@@ -1508,5 +1455,4 @@
 		</script>
 	</body>
 </html>
-
 

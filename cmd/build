@@ -5,7 +5,7 @@ function log {
 }
 
 
-# Concatenates multiple files into single onr.
+# Concatenates multiple files into single one.
 # Arguments:
 #	$1 output file name
 #	$@ file paths & masks to combine into $1
@@ -23,7 +23,7 @@ function build {
 		for file in ${FILES[@]}; do
 			log "  Adding " $file
 			cat $file >> $OUTFILE
-			echo -e '\n\n' >> $OUTFILE
+			echo -e '\n' >> $OUTFILE
 		done
 	done
 

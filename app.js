@@ -31,7 +31,6 @@ let Clipboard = {
 	}
 }
 
-
 let CompUtils = {
 	/**
 	 * Creates a default consuctor function which allows to create a standard HTML tag, which will be the component's root element
@@ -525,7 +524,6 @@ let Component = {
 };
 
 
-
 class Config {
 	constructor() {
 		this.data = {};
@@ -564,7 +562,6 @@ class LSConfig extends Config {
 		this.save();
 	}
 }
-
 
 
 class DOMOps {
@@ -636,7 +633,6 @@ class DOMOps {
 	}
 }
 
-
 /**
  * Gives general control over a UI section.
  * A UI section usually includes an input field and few associated extra controls, has some kind of state,
@@ -707,7 +703,6 @@ class Section extends DOMOps {
 		return input;
 	}
 }
-
 
 class Tool extends DOMOps {
 	constructor(id) {
@@ -786,7 +781,6 @@ class Tool extends DOMOps {
 		throw new Error('import() is not implemented.')
 	}
 }
-
 
 
 /**
@@ -892,7 +886,6 @@ class Workbench {
 		}
 	}
 }
-
 
 
 /**
@@ -1132,6 +1125,5 @@ let XUI = {
  * Components live here.
  */
 let XUIC = {};
-
 
 

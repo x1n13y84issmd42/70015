@@ -3,37 +3,7 @@
 
 		<div id="uiStash"></div>
 
-		<!-- <tool _id="unixtime" tag="unixtime" name="Unixtime">
-			<block _id="ts">
-				<overcontrols>
-					<radio name="daname" _id="daidScuko" value="--">Scuko</radio>
-					<radio name="daname" _id="daidBljad" value="--" checked>Bljad</radio>
-					<radio name="daname" _id="daidNahuy" value="--">Nahuy</radio>
-					<checkbox _id="checkie-norm" value="--">Checkie 1</checkbox>
-					<checkbox _id="checkie-yeet" value="--" checked>Checkie 2</checkbox>
-				</overcontrols>
-				<in type="text" autofocus label="Unixtime (also {args.theValue})"></in>
-				<undercontrols error="true">
-					<copy from="{Δ('ts')}"></copy>
-					<reuse>
-						<jsonyaml json="{Δ('ts')}">Convert it to YAML</jsonyaml>
-						<base64 ascii="{Δ('ts')}">Base64-encode it</base64>
-					</reuse>
-				</undercontrols>
-
-				<kvsection>Valyos</kvsection>
-				<kvpair key="F00">B4RRR! (from $)</kvpair>
-				<kvpair key="F00" value="B4RRR! (from value)"></kvpair>
-
-				<kvsection>Moar</kvsection>
-				<kvpair k="F00" v="B4RRR! (from v)"></kvpair>
-				<kvpair k="F00" v="B4RRR! (from v) with {args.theValue}"></kvpair>
-			</block>
-		</tool> -->
-
 		<script>
-			// let toolComp = XUIC.tool('unixtime', {k: "A key", theValue: "T3H VALYOOO"});
-			// document.body.appendChild(toolComp);
 
 			/**
 			 * Temporarily applies a class to an element. The class is removed after the specified amount of time passes.
