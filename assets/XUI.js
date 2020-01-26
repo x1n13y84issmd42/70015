@@ -146,7 +146,7 @@ let XUI = {
 			let Δ = (v) => ctx.iid(v);
 
 			function repl() {
-				return s.replace(/\{(.*?)\}/gi, (a, g1) => eval(g1));
+				return s.replace(/\{(.*?)\}/gi, (a, g1) => eval(g1) || '');
 			}
 
 			//	Doing it in a loop for transitive evaluations, i.e. when a replacement value is a {}-expression itself.
