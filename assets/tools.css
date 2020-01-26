@@ -334,10 +334,6 @@
 	margin: 0 0 1pt 0;
 }
 
-.tool-preview > h1:hover {
-	font-size: 26pt;
-}
-
 .tool.filteredOut > .preview > h1:hover {
 	font-size: 20pt;
 }
@@ -359,30 +355,19 @@
 	text-decoration: none;
 	font-size: 22pt;
 	font-weight: normal;
-	/* font-family: 'Special Elite', cursive; */
-	/* font-family: 'Quicksand', sans-serif; */
 	font-family: 'Cinzel', serif;
-	/* font-family: 'Cute Font', cursive; */
-	/* font-family: Abril Fatface; */
-	/* font-family: Bungee Shade; */
-	/* font-family: Cinzel; */
-	/* font-family: Cute Font; */
-	/* font-family: Faster One; */
-	/* font-family: Monoton;  */
-	/* font-family: Permanent Marker; */
-	/* font-family: Quicksand; */
-	/* font-family: Special Elite; */
-	/* font-family: Vibes; */
-	-webkit-transition: all 300ms ease-in-out;
-	-moz-transition: all 300ms ease-in-out;
-	-o-transition: all 300ms ease-in-out;
 	transition: all 300ms ease-in-out;
 	cursor: pointer;
+	transform: scale(1);
+}
+
+.tool-preview > h1:hover {
+	transform: scale(1.1);
 }
 
 #tools {
-	margin-top: 100px;
-	margin-left: 15%;
+	/* margin-top: 100px; */
+	/* margin-left: 15%; */
 	/* position: relative; */
 }
 
