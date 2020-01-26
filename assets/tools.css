@@ -409,9 +409,11 @@
 	/* background: #00bbff; */
 	/* color: white; */
 	/* transition: background, color 200ms linear; */
+	cursor: inherit;
 }
 
 .switch:hover > div {
+	cursor: inherit;
 }
 
 .switch:hover > div > a {
