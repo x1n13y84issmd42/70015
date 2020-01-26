@@ -98,9 +98,7 @@
 			}
 		}
 	
-		let comp = XUIC.tool('unixtime', {});
-		window.tools.appendChild(comp);
-		bench.add(new TUnixtime(comp));
+		bench.register('unixtime', TUnixtime);
 	})()
 </script>
 

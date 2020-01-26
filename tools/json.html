@@ -135,9 +135,7 @@
 			}
 		}
 	
-		let comp = XUIC.tool('json', {});
-		window.tools.appendChild(comp);
-		bench.add(new TJSON(comp));
+		bench.register('json', TJSON);
 	})()
 </script>
 

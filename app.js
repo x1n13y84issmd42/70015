@@ -778,7 +778,7 @@ class Tool extends DOMOps {
 	}
 	
 	import(data) {
-		throw new Error('import() is not implemented.')
+		// throw new Error('import() is not implemented.')
 	}
 }
 
@@ -790,6 +790,8 @@ class Workbench {
 	constructor(config) {
 		this.config = config;
 		this.tools = {};
+		this.toolCtors = {};
+		this.equipped = [];
 		this.currentlyFocusedID = undefined;
 		this.toolsE = document.getElementById('tools');
 	}
@@ -800,9 +802,75 @@ class Workbench {
 		tool.reconfigure(this.config.get(tool.ID));
 		this.toolsE.appendChild(tool.E);
 	}
-
+	
 	get(id) {
 		return this.tools[id];
+	}
+	
+	register(id, ctor) {
+		this.toolCtors[id] = ctor;
+	}
+	
+	equip(id, data) {
+		let ctor = this.toolCtors[id];
+		if (ctor) {
+			data = data || {};
+			let toolE = XUIC.tool(id, data);
+			this.toolsE.appendChild(toolE);
+			let tool = new ctor(toolE);
+			tool.import(data);
+			tool.setBench(this);
+			tool.reconfigure(this.config.get(tool.ID));
+			tool.E.classList.replace("unfocused", "focused");
+			tool.E.focus();
+
+			let af = tool.E.querySelector("[autofocus]");
+			if (af) {
+				af.focus();
+			}
+
+			window.location.hash = id;
+			this.equipped.push(tool);
+
+			return tool;
+		}
+	}
+
+	back() {
+		let tUnfocus = this.equipped.pop();
+
+		function remove() {
+			tUnfocus.E.parentNode.removeChild(tUnfocus.E);
+		}
+
+		if (this.equipped.length) {
+			let tNext = this.equipped[this.equipped.length - 1];
+			window.location.hash = tNext.ID;
+			this.slide(tUnfocus, tNext, 'right', remove)
+		} else {
+			window.location.hash = '';
+			remove();
+		}
+	}
+
+	/**
+	 * Plays a sliding animation for switching tools.
+	 * @param {Tool} t1 A tool to animate.
+	 * @param {Tool} t2 A tool to animate.
+	 * @param {string} dir "left" or "right"
+	 * @param {Function} cb A callback function to invoke on animation end.
+	 */
+	slide(t1, t2, dir, cb) {
+		t1.E.classList.add('switching');
+		t2.E.classList.add('switching', `slide-${dir}-init`);
+		t1.E.classList.add(`slide-${dir}-transit`);
+		t2.E.classList.add(`slide-${dir}-transit`);
+		
+		setTimeout((_t1, _t2) => {
+			_t1.E.classList.remove('switching', `slide-${dir}-transit`);
+			_t2.E.classList.remove('switching', `slide-${dir}-init`, `slide-${dir}-transit`);
+			cb && cb();
+		}, 400, t1, t2);
 	}
 	
 	focus(id) {
@@ -860,27 +928,12 @@ class Workbench {
 
 	switch(toID, data) {
 		console.log(`Switching to ${toID}.`, data);
-		if (!this.tools[toID]) {
-			throw new Error(`The tool #${toID} does not exist.`);
-		}
 
-		let t1 = (this.currentlyFocusedID !== undefined) && this.tools[this.currentlyFocusedID];
-		let t2 = this.tools[toID];
-		let cfid = this.currentlyFocusedID;
-		this.tools[toID].import(data);
-		this.focus(toID);
+		let t1 = this.equipped[this.equipped.length - 1];
+		let t2 = this.equip(toID, data);
 
 		if (t1 && t2) {
-			t1.E.classList.add('switching');
-			t2.E.classList.add('switching', 'slide-left-r');
-			t1.E.classList.add('slide-left-transit');
-			t2.E.classList.add('slide-left-transit');
-			
-			setTimeout((id, _t1, _t2) => {
-				_t1.E.classList.remove('switching', 'slide-left-transit');
-				_t2.E.classList.remove('switching', 'slide-left-r', 'slide-left-transit');
-				this.unfocus(id);
-			}, 400, cfid, t1, t2);
+			this.slide(t1, t2, "left");
 		} else {
 			throw new Error(`One of the tools was not found while switching.`);
 		}

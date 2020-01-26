@@ -58,8 +58,6 @@
 			}
 		}
 
-		let comp = XUIC.tool('hasher', {});
-		window.tools.appendChild(comp);
-		bench.add(new THasher(comp));
+		bench.register('hasher', THasher);
 	})()
 </script>

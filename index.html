@@ -297,7 +297,7 @@
 
 
 <!-- The <toollink> component structure. -->
-<div _comp="toollink" class="tool-preview" data-tag="{inst.tag}" onclick="window.focus('{inst.name}')">
+<div _comp="toollink" class="tool-preview" data-tag="{inst.tag}" onclick="bench.equip('{inst.name}')">
 	<h1>{inst.$}</h1>
 </div>
 
@@ -382,9 +382,7 @@
 			}
 		}
 
-		let comp = XUIC.tool('base64', {});
-		window.tools.appendChild(comp);
-		bench.add(new TBase64(comp));
+		bench.register('base64', TBase64);
 	})()
 </script>
 
@@ -449,9 +447,7 @@
 			}
 		}
 
-		let comp = XUIC.tool('hasher', {});
-		window.tools.appendChild(comp);
-		bench.add(new THasher(comp));
+		bench.register('hasher', THasher);
 	})()
 </script>
 
@@ -593,9 +589,7 @@
 			}
 		}
 	
-		let comp = XUIC.tool('json', {});
-		window.tools.appendChild(comp);
-		bench.add(new TJSON(comp));
+		bench.register('json', TJSON);
 	})()
 </script>
 
@@ -701,9 +695,7 @@
 			}
 		}
 	
-		let comp = XUIC.tool('jsonyaml', {onshare: function(){alert("Sharing is caring \\o/")}});
-		window.tools.appendChild(comp);
-		bench.add(new TJSONYAML(comp));
+		bench.register('jsonyaml', TJSONYAML);
 	})()
 </script>
 
@@ -814,9 +806,7 @@
 			}
 		}
 	
-		let comp = XUIC.tool('unixtime', {});
-		window.tools.appendChild(comp);
-		bench.add(new TUnixtime(comp));
+		bench.register('unixtime', TUnixtime);
 	})()
 </script>
 
@@ -963,9 +953,7 @@
 			
 		}
 		
-		let comp = XUIC.tool('urldecode', {});
-		window.tools.appendChild(comp);
-		bench.add(new TURLTranscoder(comp));
+		bench.register('urldecode', TURLTranscoder);
 	})()
 </script>
 
@@ -1059,9 +1047,7 @@
 			}
 		}
 
-		let comp = XUIC.tool('urlparse', {});
-		window.tools.appendChild(comp);
-		bench.add(new TURLParser(comp));
+		bench.register('urlparse', TURLParser);
 	})()
 </script>
 
@@ -1307,10 +1293,7 @@
 		}
 	}
 
-	let comp = XUIC.tool('xml', {});
-	window.tools.appendChild(comp);
-	bench.add(new TXML(comp));
-
+	bench.register('xml', TXML);
 </script>
 
 <style>
@@ -1410,6 +1393,12 @@
 
 			XUI.render(window.menu);
 
+			document.body.onkeydown = (e) => {
+				if (e.key == 'Escape') {
+					bench.back();
+				}
+			}
+
 			/**
 			 * Temporarily applies a class to an element. The class is removed after the specified amount of time passes.
 			 * @param {HTMLElement} e An element to style.
@@ -1469,11 +1458,11 @@
 				}
 
 				//	Copy buttons.
-				document.querySelectorAll('.copy').forEach((v, k, p) => {v.onclick = onclickCopyToClipboard});
+				// document.querySelectorAll('.copy').forEach((v, k, p) => {v.onclick = onclickCopyToClipboard});
 
 				//	Autofocusing tools upon page load.
 				if (window.location.hash) {
-					bench.focus(window.location.hash.substr(1));
+					bench.equip(window.location.hash.substr(1));
 				}
 
 				bench.render();

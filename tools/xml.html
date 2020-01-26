@@ -239,10 +239,7 @@
 		}
 	}
 
-	let comp = XUIC.tool('xml', {});
-	window.tools.appendChild(comp);
-	bench.add(new TXML(comp));
-
+	bench.register('xml', TXML);
 </script>
 
 <style>

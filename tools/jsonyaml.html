@@ -93,9 +93,7 @@
 			}
 		}
 	
-		let comp = XUIC.tool('jsonyaml', {onshare: function(){alert("Sharing is caring \\o/")}});
-		window.tools.appendChild(comp);
-		bench.add(new TJSONYAML(comp));
+		bench.register('jsonyaml', TJSONYAML);
 	})()
 </script>
 

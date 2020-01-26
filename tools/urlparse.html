@@ -87,8 +87,6 @@
 			}
 		}
 
-		let comp = XUIC.tool('urlparse', {});
-		window.tools.appendChild(comp);
-		bench.add(new TURLParser(comp));
+		bench.register('urlparse', TURLParser);
 	})()
 </script>

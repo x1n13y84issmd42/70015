@@ -24,6 +24,12 @@
 
 			XUI.render(window.menu);
 
+			document.body.onkeydown = (e) => {
+				if (e.key == 'Escape') {
+					bench.back();
+				}
+			}
+
 			/**
 			 * Temporarily applies a class to an element. The class is removed after the specified amount of time passes.
 			 * @param {HTMLElement} e An element to style.
@@ -83,11 +89,11 @@
 				}
 
 				//	Copy buttons.
-				document.querySelectorAll('.copy').forEach((v, k, p) => {v.onclick = onclickCopyToClipboard});
+				// document.querySelectorAll('.copy').forEach((v, k, p) => {v.onclick = onclickCopyToClipboard});
 
 				//	Autofocusing tools upon page load.
 				if (window.location.hash) {
-					bench.focus(window.location.hash.substr(1));
+					bench.equip(window.location.hash.substr(1));
 				}
 
 				bench.render();

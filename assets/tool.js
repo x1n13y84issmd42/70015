@@ -72,6 +72,6 @@ class Tool extends DOMOps {
 	}
 	
 	import(data) {
-		throw new Error('import() is not implemented.')
+		// throw new Error('import() is not implemented.')
 	}
 }

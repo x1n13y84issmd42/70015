@@ -56,8 +56,6 @@
 			}
 		}
 
-		let comp = XUIC.tool('base64', {});
-		window.tools.appendChild(comp);
-		bench.add(new TBase64(comp));
+		bench.register('base64', TBase64);
 	})()
 </script>

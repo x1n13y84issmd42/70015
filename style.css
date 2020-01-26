@@ -614,15 +614,6 @@ input[type=radio]:checked {
 	padding: 0;
 }
 
-.tool.switching.slide-left-r {
-	left: 100%;
-}
-
-.tool.switching.slide-left-transit {
-	margin-left: -100%;
-	transition: margin-left 400ms ease-in-out;
-}
-
 .disabled input[type=radio],
 .disabled input[type=checkbox] {
     border-color: #d0d0d0;
@@ -645,5 +636,23 @@ input[type=radio]:checked {
 
 .disabled .switch:hover > div > a {
 	margin-top: -3em;
+}
+
+.tool.switching.slide-left-init {
+	left: 100%;
+}
+
+.tool.switching.slide-left-transit {
+	margin-left: -100%;
+	transition: margin-left 400ms ease-in-out;
+}
+
+.tool.switching.slide-right-init {
+	left: -100%;
+}
+
+.tool.switching.slide-right-transit {
+	margin-left: 100%;
+	transition: margin-left 400ms ease-in-out;
 }
 

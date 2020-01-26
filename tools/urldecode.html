@@ -39,8 +39,6 @@
 			
 		}
 		
-		let comp = XUIC.tool('urldecode', {});
-		window.tools.appendChild(comp);
-		bench.add(new TURLTranscoder(comp));
+		bench.register('urldecode', TURLTranscoder);
 	})()
 </script>
