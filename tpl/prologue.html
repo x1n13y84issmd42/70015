@@ -6,6 +6,27 @@
 		<script src="./app.js"></script>
 	</head>
 	<body style="display:none;">
+		<div id="menu">
+			<div>
+				<toollink name="base64" tag="base64">Base64</toollink>
+				<toollink name="urldecode" tag="url trans encode decode">Transcode URL</toollink>
+				<toollink name="urlparse" tag="urlparse">Parse URL</toollink>
+			</div>
+			
+			<div>
+				<toollink name="json" tag="json format">Format JSON</toollink>
+				<toollink name="jsonyaml" tag="json yaml">JSON &#x2942; YAML</toollink>
+				<toollink name="xml" tag="xml xpath">XML &amp; Xpath</toollink>
+			</div>
+			
+			<div>
+				<toollink name="unixtime" tag="unittime timestamp">Unixtime</toollink>
+				<toollink name="hasher" tag="hash md5 sha des crc">Hashes &amp; ciphers</toollink>
+			</div>
+
+			<div class="clear"></div>
+		</div>
+
 		<div id="front-center">
 			<input type="text" name="" id="filter" autofocus autocomplete="off" placeholder="What's up?">
 			<div class="footer">

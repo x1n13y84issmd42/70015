@@ -238,8 +238,13 @@ let XUI = {
 	 */
 	render: function(E, args) {
 		let pE = E.parentNode;
+		let nsE = E.nextSibling;
 		pE.removeChild(E);
-		pE.appendChild(XUI.transform(E, XUI.attributes(E), args || {}, {}, new CompContext({})));
+		// pE.appendChild(XUI.transform(E, XUI.attributes(E), args || {}, {}, new CompContext({})));
+		pE.insertBefore(
+			XUI.transform(E, XUI.attributes(E), args || {}, {}, new CompContext({})),
+			nsE
+		);
 	}
 };
 

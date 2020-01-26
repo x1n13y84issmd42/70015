@@ -5,11 +5,11 @@
 }
 
 #front-center {
-	position: absolute;
-	left: 50%;
-	width: 700px;
-	margin-left: -350px;
-	top: 35%;
+	position: relative;
+    left: 50%;
+    width: 700px;
+    margin-left: -350px;
+    margin-top: 100px;
 }
 
 #menu {
@@ -132,4 +132,9 @@ input[type=radio]:checked {
 	transform: scale(1) rotate(0) translateY(250px);
 	transition: opacity 200ms linear, transform 300ms cubic-bezier(0, 1.47, 0.75, 1.02);
 	padding: 1%;
+}
+
+.clear {
+	clear: both;
+	float: none!important;
 }
