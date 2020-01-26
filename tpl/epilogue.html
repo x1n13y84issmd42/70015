@@ -1,9 +1,28 @@
 		</div>
 		<!-- #toolshed, opened in toolshed.html -->
 
-		<div id="uiStash"></div>
+		<div id="menu">
+			<div>
+				<toollink name="base64" tag="base64">Base64</toollink>
+				<toollink name="urldecode" tag="url trans encode decode">Transcode URL</toollink>
+				<toollink name="urlparse" tag="urlparse">Parse URL</toollink>
+			</div>
+			
+			<div>
+				<toollink name="json" tag="json format">Format JSON</toollink>
+				<toollink name="jsonyaml" tag="json yaml">JSON &#x2942; YAML</toollink>
+				<toollink name="xml" tag="xml xpath">XML &amp; Xpath</toollink>
+			</div>
+			
+			<div>
+				<toollink name="unixtime" tag="unittime timestamp">Unixtime</toollink>
+				<toollink name="hasher" tag="hash md5 sha des crc">Hashes &amp; ciphers</toollink>
+			</div>
+		</div>
 
 		<script>
+
+			XUI.render(window.menu);
 
 			/**
 			 * Temporarily applies a class to an element. The class is removed after the specified amount of time passes.

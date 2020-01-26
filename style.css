@@ -13,10 +13,27 @@
 	top: 35%;
 }
 
+#menu {
+	margin-left: 50%;
+    width: 960px;
+    left: -480px;
+    position: relative;
+}
+
+#menu > div {
+	width: 300px;
+	float: left;
+	margin-right: 20px;
+}
+
 #filter {
 	width: 100%;
 	font-size: 28pt;
 	font-family: Quicksand;
+}
+
+#filter::placeholder {
+	color: #ddd;
 }
 
 .footer {
@@ -453,7 +470,7 @@ input[type=radio]:checked {
 	margin: 0 0 1pt 0;
 }
 
-.tool > .preview > h1:hover {
+.tool-preview > h1:hover {
 	font-size: 26pt;
 }
 
@@ -473,7 +490,7 @@ input[type=radio]:checked {
 	cursor: pointer;
 }
 
-.tool > .preview > h1 {
+.tool-preview > h1 {
 	color: black;
 	text-decoration: none;
 	font-size: 22pt;

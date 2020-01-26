@@ -11,6 +11,7 @@ let XUI = {
 	 * @param {boolean} container Set to true if you want child nodes of an instance to be autoappended to the root.
 	 */
 	register: function(compName, ctor, container) {
+		compName = compName.toLowerCase();
 		container === undefined && (container = true);
 
 		XUIC[compName] = function(instE, args, ctx) {
@@ -80,7 +81,7 @@ let XUI = {
 	 * @param {HTMLElement} e A DOM node to check.
 	 */
 	isHTML5Tag: function(e) {
-		return (e.nodeType === Node.TEXT_NODE) || [
+		return (e.nodeType === Node.TEXT_NODE) || (e.nodeType === Node.COMMENT_NODE) || [
 			"a", "abbr", "acronym", "address", "applet", "area", "article", "aside", "audio",
 			"b", "base", "basefont", "bdi", "bdo", "big", "blockquote", "body", "br", "button",
 			"canvas", "caption", "center", "cite", "code", "col", "colgroup",
@@ -228,6 +229,17 @@ let XUI = {
 			...Object.fromEntries(Array.from(E.attributes).map(attr => [attr.name, attr.value])),
 			$: E.innerText,
 		};
+	},
+
+	/**
+	 * Performas an inplace rendering of a DOM subtree. Replaces the given element with a newly created one.
+	 * @param {HTMLElement} E An element to render.
+	 * @param {Object} args Arguments.
+	 */
+	render: function(E, args) {
+		let pE = E.parentNode;
+		pE.removeChild(E);
+		pE.appendChild(XUI.transform(E, XUI.attributes(E), args || {}, {}, new CompContext({})));
 	}
 };
 

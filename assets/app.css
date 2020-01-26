@@ -12,10 +12,27 @@
 	top: 35%;
 }
 
+#menu {
+	margin-left: 50%;
+    width: 960px;
+    left: -480px;
+    position: relative;
+}
+
+#menu > div {
+	width: 300px;
+	float: left;
+	margin-right: 20px;
+}
+
 #filter {
 	width: 100%;
 	font-size: 28pt;
 	font-family: Quicksand;
+}
+
+#filter::placeholder {
+	color: #ddd;
 }
 
 .footer {

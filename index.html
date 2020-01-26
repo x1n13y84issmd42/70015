@@ -8,7 +8,7 @@
 	</head>
 	<body style="display:none;">
 		<div id="front-center">
-			<input type="text" name="" id="filter" autofocus autocomplete="off">
+			<input type="text" name="" id="filter" autofocus autocomplete="off" placeholder="What's up?">
 			<div class="footer">
 				<span class="c">© 2019 x1n13y84issmd42</span>
 				<span class="pipe"></span>
@@ -285,10 +285,7 @@
 
 
 <!-- The <tool> component structure. -->
-<div _comp="tool" class="tool unfocused" id="{inst._id}" data-tag="{inst.tag}">
-	<div class="preview">
-		<h1>{inst.name}</h1>
-	</div>
+<div _comp="tool" class="tool unfocused" id="{inst._id}">
 	<div class="controls smaller" xui-root></div>
 </div>
 
@@ -296,6 +293,16 @@
 	XUI.register('tool', (elements, inst, comp, ctx) => {
 		ctx.set("toolID", elements.$comp.id);
 	});
+</script>
+
+
+<!-- The <toollink> component structure. -->
+<div _comp="toollink" class="tool-preview" data-tag="{inst.tag}" onclick="window.focus('{inst.name}')">
+	<h1>{inst.$}</h1>
+</div>
+
+<script>
+	XUI.register('toollink');
 </script>
 
 
@@ -1380,9 +1387,28 @@
 		</div>
 		<!-- #toolshed, opened in toolshed.html -->
 
-		<div id="uiStash"></div>
+		<div id="menu">
+			<div>
+				<toollink name="base64" tag="base64">Base64</toollink>
+				<toollink name="urldecode" tag="url trans encode decode">Transcode URL</toollink>
+				<toollink name="urlparse" tag="urlparse">Parse URL</toollink>
+			</div>
+			
+			<div>
+				<toollink name="json" tag="json format">Format JSON</toollink>
+				<toollink name="jsonyaml" tag="json yaml">JSON &#x2942; YAML</toollink>
+				<toollink name="xml" tag="xml xpath">XML &amp; Xpath</toollink>
+			</div>
+			
+			<div>
+				<toollink name="unixtime" tag="unittime timestamp">Unixtime</toollink>
+				<toollink name="hasher" tag="hash md5 sha des crc">Hashes &amp; ciphers</toollink>
+			</div>
+		</div>
 
 		<script>
+
+			XUI.render(window.menu);
 
 			/**
 			 * Temporarily applies a class to an element. The class is removed after the specified amount of time passes.

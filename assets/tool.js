@@ -10,9 +10,9 @@ class Tool extends DOMOps {
 
 		this.C = this.$('.controls')[0];
 	
-		E.querySelector('.preview').onclick = () => {
-			focus(this.ID);
-		}
+		// E.querySelector('.preview').onclick = () => {
+		// 	focus(this.ID);
+		// }
 
 		this.configuration = {};
 	
