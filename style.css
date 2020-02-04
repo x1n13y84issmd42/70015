@@ -345,12 +345,15 @@ input[type=radio]:checked {
 	left: 2%;
 	top: 2%;
 	color: #00BBFF;
+	text-decoration: none;
 }
 
 .sidebar > a {
 	cursor: pointer;
 	display: block;
 	margin-bottom: 1em;
+	color: inherit;
+	text-decoration: inherit;
 }
 
 .sidebar a > * {

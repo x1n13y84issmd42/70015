@@ -176,7 +176,9 @@ let XUI = {
 		
 				//	Attributes
 				for (let EAttr of compE.attributes) {
-					EAttr.nodeValue = xeval(EAttr.nodeValue);
+					if (! EAttr.nodeName.startsWith('xui-')) {
+						EAttr.nodeValue = xeval(EAttr.nodeValue);
+					}
 				}
 
 				//TODO: enrich dataset

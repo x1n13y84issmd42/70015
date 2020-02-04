@@ -814,7 +814,13 @@ class Workbench {
 	equip(id, data) {
 		let ctor = this.toolCtors[id];
 		if (ctor) {
-			data = data || {};
+			data = {
+				...data,
+				onback: this.equipped.length && 'bench.back()',
+				onclose: 'bench.closeAll()',
+				onshare: 'window.share()'
+			};
+
 			let toolE = XUIC.tool(id, data);
 			this.toolsE.appendChild(toolE);
 			let tool = new ctor(toolE);
@@ -1119,7 +1125,9 @@ let XUI = {
 		
 				//	Attributes
 				for (let EAttr of compE.attributes) {
-					EAttr.nodeValue = xeval(EAttr.nodeValue);
+					if (! EAttr.nodeName.startsWith('xui-')) {
+						EAttr.nodeValue = xeval(EAttr.nodeValue);
+					}
 				}
 
 				//TODO: enrich dataset

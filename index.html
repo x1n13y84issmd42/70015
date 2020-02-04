@@ -308,6 +308,12 @@
 <!-- The <tool> component structure. -->
 <div _comp="tool" class="tool unfocused" id="{inst._id}">
 	<div class="controls smaller" xui-root></div>
+
+	<div class="sidebar">
+		<a xui-if="{args.onback}" onclick="{args.onback}" href="javascript:void(0);" class="back"><i>&#x1F860;</i><span>BACK</span></a>
+		<a xui-if="{args.onclose}" onclick="{args.onclose}" href="javascript:void(0);" class="close"><i>&#x1f7a9;</i><span>CLOSE</span></a>
+		<a xui-if="{args.onshare}" onclick="{args.onshare}" href="javascript:void(0);" class="share"><i>#</i><span>SHARE</span></a>
+	</div>
 </div>
 
 <script>
