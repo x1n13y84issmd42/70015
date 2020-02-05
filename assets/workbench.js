@@ -33,7 +33,7 @@ class Workbench {
 				...data,
 				onback: this.equipped.length && 'bench.back()',
 				onclose: 'bench.clear()',
-				onshare: 'window.share()'
+				onshare: 'window.share2()'
 			};
 
 			let toolE = XUIC.tool(id, data);
@@ -80,6 +80,10 @@ class Workbench {
 		}
 
 		this.equipped = [];
+	}
+
+	currentlyEquipped() {
+		return this.equipped[this.equipped.length - 1];
 	}
 
 	/**

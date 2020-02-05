@@ -30,7 +30,7 @@ let XUI = {
 
 			let elements = {};
 			let srcE = document.querySelector(`[_comp=${compName}]`);
-			let instAttrs = XUI.attributes(instE);
+			let instAttrs = XUI.attributes(instE, args);
 
 			//	Building the component itself from the component source markup.
 			let compE = XUI.transform(srcE, instAttrs, args, elements, ctx);
@@ -138,45 +138,24 @@ let XUI = {
 	 * @param {CompContext} ctx A composition context.
 	 */
 	enrich: function(compE, inst, args, elements, ctx) {
-		//	Replaces occurences of {}-expressions (JS code) with their evaluated results.
-		function xeval(s) {
-			//	These are available in components to generate ids.
-			//	Other cool symbols to use: 𐐏 𐐍 𐐝 𐐦 𝛺 𝜴 𝝙 Δ 𝝣 𝝨 𝝮 Ω Σ 
-			let Σ = (v) => ctx.id(v);
-			let Δ = (v) => ctx.iid(v);
-
-			function repl() {
-				return s.replace(/\{(.*?)\}/gi, (a, g1) => eval(g1) || '');
-			}
-
-			//	Doing it in a loop for transitive evaluations, i.e. when a replacement value is a {}-expression itself.
-			let s1 = repl(s);
-			while (s1 != s) {
-				s = s1;
-				s1 = repl(s);
-			}
-
-			return s1;
-		}
-
 		switch (compE.nodeType) {
 			case Node.TEXT_NODE:
-				compE.nodeValue = xeval(compE.nodeValue);
+				compE.nodeValue = XUI.eval(compE.nodeValue, inst, args, ctx);
 			break;
 
 			case Node.ELEMENT_NODE:
 				//	Replacing text content
 				if (compE.innerText && !compE.children.length) {
-					compE.innerText = xeval(compE.innerText);
+					compE.innerText = XUI.eval(compE.innerText, inst, args, ctx);
 				}
 		
 				if (compE.value) {
-					compE.value = xeval(compE.value);
+					compE.value = XUI.eval(compE.value, inst, args, ctx);
 				}
 		
 				//	Attributes
 				for (let EAttr of compE.attributes) {
-					EAttr.nodeValue = xeval(EAttr.nodeValue);
+					EAttr.nodeValue = XUI.eval(EAttr.nodeValue, inst, args, ctx);
 				}
 
 				//TODO: enrich dataset
@@ -197,6 +176,35 @@ let XUI = {
 				compE.removeAttribute('_comp');
 			break;
 		}
+	},
+
+	/**
+	 * Replaces occurences of {}-expressions (JS code) with their evaluated results.
+	 * @param {*} s An expression to evaluate.
+	 */
+	eval(s, inst, args, ctx) {
+		//	These are available in components to generate ids.
+		//	Other cool symbols to use: 𐐏 𐐍 𐐝 𐐦 𝛺 𝜴 𝝙 Δ 𝝣 𝝨 𝝮 Ω Σ 
+		let Σ = (v) => ctx.id(v);
+		let Δ = (v) => ctx.iid(v);
+		
+		if (! ctx) {
+			Σ = (v) => v;
+			Δ = (v) => v;
+		}
+
+		function repl() {
+			return s.replace(/\{(.*?)\}/gi, (a, g1) => eval(g1) || '');
+		}
+
+		//	Doing it in a loop for transitive evaluations, i.e. when a replacement value is a {}-expression itself.
+		let s1 = repl(s);
+		while (s1 != s) {
+			s = s1;
+			s1 = repl(s);
+		}
+
+		return s1;
 	},
 
 	/**
@@ -223,16 +231,17 @@ let XUI = {
 	 * Collects attributes from a DOM node into an objet.
 	 * Puts the element's innerText value under the '$' key.
 	 * @param {HTMLElement} E An HTML element to grab attributes from.
+	 * @param {Object} args Arguments.
 	 */
-	attributes: function(E) {
+	attributes: function(E, args) {
 		return {
-			...Object.fromEntries(Array.from(E.attributes).map(attr => [attr.name, attr.value])),
+			...Object.fromEntries(Array.from(E.attributes).map(attr => [attr.name, XUI.eval(attr.value, {}, args)])),
 			$: E.innerText,
 		};
 	},
 
 	/**
-	 * Performas an inplace rendering of a DOM subtree. Replaces the given element with a newly created one.
+	 * Performs an inplace rendering of a DOM subtree. Replaces the given element with a newly created one.
 	 * @param {HTMLElement} E An element to render.
 	 * @param {Object} args Arguments.
 	 */
@@ -242,7 +251,7 @@ let XUI = {
 		pE.removeChild(E);
 		// pE.appendChild(XUI.transform(E, XUI.attributes(E), args || {}, {}, new CompContext({})));
 		pE.insertBefore(
-			XUI.transform(E, XUI.attributes(E), args || {}, {}, new CompContext({})),
+			XUI.transform(E, XUI.attributes(E, args), args || {}, {}, new CompContext({})),
 			nsE
 		);
 	}

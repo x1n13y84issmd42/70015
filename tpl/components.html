@@ -1,7 +1,7 @@
 <div id="components">
-	<dialog data-purpose="social" _id="share" title="${title}">
+	<dialog data-purpose="social" _id="share" title="{inst.title||args.title}">
 		<section _id="link">
-			<input type="text" value="${value}" />
+			<input type="text" value="{inst.value||args.value}" />
 			<undercontrols>
 				<copy from="#link" handler="onclickCopyToClipboard(e)"></copy>
 			</undercontrols>

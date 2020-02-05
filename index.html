@@ -73,14 +73,14 @@
 				return res;
 			}
 
-			function share(id, e) {
-				console.log(`Sharing the #${id} tool!`);
-				let tool = bench.get(id);
+			function share() {
+				let tool = bench.currentlyEquipped();
+				console.log(`Sharing the #${tool.ID} tool!`);
 				tool.C.classList.add('bg');
 				
 				let value = `A shareable URL is expected here`;
 				let dlgBGE = Component.NewElement('div', ['dialog-bg', 'out']);
-				let shareC = Component.New('share', {title: `Share ${id}`, value: value});
+				let shareC = Component.New('share', {title: `Share ${tool.ID}`, value: value});
 				dlgBGE.appendChild(shareC);
 				dlgBGE.onclick = (e) => {
 					if (e.target === e.currentTarget) {
@@ -95,6 +95,25 @@
 					dlgBGE.classList.remove('out');
 					dlgBGE.classList.add('in');
 				}, 0);
+			}
+
+			function share2() {
+				let tool = bench.currentlyEquipped();
+				console.log(`Sharing the #${tool.ID} tool!`);
+				tool.C.classList.add('bg');
+
+				document.body.appendChild(XUIC.dialog('share', {
+					onclose: () => {
+						tool.C.classList.remove('bg');
+					},
+					value: `A shareable URL is expected here`,
+					title: 'YOLO social '
+				}));
+				
+				/* setTimeout(() => {
+					dlgBGE.classList.remove('out');
+					dlgBGE.classList.add('in');
+				}, 0); */
 			}
 
 			function onclickCopyToClipboard(e) {
@@ -140,9 +159,9 @@
 
 
 <div id="components">
-	<dialog data-purpose="social" _id="share" title="${title}">
+	<dialog data-purpose="social" _id="share" title="{inst.title||args.title}">
 		<section _id="link">
-			<input type="text" value="${value}" />
+			<input type="text" value="{inst.value||args.value}" />
 			<undercontrols>
 				<copy from="#link" handler="onclickCopyToClipboard(e)"></copy>
 			</undercontrols>
@@ -191,6 +210,27 @@
 	});
 </script>
 
+
+<!-- The <dialog> component structure. -->
+<div _comp="dialog" xui-as="bg" class="dialog-bg" id="{inst._id}">
+	<div xui-root class="dialog controls">
+		<h1 xui-if="args.title||inst.title">{args.title||inst.title}</h1>
+	</div>
+</div>
+
+<script>
+	XUI.register('dialog', (elements, inst, args, ctx) => {
+		ctx.set("toolID", elements.$comp.id);
+
+		elements.bg.onclick = (e) => {
+			if (e.target === e.currentTarget) {
+				elements.bg.parentNode.removeChild(elements.bg);
+				args.onclose && args.onclose();
+			}
+		};
+	});
+</script>
+	
 
 <!-- The <error> component structure - a general error reporting element under inputs. -->
 <p _comp="error" class="error">
