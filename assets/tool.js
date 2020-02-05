@@ -10,10 +10,6 @@ class Tool extends DOMOps {
 
 		this.C = this.$('.controls')[0];
 	
-		// E.querySelector('.preview').onclick = () => {
-		// 	focus(this.ID);
-		// }
-
 		this.configuration = {};
 	
 		//	Selecting all the checkboxes & radio buttons.
@@ -42,28 +38,6 @@ class Tool extends DOMOps {
 			return new Section(n);
 		} else {
 			throw new Error(`Could not find a section ${sid}.`);
-		}
-	}
-
-	/**
-	 * Creates a component by copying a DOM subtree specified by it's ID attribute
-	 * and setting values into specific places.
-	 * @param {string} cid Component id. An element with that id will be copied and used as a component. 
-	 * The rest of arguments will be used to fill the component template tructure with content.
-	 */
-	Component(compID, args) {
-		let compE = this.$(`.components .${compID}`)[0];
-
-		if (! compE) {
-			compE = document.querySelector(`#components > .${compID}`)
-		}
-	
-		if (compE) {
-			compE = Component.New(compE, args);
-			compE.querySelectorAll('.copy').forEach((v, k, p) => {v.onclick = onclickCopyToClipboard});
-			return compE;
-		} else {
-			throw new Error(`Could not find a '${compID}' component.`);
 		}
 	}
 
