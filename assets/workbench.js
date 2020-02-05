@@ -32,7 +32,7 @@ class Workbench {
 			data = {
 				...data,
 				onback: this.equipped.length && 'bench.back()',
-				onclose: 'bench.closeAll()',
+				onclose: 'bench.clear()',
 				onshare: 'window.share()'
 			};
 
@@ -58,20 +58,28 @@ class Workbench {
 	}
 
 	back() {
-		let tUnfocus = this.equipped.pop();
+		let tUnequipped = this.equipped.pop();
 
 		function remove() {
-			tUnfocus.E.parentNode.removeChild(tUnfocus.E);
+			tUnequipped.E.parentNode.removeChild(tUnequipped.E);
 		}
-
+		
 		if (this.equipped.length) {
 			let tNext = this.equipped[this.equipped.length - 1];
 			window.location.hash = tNext.ID;
-			this.slide(tUnfocus, tNext, 'right', remove)
+			this.slide(tUnequipped, tNext, 'right', remove)
 		} else {
 			window.location.hash = '';
 			remove();
 		}
+	}
+	
+	clear() {
+		for (let t of this.equipped) {
+			t.E.parentNode.removeChild(t.E);
+		}
+
+		this.equipped = [];
 	}
 
 	/**
@@ -91,7 +99,9 @@ class Workbench {
 			_t1.E.classList.remove('switching', `slide-${dir}-transit`);
 			_t2.E.classList.remove('switching', `slide-${dir}-init`, `slide-${dir}-transit`);
 			cb && cb();
-		}, 400, t1, t2);
+		},
+		400,	//	This must be the same as in CSS.
+		t1, t2);
 	}
 	
 	focus(id) {
