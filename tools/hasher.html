@@ -24,19 +24,19 @@
 				let results = this.$(".results")[0];
 				this.removeChildren(results);
 
-				results.appendChild(Comp.kvSection({label: "Checksums"}));
-				results.appendChild(Comp.kvPair({k: "CRC16", v: crc16(this.input.value)}));
-				results.appendChild(Comp.kvPair({k: "CRC32", v: crc32(this.input.value)}));
-				results.appendChild(Comp.kvPair({k: "CRC16", v: crc16(this.input.value)}));
-				results.appendChild(Comp.kvPair({k: "CRC32", v: crc32(this.input.value)}));
+				results.appendChild(XUIC.kvsection({label: "Checksums"}));
+				results.appendChild(XUIC.kvpair({k: "CRC16", v: crc16(this.input.value)}));
+				results.appendChild(XUIC.kvpair({k: "CRC32", v: crc32(this.input.value)}));
+				results.appendChild(XUIC.kvpair({k: "CRC16", v: crc16(this.input.value)}));
+				results.appendChild(XUIC.kvpair({k: "CRC32", v: crc32(this.input.value)}));
 				
-				results.appendChild(Comp.kvSection({label: "Hashes"}));
-				results.appendChild(Comp.kvPair({k: "MD5", v: '' + CryptoJS.MD5(this.input.value)}));
-				results.appendChild(Comp.kvPair({k: "SHA1", v: '' + CryptoJS.SHA1(this.input.value)}));
-				results.appendChild(Comp.kvPair({k: "SHA3", v: '' + CryptoJS.SHA3(this.input.value)}));
-				results.appendChild(Comp.kvPair({k: "SHA256", v: '' + CryptoJS.SHA256(this.input.value)}));
+				results.appendChild(XUIC.kvsection({label: "Hashes"}));
+				results.appendChild(XUIC.kvpair({k: "MD5", v: '' + CryptoJS.MD5(this.input.value)}));
+				results.appendChild(XUIC.kvpair({k: "SHA1", v: '' + CryptoJS.SHA1(this.input.value)}));
+				results.appendChild(XUIC.kvpair({k: "SHA3", v: '' + CryptoJS.SHA3(this.input.value)}));
+				results.appendChild(XUIC.kvpair({k: "SHA256", v: '' + CryptoJS.SHA256(this.input.value)}));
 				
-				results.appendChild(Comp.kvSection({label: "Ciphers"}));
+				results.appendChild(XUIC.kvsection({label: "Ciphers"}));
 				let aes = CryptoJS.AES.encrypt(this.input.value, this.keyInput.value, {keySize: 128});
 				let des = CryptoJS.DES.encrypt(this.input.value, this.keyInput.value, {keySize: 128});
 				// console.log(aes);
@@ -46,8 +46,8 @@
 				// console.log(aes.key);
 				// console.log(aes.iv);
 				// console.log(aes.ciphertext);
-				results.appendChild(Comp.kvPair({k: "AES", v: aes.ciphertext.toString()}));
-				results.appendChild(Comp.kvPair({k: "DES", v: des.ciphertext.toString()}));
+				results.appendChild(XUIC.kvpair({k: "AES", v: aes.ciphertext.toString()}));
+				results.appendChild(XUIC.kvpair({k: "DES", v: des.ciphertext.toString()}));
 			};
 
 			import(data) {
