@@ -11,9 +11,16 @@
 
 		elements.bg.onclick = (e) => {
 			if (e.target === e.currentTarget) {
-				elements.bg.parentNode.removeChild(elements.bg);
-				args.onclose && args.onclose();
+				elements.bg.classList.add('out');
+				setTimeout(() => {
+					elements.bg.parentNode.removeChild(elements.bg);
+					args.onclose && args.onclose();
+				}, 300);
 			}
 		};
+
+		setTimeout(() => {
+			elements.bg.classList.add('in');
+		}, 0);
 	});
 </script>

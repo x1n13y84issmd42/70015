@@ -356,7 +356,7 @@ class Workbench {
 				...data,
 				onback: this.equipped.length && 'bench.back()',
 				onclose: 'bench.clear()',
-				onshare: 'window.share2()'
+				onshare: 'window.share()'
 			};
 
 			let toolE = XUIC.tool(id, data);

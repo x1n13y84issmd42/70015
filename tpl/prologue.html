@@ -76,30 +76,6 @@
 				let tool = bench.currentlyEquipped();
 				console.log(`Sharing the #${tool.ID} tool!`);
 				tool.C.classList.add('bg');
-				
-				let value = `A shareable URL is expected here`;
-				let dlgBGE = Component.NewElement('div', ['dialog-bg', 'out']);
-				let shareC = Component.New('share', {title: `Share ${tool.ID}`, value: value});
-				dlgBGE.appendChild(shareC);
-				dlgBGE.onclick = (e) => {
-					if (e.target === e.currentTarget) {
-						document.body.removeChild(dlgBGE);
-						tool.C.classList.remove('bg');
-					}
-				};
-
-				document.body.appendChild(dlgBGE);
-				
-				setTimeout(() => {
-					dlgBGE.classList.remove('out');
-					dlgBGE.classList.add('in');
-				}, 0);
-			}
-
-			function share2() {
-				let tool = bench.currentlyEquipped();
-				console.log(`Sharing the #${tool.ID} tool!`);
-				tool.C.classList.add('bg');
 
 				document.body.appendChild(XUIC.dialog('share', {
 					onclose: () => {
@@ -108,11 +84,6 @@
 					value: `A shareable URL is expected here`,
 					title: 'YOLO social '
 				}));
-				
-				/* setTimeout(() => {
-					dlgBGE.classList.remove('out');
-					dlgBGE.classList.add('in');
-				}, 0); */
 			}
 
 			function onclickCopyToClipboard(e) {
