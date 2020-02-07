@@ -30,7 +30,7 @@ let XUI = {
 
 			let elements = {};
 			let srcE = document.querySelector(`[_comp=${compName}]`);
-			let instAttrs = XUI.attributes(instE, args);
+			let instAttrs = XUI.attributes(instE, args, ctx);
 
 			//	Building the component itself from the component source markup.
 			let compE = XUI.transform(srcE, instAttrs, args, elements, ctx);
@@ -233,9 +233,9 @@ let XUI = {
 	 * @param {HTMLElement} E An HTML element to grab attributes from.
 	 * @param {Object} args Arguments.
 	 */
-	attributes: function(E, args) {
+	attributes: function(E, args, ctx) {
 		return {
-			...Object.fromEntries(Array.from(E.attributes).map(attr => [attr.name, XUI.eval(attr.value, {}, args)])),
+			...Object.fromEntries(Array.from(E.attributes).map(attr => [attr.name, XUI.eval(attr.value, {}, args, ctx)])),
 			$: E.innerText,
 		};
 	},
@@ -249,7 +249,6 @@ let XUI = {
 		let pE = E.parentNode;
 		let nsE = E.nextSibling;
 		pE.removeChild(E);
-		// pE.appendChild(XUI.transform(E, XUI.attributes(E), args || {}, {}, new CompContext({})));
 		pE.insertBefore(
 			XUI.transform(E, XUI.attributes(E, args), args || {}, {}, new CompContext({})),
 			nsE

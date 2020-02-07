@@ -516,6 +516,14 @@ let XUI = {
 		container === undefined && (container = true);
 
 		XUIC[compName] = function(instE, args, ctx) {
+			if (compName == 'tool') {
+				debugger;
+			}
+
+			if (compName == 'copy') {
+				debugger;
+			}
+
 			if (arguments.length < 2) {
 				args = instE || {};
 				instE = document.createElement('div');
@@ -531,7 +539,7 @@ let XUI = {
 
 			let elements = {};
 			let srcE = document.querySelector(`[_comp=${compName}]`);
-			let instAttrs = XUI.attributes(instE, args);
+			let instAttrs = XUI.attributes(instE, args, ctx);
 
 			//	Building the component itself from the component source markup.
 			let compE = XUI.transform(srcE, instAttrs, args, elements, ctx);
@@ -690,8 +698,8 @@ let XUI = {
 		let Δ = (v) => ctx.iid(v);
 		
 		if (! ctx) {
-			Σ = (v) => v;
-			Δ = (v) => v;
+			Σ = (v) => `noctx_${v}`;
+			Δ = (v) => `noctx_${v}`;
 		}
 
 		function repl() {
@@ -734,9 +742,9 @@ let XUI = {
 	 * @param {HTMLElement} E An HTML element to grab attributes from.
 	 * @param {Object} args Arguments.
 	 */
-	attributes: function(E, args) {
+	attributes: function(E, args, ctx) {
 		return {
-			...Object.fromEntries(Array.from(E.attributes).map(attr => [attr.name, XUI.eval(attr.value, {}, args)])),
+			...Object.fromEntries(Array.from(E.attributes).map(attr => [attr.name, XUI.eval(attr.value, {}, args, ctx)])),
 			$: E.innerText,
 		};
 	},
@@ -750,7 +758,6 @@ let XUI = {
 		let pE = E.parentNode;
 		let nsE = E.nextSibling;
 		pE.removeChild(E);
-		// pE.appendChild(XUI.transform(E, XUI.attributes(E), args || {}, {}, new CompContext({})));
 		pE.insertBefore(
 			XUI.transform(E, XUI.attributes(E, args), args || {}, {}, new CompContext({})),
 			nsE
