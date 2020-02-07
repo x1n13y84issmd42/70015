@@ -516,14 +516,6 @@ let XUI = {
 		container === undefined && (container = true);
 
 		XUIC[compName] = function(instE, args, ctx) {
-			if (compName == 'tool') {
-				debugger;
-			}
-
-			if (compName == 'copy') {
-				debugger;
-			}
-
 			if (arguments.length < 2) {
 				args = instE || {};
 				instE = document.createElement('div');
@@ -698,8 +690,8 @@ let XUI = {
 		let Δ = (v) => ctx.iid(v);
 		
 		if (! ctx) {
-			Σ = (v) => `noctx_${v}`;
-			Δ = (v) => `noctx_${v}`;
+			Σ = (v) => v;
+			Δ = (v) => v;
 		}
 
 		function repl() {
