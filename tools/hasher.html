@@ -52,8 +52,20 @@
 
 			import(data) {
 				if (data.input) {
-					this.T(this.$$('input'), data.input);
-					this.hash();
+					this.input.value = data.input;
+				}
+
+				if (data.key) {
+					this.keyInput.value = data.key;
+				}
+
+				this.hash();
+			}
+
+			export() {
+				return {
+					input: this.input.value,
+					key: this.keyInput.value,
 				}
 			}
 		}

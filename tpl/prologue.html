@@ -79,7 +79,7 @@
 
 				let toolData = tool.export();
 				toolData = btoa(JSON.stringify(toolData));
-				let toolURL = `http://zzxx.one/70015#${tool.ID}@${toolData}`
+				let toolURL = `${window.location.href.split('#')[0]}#${tool.ID}@${toolData}`
 
 				document.body.appendChild(XUIC.dialog('share', {
 					onclose: () => {

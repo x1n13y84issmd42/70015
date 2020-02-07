@@ -65,7 +65,17 @@
 			}
 	
 			import(data) {
-				data.json && (this.$$('json', data.json));
+				if (data.input) {
+					this.inJSON.value = data.input;
+					this.update();
+				}
+			}
+
+			export() {
+				return {
+					input: this.inJSON.value,
+					//TODO: quoting settings, etc
+				};
 			}
 	
 			update() {
@@ -101,13 +111,6 @@
 			oneliner(v) {
 				if (v) {
 					this.out1liner.value = JSON1Liner(undefined, v, this.quoteCheck.checked, this.escapeQuotesCheck.checked);
-				}
-			}
-	
-			import(data) {
-				if (data.input) {
-					this.inJSON.value = data.input;
-					this.update();
 				}
 			}
 		}

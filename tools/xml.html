@@ -81,10 +81,7 @@
 				this.Section('nice').Hide();
 			}
 
-			while(this.xmlNice.firstChild) {
-				this.xmlNice.removeChild(this.xmlNice.firstChild)
-			}
-
+			this.removeChildren(this.xmlNice);
 			this.renderXML(xml, this.xmlNice, found);
 		}
 
@@ -235,6 +232,21 @@
 				xt.appendChild(this.createXMLNode(['name'], xml.nodeName));
 				xt.appendChild(this.createXMLNode(['closing']));
 				xmlE.appendChild(xt)
+			}
+		}
+
+		export() {
+			return {
+				xml: this.xml.value,
+				xpath: this.xpath.value,
+			};
+		}
+
+		import(data) {
+			if (data.xml) {
+				this.xml.value = data.xml;
+				this.xpath.value = data.xpath;
+				this.update();
 			}
 		}
 	}

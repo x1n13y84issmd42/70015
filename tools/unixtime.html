@@ -96,6 +96,19 @@
 				tdE.appendChild(yearE);
 				tdE.appendChild(timeE);
 			}
+
+			export() {
+				return {
+					ts: this.inTS.value,
+				};
+			}
+
+			import(data) {
+				if (data.ts) {
+					this.inTS.value = data.ts;
+					this.convert();
+				}
+			}
 		}
 	
 		bench.register('unixtime', TUnixtime);

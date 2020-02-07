@@ -85,6 +85,19 @@
 
 				return res;
 			}
+
+			export() {
+				return {
+					URL: this.URL.value,
+				};
+			}
+
+			import(data) {
+				if (data.URL) {
+					this.URL.value = data.URL;
+					this.URL.oninput();
+				}
+			}
 		}
 
 		bench.register('urlparse', TURLParser);

@@ -80,7 +80,7 @@
 
 				let toolData = tool.export();
 				toolData = btoa(JSON.stringify(toolData));
-				let toolURL = `http://zzxx.one/70015#${tool.ID}@${toolData}`
+				let toolURL = `${window.location.href.split('#')[0]}#${tool.ID}@${toolData}`
 
 				document.body.appendChild(XUIC.dialog('share', {
 					onclose: () => {
@@ -496,8 +496,20 @@
 
 			import(data) {
 				if (data.input) {
-					this.T(this.$$('input'), data.input);
-					this.hash();
+					this.input.value = data.input;
+				}
+
+				if (data.key) {
+					this.keyInput.value = data.key;
+				}
+
+				this.hash();
+			}
+
+			export() {
+				return {
+					input: this.input.value,
+					key: this.keyInput.value,
 				}
 			}
 		}
@@ -574,7 +586,17 @@
 			}
 	
 			import(data) {
-				data.json && (this.$$('json', data.json));
+				if (data.input) {
+					this.inJSON.value = data.input;
+					this.update();
+				}
+			}
+
+			export() {
+				return {
+					input: this.inJSON.value,
+					//TODO: quoting settings, etc
+				};
 			}
 	
 			update() {
@@ -610,13 +632,6 @@
 			oneliner(v) {
 				if (v) {
 					this.out1liner.value = JSON1Liner(undefined, v, this.quoteCheck.checked, this.escapeQuotesCheck.checked);
-				}
-			}
-	
-			import(data) {
-				if (data.input) {
-					this.inJSON.value = data.input;
-					this.update();
 				}
 			}
 		}
@@ -748,6 +763,12 @@
 					this.toJSON();
 				}
 			}
+
+			export() {
+				return {
+					json: this.json.value,
+				};
+			}
 		}
 	
 		bench.register('jsonyaml', TJSONYAML);
@@ -858,6 +879,19 @@
 				tdE.appendChild(monthE);
 				tdE.appendChild(yearE);
 				tdE.appendChild(timeE);
+			}
+
+			export() {
+				return {
+					ts: this.inTS.value,
+				};
+			}
+
+			import(data) {
+				if (data.ts) {
+					this.inTS.value = data.ts;
+					this.convert();
+				}
 			}
 		}
 	
@@ -1005,7 +1039,24 @@
 			encode() {
 				this.encoded.value = encodeURIComponent(this.decoded.value);
 			};
-			
+
+			export() {
+				return {
+					decoded: this.decoded.value,
+				};
+			}
+
+			import(data) {
+				if (data.decoded) {
+					this.decoded.value = data.decoded;
+					this.encode();
+				}
+
+				if (data.encoded) {
+					this.encoded.value = data.encoded;
+					this.decode();
+				}
+			}
 		}
 		
 		bench.register('urldecode', TURLTranscoder);
@@ -1100,6 +1151,19 @@
 
 				return res;
 			}
+
+			export() {
+				return {
+					URL: this.URL.value,
+				};
+			}
+
+			import(data) {
+				if (data.URL) {
+					this.URL.value = data.URL;
+					this.URL.oninput();
+				}
+			}
 		}
 
 		bench.register('urlparse', TURLParser);
@@ -1190,10 +1254,7 @@
 				this.Section('nice').Hide();
 			}
 
-			while(this.xmlNice.firstChild) {
-				this.xmlNice.removeChild(this.xmlNice.firstChild)
-			}
-
+			this.removeChildren(this.xmlNice);
 			this.renderXML(xml, this.xmlNice, found);
 		}
 
@@ -1344,6 +1405,21 @@
 				xt.appendChild(this.createXMLNode(['name'], xml.nodeName));
 				xt.appendChild(this.createXMLNode(['closing']));
 				xmlE.appendChild(xt)
+			}
+		}
+
+		export() {
+			return {
+				xml: this.xml.value,
+				xpath: this.xpath.value,
+			};
+		}
+
+		import(data) {
+			if (data.xml) {
+				this.xml.value = data.xml;
+				this.xpath.value = data.xpath;
+				this.update();
 			}
 		}
 	}

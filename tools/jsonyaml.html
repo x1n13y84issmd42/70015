@@ -91,6 +91,12 @@
 					this.toJSON();
 				}
 			}
+
+			export() {
+				return {
+					json: this.json.value,
+				};
+			}
 		}
 	
 		bench.register('jsonyaml', TJSONYAML);

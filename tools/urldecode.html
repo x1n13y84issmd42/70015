@@ -36,7 +36,24 @@
 			encode() {
 				this.encoded.value = encodeURIComponent(this.decoded.value);
 			};
-			
+
+			export() {
+				return {
+					decoded: this.decoded.value,
+				};
+			}
+
+			import(data) {
+				if (data.decoded) {
+					this.decoded.value = data.decoded;
+					this.encode();
+				}
+
+				if (data.encoded) {
+					this.encoded.value = data.encoded;
+					this.decode();
+				}
+			}
 		}
 		
 		bench.register('urldecode', TURLTranscoder);
