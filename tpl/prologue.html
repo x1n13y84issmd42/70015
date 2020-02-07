@@ -77,12 +77,16 @@
 				console.log(`Sharing the #${tool.ID} tool!`);
 				tool.C.classList.add('bg');
 
+				let toolData = tool.export();
+				toolData = btoa(JSON.stringify(toolData));
+				let toolURL = `http://zzxx.one/70015#${tool.ID}@${toolData}`
+
 				document.body.appendChild(XUIC.dialog('share', {
 					onclose: () => {
 						tool.C.classList.remove('bg');
 					},
-					value: `A shareable URL is expected here`,
-					title: 'YOLO social '
+					value: toolURL,
+					title: `Sharing some ${tool.ID} goodness`
 				}));
 			}
 

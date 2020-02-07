@@ -42,12 +42,7 @@
 			}
 
 			document.body.onload = () => {
-				// let dialogE = Component.New('share', {
-				// 	title: 'Share',
-				// 	value: `${window.location.pathname}#yolo2020`
-				// });
-				// document.body.appendChild(dialogE);
-
+				//TODO: fixme
 				let filter = document.getElementById("filter");
 				filter.oninput = () => {
 					bench.filter(filter.value);
@@ -69,12 +64,17 @@
 					}
 				}
 
-				//	Copy buttons.
-				// document.querySelectorAll('.copy').forEach((v, k, p) => {v.onclick = onclickCopyToClipboard});
-
 				//	Autofocusing tools upon page load.
+				//	The hash can contain a tool data after a '@'.
 				if (window.location.hash) {
-					bench.equip(window.location.hash.substr(1));
+					let hashSegments = window.location.hash.substr(1).split('@');
+					let data;
+
+					if (hashSegments[1]) {
+						data = JSON.parse(atob(hashSegments[1]));
+					}
+
+					bench.equip(hashSegments[0], data);
 				}
 
 				bench.render();

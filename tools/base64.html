@@ -54,6 +54,12 @@
 					this.decode();
 				}
 			}
+
+			export() {
+				return {
+					ascii: this.inAscii.value
+				};
+			}
 		}
 
 		bench.register('base64', TBase64);

@@ -78,12 +78,16 @@
 				console.log(`Sharing the #${tool.ID} tool!`);
 				tool.C.classList.add('bg');
 
+				let toolData = tool.export();
+				toolData = btoa(JSON.stringify(toolData));
+				let toolURL = `http://zzxx.one/70015#${tool.ID}@${toolData}`
+
 				document.body.appendChild(XUIC.dialog('share', {
 					onclose: () => {
 						tool.C.classList.remove('bg');
 					},
-					value: `A shareable URL is expected here`,
-					title: 'YOLO social '
+					value: toolURL,
+					title: `Sharing some ${tool.ID} goodness`
 				}));
 			}
 
@@ -424,6 +428,12 @@
 					this.base64.value = data.base64;
 					this.decode();
 				}
+			}
+
+			export() {
+				return {
+					ascii: this.inAscii.value
+				};
 			}
 		}
 
@@ -1456,12 +1466,7 @@
 			}
 
 			document.body.onload = () => {
-				// let dialogE = Component.New('share', {
-				// 	title: 'Share',
-				// 	value: `${window.location.pathname}#yolo2020`
-				// });
-				// document.body.appendChild(dialogE);
-
+				//TODO: fixme
 				let filter = document.getElementById("filter");
 				filter.oninput = () => {
 					bench.filter(filter.value);
@@ -1483,12 +1488,17 @@
 					}
 				}
 
-				//	Copy buttons.
-				// document.querySelectorAll('.copy').forEach((v, k, p) => {v.onclick = onclickCopyToClipboard});
-
 				//	Autofocusing tools upon page load.
+				//	The hash can contain a tool data after a '@'.
 				if (window.location.hash) {
-					bench.equip(window.location.hash.substr(1));
+					let hashSegments = window.location.hash.substr(1).split('@');
+					let data;
+
+					if (hashSegments[1]) {
+						data = JSON.parse(atob(hashSegments[1]));
+					}
+
+					bench.equip(hashSegments[0], data);
 				}
 
 				bench.render();
