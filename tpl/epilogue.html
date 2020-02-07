@@ -1,15 +1,14 @@
-		<!-- opened in components.html -->
 		</div>
+		<!-- #toolshed, opened in toolshed.html -->
 
 		<script>
-			function focus(id) {
-				bench.focus(id);
-			}
 
-			function unfocus(id) {
-				bench.unfocus(id);
-				window.location.hash = '';
-				filter.focus();
+			XUI.render(window.menu);
+
+			document.body.onkeydown = (e) => {
+				if (e.key == 'Escape') {
+					bench.back();
+				}
 			}
 
 			/**
@@ -42,53 +41,8 @@
 				}, 1000);
 			}
 
-			function onclickCopyToClipboard(e) {
-				let from = e.currentTarget;
-
-				//	Looking for a disabled parent.
-				let pn = from.parentNode;
-				while (pn) {
-					if (pn.classList && pn.classList.contains('disabled')) {
-						return;
-					}
-					pn = pn.parentNode;
-				}
-
-				if (from.dataset.value) {
-					Clipboard.copy(from.dataset.value);
-					tmpStyle(from, 'copied', 200);
-					copiedFloater(e.pageX, e.pageY);
-					return;
-				}
-				
-				if (from.dataset.from) {
-					from = document.getElementById(from.dataset.from);
-				}
-				
-				if (from) {	
-					switch (from.tagName) {
-						case "INPUT":
-						case "TEXTAREA":
-							Clipboard.copy(from.value);
-							break;
-							
-						default:
-							Clipboard.copy(from.innerHTML);
-							break;
-					}
-
-					tmpStyle(from, 'copied', 200);
-					copiedFloater(e.pageX, e.pageY);
-				}
-			}
-
 			document.body.onload = () => {
-				// let dialogE = Component.New('share', {
-				// 	title: 'Share',
-				// 	value: `${window.location.pathname}#yolo2020`
-				// });
-				// document.body.appendChild(dialogE);
-
+				//TODO: fixme
 				let filter = document.getElementById("filter");
 				filter.oninput = () => {
 					bench.filter(filter.value);
@@ -110,12 +64,17 @@
 					}
 				}
 
-				//	Copy buttons.
-				document.querySelectorAll('.copy').forEach((v, k, p) => {v.onclick = onclickCopyToClipboard});
-
 				//	Autofocusing tools upon page load.
+				//	The hash can contain a tool data after a '@'.
 				if (window.location.hash) {
-					bench.focus(window.location.hash.substr(1));
+					let hashSegments = window.location.hash.substr(1).split('@');
+					let data;
+
+					if (hashSegments[1]) {
+						data = JSON.parse(atob(hashSegments[1]));
+					}
+
+					bench.equip(hashSegments[0], data);
 				}
 
 				bench.render();

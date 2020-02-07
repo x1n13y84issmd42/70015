@@ -7,8 +7,29 @@
 		<script src="./app.js"></script>
 	</head>
 	<body style="display:none;">
+		<div id="menu">
+			<div>
+				<toollink name="base64" tag="base64">Base64</toollink>
+				<toollink name="urldecode" tag="url trans encode decode">Transcode URL</toollink>
+				<toollink name="urlparse" tag="urlparse">Parse URL</toollink>
+			</div>
+			
+			<div>
+				<toollink name="json" tag="json format">Format JSON</toollink>
+				<toollink name="jsonyaml" tag="json yaml">JSON &#x2942; YAML</toollink>
+				<toollink name="xml" tag="xml xpath">XML &amp; Xpath</toollink>
+			</div>
+			
+			<div>
+				<toollink name="unixtime" tag="unittime timestamp">Unixtime</toollink>
+				<toollink name="hasher" tag="hash md5 sha des crc">Hashes &amp; ciphers</toollink>
+			</div>
+
+			<div class="clear"></div>
+		</div>
+
 		<div id="front-center">
-			<input type="text" name="" id="filter" autofocus autocomplete="off">
+			<input type="text" name="" id="filter" autofocus autocomplete="off" placeholder="What's up?">
 			<div class="footer">
 				<span class="c">© 2019 x1n13y84issmd42</span>
 				<span class="pipe"></span>
@@ -23,60 +44,357 @@
 		<script>
 			let config = new LSConfig();
 			let bench = new Workbench(config);
+
+			function focus(id) {
+				bench.focus(id);
+			}
+
+			function unfocus(id) {
+				bench.unfocus(id);
+				window.location.hash = '';
+				filter.focus();
+			}
+
+			function offset(e) {
+				let res = {
+					left: e.offsetLeft,
+					top: e.offsetTop,
+				};
+
+				let p = e.parentNode;
+
+				while(p) {
+					res.left += ~~p.offsetLeft;
+					res.top += ~~p.offsetTop;
+
+					p = p.parentNode;
+				}
+
+				return res;
+			}
+
+			function share() {
+				let tool = bench.currentlyEquipped();
+				console.log(`Sharing the #${tool.ID} tool!`);
+				tool.C.classList.add('bg');
+
+				let toolData = tool.export();
+				toolData = btoa(JSON.stringify(toolData));
+				let toolURL = `${window.location.href.split('#')[0]}#${tool.ID}@${toolData}`
+
+				document.body.appendChild(XUIC.dialog('share', {
+					onclose: () => {
+						tool.C.classList.remove('bg');
+					},
+					value: toolURL,
+					title: `Sharing some ${tool.ID} goodness`
+				}));
+			}
+
+			function onclickCopyToClipboard(e) {
+				let from = e.currentTarget;
+
+				//	Looking for a disabled parent.
+				let pn = from.parentNode;
+				while (pn) {
+					if (pn.classList && pn.classList.contains('disabled')) {
+						return;
+					}
+					pn = pn.parentNode;
+				}
+
+				if (from.dataset.value) {
+					Clipboard.copy(from.dataset.value);
+					tmpStyle(from, 'copied', 200);
+					copiedFloater(e.pageX, e.pageY);
+					return;
+				}
+				
+				if (from.dataset.from) {
+					from = document.getElementById(from.dataset.from);
+				}
+				
+				if (from) {	
+					switch (from.tagName) {
+						case "INPUT":
+						case "TEXTAREA":
+							Clipboard.copy(from.value);
+							break;
+							
+						default:
+							Clipboard.copy(from.innerHTML);
+							break;
+					}
+
+					tmpStyle(from, 'copied', 200);
+					copiedFloater(e.pageX, e.pageY);
+				}
+			}
 		</script>
 
 
-
 <div id="components">
-
-	<dialog data-purpose="social" id="share" title="${title}">
-		<section id="link">
-			<input type="text" label="<<${title} a link>>" value="${value}" />
+	<dialog data-purpose="social" _id="share" title="{inst.title||args.title}">
+		<section _id="link">
+			<input type="text" value="{inst.value||args.value}" />
 			<undercontrols>
-				<copy from="link"></copy>
+				<copy from="#link" handler="onclickCopyToClipboard(e)"></copy>
 			</undercontrols>
 		</section>
 	</dialog>
 
-	<div class="kvpair kvsection">
-		<span class="label">${label}</span>
+	<!-- continues in toolshed.html -->
+
+<!-- The <block> component structure - a group of controls usually built around an <in> input component. -->
+<section _comp="block" id="{Σ(inst._id)}"></section>
+
+<script>
+	XUI.register('block');
+</script>
+
+
+<!-- The glorious <bothways> component structure. -->
+<div _comp="bothways" class="bothways">It works ⇃both↾ ways.</div>
+
+<script>
+	XUI.register('bothways');
+</script>
+
+
+<!-- The <checkbox> component structure. -->
+<label _comp="checkbox" for="{Σ(inst._id)}">
+	<input type="checkbox" id="{Σ(inst._id)}" xui-as="in">
+	<span>{inst.$||args.label}</span>
+</label>
+
+<script>
+	XUI.register('checkbox', (elements, inst, args, ctx) => {
+		(inst.checked != undefined) && (elements.in.checked = true);
+	});
+</script>
+
+
+<!-- The <copy> component structure. -->
+<a _comp="copy" class="copy" data-from="{inst.from}">
+	<span>{inst.$||"Copy"}</span><i class="far fa-copy"></i>
+</a>
+
+<script>
+	XUI.register('copy', (elements, ints, args, ctx) => {
+		elements.$comp.onclick = args.onclick || onclickCopyToClipboard;
+	});
+</script>
+
+
+<!-- The <dialog> component structure. -->
+<div _comp="dialog" xui-as="bg" class="dialog-bg" id="{inst._id}">
+	<div xui-root class="dialog controls">
+		<h1 xui-if="args.title||inst.title">{args.title||inst.title}</h1>
 	</div>
-
-	<div class="kvpair kv">
-		<span class="label">${k}</span>
-		<span class="value copy">${v}</span>
-	</div>
-
-	<h1 class="sectionLabel">${label}</h1>
-
 </div>
 
+<script>
+	XUI.register('dialog', (elements, inst, args, ctx) => {
+		ctx.set("toolID", elements.$comp.id);
+
+		elements.bg.onclick = (e) => {
+			if (e.target === e.currentTarget) {
+				elements.bg.classList.add('out');
+				setTimeout(() => {
+					elements.bg.parentNode.removeChild(elements.bg);
+					args.onclose && args.onclose();
+				}, 300);
+			}
+		};
+
+		setTimeout(() => {
+			elements.bg.classList.add('in');
+		}, 0);
+	});
+</script>
+
+
+<!-- The <error> component structure - a general error reporting element under inputs. -->
+<p _comp="error" class="error">
+	<i class="fas fa-exclamation-circle"></i>
+	<span>{inst.$||args.error||"&nbsp;"}</span>
+</p>
+
+<script>
+	XUI.register("error");
+</script>
+
+
+<!-- The <in> component structure - a flexible input field. -->
+<div _comp="in">
+	<label for="{Σ(inst._id||'in')}">{inst.label}</label>
+	<input xui-if="inst.type==='text'" type="text" id="{Σ(inst._id||'in')}" autofocus="" value="{inst.$||args.value}">
+	<textarea xui-if="inst.type==='area'" name="{inst.name}" id="{Σ(inst._id||'in')}" cols="{inst.cols||30}" rows="{inst.rows||10}">{inst.$}</textarea>
+</div>
+
+<script>
+	XUI.register('in');
+</script>
+
+
+<!-- The <kvpair> component structure - a key-value pair, values get copied to clipboard when clicked. -->
+<div _comp="kvpair" class="kvpair kv">
+	<span class="key">{inst.key||inst.k||args.k}</span>
+	<span class="value" xui-as="v">{inst.value||inst.v||args.v||inst.$}</span>
+</div>
+
+<script>
+	XUI.register('kvpair', (elements, inst, args, ctx) => {
+		elements.v.onclick = args.onclick || onclickCopyToClipboard;
+	});
+</script>
+
+
+<!-- The <kvsection> component structure. -->
+<div _comp="kvsection" class="kvpair kvsection">
+	<span class="key">{inst.$||args.label}</span>
+</div>
+
+<script>
+	XUI.register('kvsection');
+</script>
+
+
+<!-- The <overcontrols> component structure. -->
+<div _comp="overcontrols" class="overcontrols"></div>
+
+<script>
+	XUI.register("overcontrols");
+</script>
+
+
+<!-- The <radio> component structure. -->
+<label _comp="radio" for="{Σ(inst._id)}">
+	<input type="radio" name="{Σ(inst.name)}" id="{Σ(inst._id)}" xui-as="in" value="{inst.value}">
+	<span>{inst.$||args.label}</span>
+</label>
+
+<script>
+	XUI.register('radio', (elements, inst, args, ctx) => {
+		(inst.checked != undefined) && (elements.in.checked = true);
+	});
+</script>
+
+
+<!-- The <reuse> component structure - a menu to transfer data pieces between tools. -->
+<div _comp="reuse" class="menu switch">
+	<span>{inst.title||"Reuse"}<i class="fas fa-recycle"></i></span>
+	<div xui-root></div>
+</div>
+
+<script>
+	XUI.register('reuse', (elements, inst, args, ctx) => {
+		//	Building the menu items.
+		//	Things like
+		//		<hasher input="json">Hash it</hasher>
+		//	become
+		//		<a data-to="hasher" data-input="json">Hash it</a>
+		for (let instChildE of elements.$inst.children) {
+			let aE = document.createElement('a');
+			aE.dataset.to = instChildE.nodeName.toLowerCase();
+
+			for (let instChildEAI = 0; instChildEAI < instChildE.attributes.length; instChildEAI++) {
+				let instChildEA = instChildE.attributes[instChildEAI];
+				aE.dataset[instChildEA.nodeName] = instChildEA.nodeValue
+			}
+			
+			aE.innerText = instChildE.innerText;
+
+			XUI.enrich(aE, inst, args, {}, ctx);
+
+			aE.onclick = (e) => {
+				let aSwitchData = {};
+				for (let eDN in e.target.dataset) {
+					aSwitchData[eDN] = e.target.dataset[eDN];
+
+					//	May be a reference by id
+					if (window[aSwitchData[eDN]]) {
+						aSwitchData[eDN] = window[aSwitchData[eDN]].value;
+					}
+				}
+
+				bench.switch(aE.dataset.to, aSwitchData);
+			}
+
+			elements.$root.appendChild(aE);
+		}
+	}, false);
+</script>
+
+
+<!-- The <tool> component structure. -->
+<div _comp="tool" class="tool unfocused" id="{inst._id}">
+	<div class="controls smaller" xui-root></div>
+
+	<div class="sidebar">
+		<a xui-if="args.onback" onclick="{args.onback}" href="javascript:void(0);" class="back"><i>&#x1F860;</i><span>BACK</span></a>
+		<a xui-if="args.onclose" onclick="{args.onclose}" href="javascript:void(0);" class="close"><i>&#x1f7a9;</i><span>CLOSE</span></a>
+		<a xui-if="args.onshare" onclick="{args.onshare}" href="javascript:void(0);" class="share"><i>#</i><span>SHARE</span></a>
+	</div>
+</div>
+
+<script>
+	XUI.register('tool', (elements, inst, comp, ctx) => {
+		ctx.set("toolID", elements.$comp.id);
+	});
+</script>
+
+
+<!-- The <toollink> component structure. -->
+<div _comp="toollink" class="tool-preview" data-tag="{inst.tag}" onclick="bench.equip('{inst.name}')">
+	<h1>{inst.$}</h1>
+</div>
+
+<script>
+	XUI.register('toollink');
+</script>
+
+
+<!-- The <undercontrols> component structure. -->
+<div _comp="undercontrols" class="undercontrols"></div>
+
+<script>
+	XUI.register("undercontrols", (elements, inst, args, ctx) => {
+		if (inst.error) {
+			elements.$comp.appendChild(XUIC.error())
+		}
+	});
+</script>
+
+
+</div>
+<!-- #components, opened in components.html -->
+
 <div id="toolshed">
-	<!-- it continues in epilogue.html -->
+<!-- continues in epilogue.html -->
 
-
-<tool _id="base64" data-tag="base64" name="Base64">
-	<section _id="base64">
-		<input type="area" rows="8" label="Base64-encoded string">
+<tool _id="base64" data-tag="base64" name="Base64" onclose="unfocus" onshare="share">
+	<block _id="base64">
+		<in type="area" rows="8" label="Base64-encoded string"></in>
 		<undercontrols>
 			<reuse>
-				<hasher input="#base64">Hash it</hasher>
+				<hasher input="{Δ('base64')}">Hash it</hasher>
 			</reuse>
-			<copy from="#base64"></copy>
+			<copy from="{Δ('base64')}"></copy>
 		</undercontrols>
-	</section>
+	</block>
 
-	<div class="bothways">It works ⇃both↾ ways.</div>
+	<bothways></bothways>
 
-	<section _id="ascii">
-		<input type="area" rows="8" label="ASCII string">
+	<block _id="ascii">
+		<in type="area" rows="8" label="ASCII string"></in>
 		<undercontrols>
 			<reuse>
-				<hasher input="#ascii">Hash it</hasher>
+				<hasher input="{Δ('ascii')}">Hash it</hasher>
 			</reuse>
-			<copy from="#ascii"></copy>
+			<copy from="{Δ('ascii')}"></copy>
 		</undercontrols>
-	</section>
+	</block>
 </tool>
 
 <script>
@@ -111,19 +429,22 @@
 					this.decode();
 				}
 			}
+
+			export() {
+				return {
+					ascii: this.inAscii.value
+				};
+			}
 		}
 
-		let comp = Component.New('base64');
-		window.tools.appendChild(comp);
-		bench.add(new TBase64(comp));
+		bench.register('base64', TBase64);
 	})()
 </script>
 
 
-
 <tool _id="hasher" data-tag="hash md5 sha des" name="Hashes &amp; ciphers">
-	<input type="text" _id="input" autofocus tabindex="21" label="Input"/>
-	<input type="text" class="hasherKeyInput" _id="key" autofocus tabindex="21" label="Encryption key" />
+	<in type="text" _id="input" autofocus tabindex="21" label="Input"></in>
+	<in type="text" class="hasherKeyInput" _id="key" autofocus tabindex="21" label="Encryption key" ></in>
 
 	<div class="results subsection"></div>
 </tool>
@@ -147,17 +468,19 @@
 				let results = this.$(".results")[0];
 				this.removeChildren(results);
 
-				results.appendChild(this.Component('kvsection', {label: "Checksums"}));
-				results.appendChild(this.Component('kv', {k: "CRC16", v: crc16(this.input.value)}));
-				results.appendChild(this.Component('kv', {k: "CRC32", v: crc32(this.input.value)}));
+				results.appendChild(XUIC.kvsection({label: "Checksums"}));
+				results.appendChild(XUIC.kvpair({k: "CRC16", v: crc16(this.input.value)}));
+				results.appendChild(XUIC.kvpair({k: "CRC32", v: crc32(this.input.value)}));
+				results.appendChild(XUIC.kvpair({k: "CRC16", v: crc16(this.input.value)}));
+				results.appendChild(XUIC.kvpair({k: "CRC32", v: crc32(this.input.value)}));
 				
-				results.appendChild(this.Component('kvsection', {label: "Hashes"}));
-				results.appendChild(this.Component('kv', {k: "MD5", v: '' + CryptoJS.MD5(this.input.value)}));
-				results.appendChild(this.Component('kv', {k: "SHA1", v: '' + CryptoJS.SHA1(this.input.value)}));
-				results.appendChild(this.Component('kv', {k: "SHA3", v: '' + CryptoJS.SHA3(this.input.value)}));
-				results.appendChild(this.Component('kv', {k: "SHA256", v: '' + CryptoJS.SHA256(this.input.value)}));
+				results.appendChild(XUIC.kvsection({label: "Hashes"}));
+				results.appendChild(XUIC.kvpair({k: "MD5", v: '' + CryptoJS.MD5(this.input.value)}));
+				results.appendChild(XUIC.kvpair({k: "SHA1", v: '' + CryptoJS.SHA1(this.input.value)}));
+				results.appendChild(XUIC.kvpair({k: "SHA3", v: '' + CryptoJS.SHA3(this.input.value)}));
+				results.appendChild(XUIC.kvpair({k: "SHA256", v: '' + CryptoJS.SHA256(this.input.value)}));
 				
-				results.appendChild(this.Component('kvsection', {label: "Ciphers"}));
+				results.appendChild(XUIC.kvsection({label: "Ciphers"}));
 				let aes = CryptoJS.AES.encrypt(this.input.value, this.keyInput.value, {keySize: 128});
 				let des = CryptoJS.DES.encrypt(this.input.value, this.keyInput.value, {keySize: 128});
 				// console.log(aes);
@@ -167,64 +490,73 @@
 				// console.log(aes.key);
 				// console.log(aes.iv);
 				// console.log(aes.ciphertext);
-				results.appendChild(this.Component('kv', {k: "AES", v: aes.ciphertext.toString()}));
-				results.appendChild(this.Component('kv', {k: "DES", v: des.ciphertext.toString()}));
+				results.appendChild(XUIC.kvpair({k: "AES", v: aes.ciphertext.toString()}));
+				results.appendChild(XUIC.kvpair({k: "DES", v: des.ciphertext.toString()}));
 			};
 
 			import(data) {
 				if (data.input) {
-					this.T(this.$$('input'), data.input);
-					this.hash();
+					this.input.value = data.input;
+				}
+
+				if (data.key) {
+					this.keyInput.value = data.key;
+				}
+
+				this.hash();
+			}
+
+			export() {
+				return {
+					input: this.input.value,
+					key: this.keyInput.value,
 				}
 			}
 		}
 
-		let comp = Component.New('hasher');
-		window.tools.appendChild(comp);
-		bench.add(new THasher(comp));
+		bench.register('hasher', THasher);
 	})()
 </script>
 
 
-
 <tool _id="json" data-tag="json format" name="Format JSON">
-	<section _id="input">
-		<input type="area" autofocus spellcheck="false" rows="5" label="JSON input">
+	<block _id="input">
+		<in type="area" autofocus spellcheck="false" rows="5" label="JSON input"></in>
 		<undercontrols error="true">
 			<reuse>
-				<jsonyaml json="#input">Convert it to YAML</jsonyaml>
-				<base64 ascii="#input">Base64-encode it</base64>
+				<jsonyaml json="{Δ('input')}">Convert it to YAML</jsonyaml>
+				<base64 ascii="{Δ('input')}">Base64-encode it</base64>
 			</reuse>
 		</undercontrols>
-	</section>
+	</block>
 	
-	<section _id="1liner" class="disabled">
+	<block _id="1liner" class="disabled">
 		<overcontrols>
 			<checkbox _id="quote-identifiers" checked >Quote names</checkbox>
 			<checkbox _id="escape-quotes" >Escape the quotes</checkbox>
 		</overcontrols>
-		<input type="text" spellcheck="false" disabled label="One-liner JSON">
+		<in type="text" spellcheck="false" disabled label="One-liner JSON"></in>
 		<undercontrols>
-			<copy from="#1liner">
+			<copy from="{Δ('1liner')}"></copy>
 		</undercontrols>
-	</section>
+	</block>
 	
-	<section _id="pretty" class="disabled">
+	<block _id="pretty" class="disabled">
 		<overcontrols>
 			<label for="">Indent with</label>
-			<radio name="indent" _id="tabs" value="	">tabs</radio>
+			<radio name="indent" _id="tabs" value="	" checked>tabs</radio>
 			<radio name="indent" _id="4spaces" value="    ">4 spaces</radio>
 			<radio name="indent" _id="2spaces" value="  ">2 spaces</radio>
 		</overcontrols>
-		<input type="area" rows="8" spellcheck="false" disabled label="Pretty JSON">
+		<in type="area" rows="8" spellcheck="false" disabled label="Pretty JSON"></in>
 		<undercontrols>
 			<reuse>
-				<jsonyaml json="#pretty">Convert it to YAML</jsonyaml>
-				<base64 ascii="#pretty">Base64-encode it</base64>
+				<jsonyaml json="{Δ('pretty')}">Convert it to YAML</jsonyaml>
+				<base64 ascii="{Δ('pretty')}">Base64-encode it</base64>
 			</reuse>
-			<copy from="#pretty">
+			<copy from="{Δ('pretty')}"></copy>
 		</undercontrols>
-	</section>
+	</block>
 </tool>
 	
 <script>
@@ -254,7 +586,17 @@
 			}
 	
 			import(data) {
-				data.json && (this.$$('json', data.json));
+				if (data.input) {
+					this.inJSON.value = data.input;
+					this.update();
+				}
+			}
+
+			export() {
+				return {
+					input: this.inJSON.value,
+					//TODO: quoting settings, etc
+				};
 			}
 	
 			update() {
@@ -292,13 +634,6 @@
 					this.out1liner.value = JSON1Liner(undefined, v, this.quoteCheck.checked, this.escapeQuotesCheck.checked);
 				}
 			}
-	
-			import(data) {
-				if (data.input) {
-					this.inJSON.value = data.input;
-					this.update();
-				}
-			}
 		}
 	
 		function JSON1Liner(name, v, quoteNames, escapeQuotes) {
@@ -324,9 +659,7 @@
 			}
 		}
 	
-		let comp = Component.New('json');
-		window.tools.appendChild(comp);
-		bench.add(new TJSON(comp));
+		bench.register('json', TJSON);
 	})()
 </script>
 
@@ -337,9 +670,8 @@
 </style>
 
 
-
-<tool _id="jsonyaml" data-tag="json yaml" name="JSON &#x2942 YAML">
-	<section _id="json">
+<tool _id="jsonyaml" data-tag="json yaml" name="JSON &#x2942; YAML">
+	<block _id="json">
 		<div class="overcontrols">
 			<label for="">Indent with</label>
 
@@ -348,24 +680,24 @@
 			<radio name="indent" _id="2spaces" value="  ">2 spaces</radio>
 		</div>
 		
-		<input type="area" rows="9" label="JSON"></input>
+		<in type="area" rows="9" label="JSON"></in>
 		
 		<undercontrols>
 			<reuse>
-				<json input="#json">Format it</json>
+				<json input="{Δ('json')}">Format it</json>
 			</reuse>
-			<copy from="#json"></copy>
+			<copy from="{Δ('json')}"></copy>
 		</undercontrols>
-	</section>
+	</block>
 	
-	<div class="bothways">It works ⇃both↾ ways.</div>
+	<bothways></bothways>
 	
-	<section _id="yaml">
-		<input type="area" rows="9" label="YAML"></input>
+	<block _id="yaml">
+		<in type="area" rows="9" label="YAML"></in>
 		<undercontrols error="true">
-			<copy from="#yaml"></copy>
+			<copy from="{Δ('yaml')}"></copy>
 		</undercontrols>
-	</section>
+	</block>
 </tool>
 
 <script src="./node_modules/js-yaml/dist/js-yaml.min.js"></script>
@@ -431,11 +763,15 @@
 					this.toJSON();
 				}
 			}
+
+			export() {
+				return {
+					json: this.json.value,
+				};
+			}
 		}
 	
-		let comp = Component.New('jsonyaml');
-		window.tools.appendChild(comp);
-		bench.add(new TJSONYAML(comp));
+		bench.register('jsonyaml', TJSONYAML);
 	})()
 </script>
 
@@ -446,14 +782,13 @@
 </style>
 
 
-
 <tool _id="unixtime" data-tag="unixtime" name="Unixtime">
-	<section _id="ts">
-		<input type="text" autofocus label="Unixtime">
+	<block _id="ts">
+		<in type="text" autofocus label="Unixtime"></in>
 		<undercontrols error="true"></undercontrols>
-	</section>
+	</block>
 
-	<section _id="formatted">
+	<block _id="formatted">
 		<div class="left l35">
 			<div class="typographyDate copy">
 				<p class="l10">&nbsp;</p>
@@ -463,7 +798,7 @@
 		<div class="right r65">
 			<div class="dates"></div>
 		</div>
-	</section>
+	</block>
 </tool>
 
 <script>
@@ -486,9 +821,10 @@
 					d.setTime(this.inTS.value.trim() + "000")
 	
 					this.typographyDate(d);
-					this.dates.appendChild(this.Component("kvsection", {label: "Formatted"}))
-					this.dates.appendChild(this.Component("kv", {k: "ISO 8601", v: d.toISOString()}))
-					this.dates.appendChild(this.Component("kv", {k: "Date.toString()", v: d.toString()}))
+					this.dates.appendChild(XUIC.kvsection({label: "Formatted"}))
+					this.dates.appendChild(XUIC.kvpair({k: "ISO 8601", v: d.toISOString()}))
+					this.dates.appendChild(XUIC.kvpair({k: "Date.toString()", v: d.toString()}))
+
 					this.Section('ts').Error(undefined);
 					this.Section('formatted').Show();
 				} catch (err) {
@@ -544,16 +880,27 @@
 				tdE.appendChild(yearE);
 				tdE.appendChild(timeE);
 			}
+
+			export() {
+				return {
+					ts: this.inTS.value,
+				};
+			}
+
+			import(data) {
+				if (data.ts) {
+					this.inTS.value = data.ts;
+					this.convert();
+				}
+			}
 		}
 	
-		let comp = Component.New('unixtime');
-		window.tools.appendChild(comp);
-		bench.add(new TUnixtime(comp));
+		bench.register('unixtime', TUnixtime);
 	})()
 </script>
 
 <style>
-	#unixtime .dates .kvpair > .label {
+	#unixtime .dates .kvpair > .key {
 		padding-bottom: 2em;
 	}
 
@@ -654,24 +1001,23 @@
 </style>
 
 
-
 <tool _id="urldecode" data-tag="url trans encode decode" name="Transcode URL">
-	<section _id="encoded">
-		<input type="text" autofocus tabindex="11" label="URL-encoded string">
+	<block _id="encoded">
+		<in type="text" autofocus tabindex="11" label="URL-encoded string"></in>
 		<undercontrols>
-			<copy from="#encoded"></copy>
+			<copy from="{Δ('encoded')}"></copy>
 		</undercontrols>
-	</section>
+	</block>
 
-	<div class="bothways">It works ⇃both↾ ways.</div>
+	<bothways></bothways>
 
-	<section _id="decoded" >
+	<block _id="decoded" >
 		<label for="urldecode-encinput"></label>		
-		<input type="text" label="ASCII string" tabindex="12" onFocus="this.tabIndex=10;" onBlur="this.tabIndex=12;">
+		<in type="text" label="ASCII string" tabindex="12" onFocus="this.tabIndex=10;" onBlur="this.tabIndex=12;"></in>
 		<undercontrols>
-			<copy from="#decoded"></copy>
+			<copy from="{Δ('decoded')}"></copy>
 		</undercontrols>
-	</section>
+	</block>
 </tool>
 
 <script>
@@ -693,26 +1039,40 @@
 			encode() {
 				this.encoded.value = encodeURIComponent(this.decoded.value);
 			};
-			
+
+			export() {
+				return {
+					decoded: this.decoded.value,
+				};
+			}
+
+			import(data) {
+				if (data.decoded) {
+					this.decoded.value = data.decoded;
+					this.encode();
+				}
+
+				if (data.encoded) {
+					this.encoded.value = data.encoded;
+					this.decode();
+				}
+			}
 		}
 		
-		let comp = Component.New('urldecode');
-		window.tools.appendChild(comp);
-		bench.add(new TURLTranscoder(comp));
+		bench.register('urldecode', TURLTranscoder);
 	})()
 </script>
 
 
-
 <tool _id="urlparse" name="Parse URL" data-tag="urlparse">
-	<section _id="url">
-		<input type="text" label="URL">
+	<block _id="url">
+		<in type="text" label="URL"></in>
 		<undercontrols error="true"></undercontrols>
-	</section>
+	</block>
 
-	<section _id="fields">
+	<block _id="fields">
 		<div class="fields"></div>
-	</section>
+	</block>
 </tool>
 
 <script>
@@ -738,33 +1098,33 @@
 						return;
 					}
 					
-					fields.appendChild(this.Component("kvsection", {label: "URL"}));
-					url.protocol && fields.appendChild(this.Component("kv", {k: "Protocol", v: url.protocol}));
-					url.hostname && fields.appendChild(this.Component("kv", {k: "Domain", v: url.hostname}));
-					url.username && fields.appendChild(this.Component("kv", {k: "Username", v: url.username}));
-					url.password && fields.appendChild(this.Component("kv", {k: "Password", v: url.password}));
+					fields.appendChild(XUIC.kvsection({label: "URL"}));
+					url.protocol && fields.appendChild(XUIC.kvpair({k: "Protocol", v: url.protocol}));
+					url.hostname && fields.appendChild(XUIC.kvpair({k: "Domain", v: url.hostname}));
+					url.username && fields.appendChild(XUIC.kvpair({k: "Username", v: url.username}));
+					url.password && fields.appendChild(XUIC.kvpair({k: "Password", v: url.password}));
 
 					if (url.path) {
-						fields.appendChild(this.Component("kv", {k: "Path", v: url.path}));
+						fields.appendChild(XUIC.kvpair({k: "Path", v: url.path}));
 					} else if (url.pathname) {
-						fields.appendChild(this.Component("kv", {k: "Path", v: url.pathname}));
+						fields.appendChild(XUIC.kvpair({k: "Path", v: url.pathname}));
 					}
 
-					url.port && fields.appendChild(this.Component("kv", {k: "Port", v: url.port}));
-					url.hash && fields.appendChild(this.Component("kv", {k: "Hash", v: url.hash}));
+					url.port && fields.appendChild(XUIC.kvpair({k: "Port", v: url.port}));
+					url.hash && fields.appendChild(XUIC.kvpair({k: "Hash", v: url.hash}));
 
 					if (url.search && url.searchParams) {
-						fields.appendChild(this.Component("kvsection", {label: "Query"}));
+						fields.appendChild(XUIC.kvsection({label: "Query"}));
 						let sp = this.improveSearchParams(url.searchParams);
 						for (let spn in sp) {
 							let spv = sp[spn];
 							if (spv instanceof Array) {
 								let t = true;
 								for (let spvv of spv) {
-									fields.appendChild(this.Component("kv", {k: t ? (t = false, spn) : "", v: spvv}));
+									fields.appendChild(XUIC.kvpair({k: t ? (t = false, spn) : "", v: spvv}));
 								}
 							} else {
-								fields.appendChild(this.Component("kv", {k: spn, v: spv}));
+								fields.appendChild(XUIC.kvpair({k: spn, v: spv}));
 							}
 						}
 					}
@@ -791,37 +1151,47 @@
 
 				return res;
 			}
+
+			export() {
+				return {
+					URL: this.URL.value,
+				};
+			}
+
+			import(data) {
+				if (data.URL) {
+					this.URL.value = data.URL;
+					this.URL.oninput();
+				}
+			}
 		}
 
-		let comp = Component.New('urlparse');
-		window.tools.appendChild(comp);
-		bench.add(new TURLParser(comp));
+		bench.register('urlparse', TURLParser);
 	})()
 </script>
 
 
-
 <tool _id="xml" data-tag="xml xpath" name="XML &amp; Xpath">
-	<section _id="xml">
-		<input type="area" autofocus spellcheck="false" rows="5" label="XML input"></input>
+	<block _id="xml">
+		<in type="area" autofocus spellcheck="false" rows="5" label="XML input"></in>
 		<undercontrols error="true">
 			<reuse>
-				<base64 ascii="#xml">Base64-encode it</base64>
+				<base64 ascii="{Δ('xml')}">Base64-encode it</base64>
 			</reuse>
 		</undercontrols>
-	</section>
+	</block>
 
-	<section _id="xpath">
-		<input type="text" id="xml-xpath-in" spellcheck="false" label="XPath query"></input>
+	<block _id="xpath">
+		<in type="text" id="xml-xpath-in" spellcheck="false" label="XPath query"></in>
 		<undercontrols error="true">
-			<copy from="#xpath"></copy>
+			<copy from="{Δ('xpath')}"></copy>
 		</undercontrols>
-	</section>
+	</block>
 	
-	<section _id="nice" class="hidden">
+	<block _id="nice" class="hidden">
 		<label>XML structure</label>
 		<div id="xml-nice-root"></div>
-	</section>
+	</block>
 </tool>
 
 <script>
@@ -846,7 +1216,7 @@
 			return xml;
 		}
 
-		//	DOMParser.parseFromString() won't throw or report errorss in any other way.
+		//	DOMParser.parseFromString() won't throw or report errors in any other way.
 		//	Instead it creates a document with a markup in it, where an information about error is stored.
 		//	Wat.
 		checkXMLParserErrors(xml) {
@@ -884,10 +1254,7 @@
 				this.Section('nice').Hide();
 			}
 
-			while(this.xmlNice.firstChild) {
-				this.xmlNice.removeChild(this.xmlNice.firstChild)
-			}
-
+			this.removeChildren(this.xmlNice);
 			this.renderXML(xml, this.xmlNice, found);
 		}
 
@@ -1040,12 +1407,24 @@
 				xmlE.appendChild(xt)
 			}
 		}
+
+		export() {
+			return {
+				xml: this.xml.value,
+				xpath: this.xpath.value,
+			};
+		}
+
+		import(data) {
+			if (data.xml) {
+				this.xml.value = data.xml;
+				this.xpath.value = data.xpath;
+				this.update();
+			}
+		}
 	}
 
-	let comp = Component.New('xml');
-	window.tools.appendChild(comp);
-	bench.add(new TXML(comp));
-
+	bench.register('xml', TXML);
 </script>
 
 <style>
@@ -1119,19 +1498,17 @@
 </style>
 
 
-
-		<!-- opened in components.html -->
 		</div>
+		<!-- #toolshed, opened in toolshed.html -->
 
 		<script>
-			function focus(id) {
-				bench.focus(id);
-			}
 
-			function unfocus(id) {
-				bench.unfocus(id);
-				window.location.hash = '';
-				filter.focus();
+			XUI.render(window.menu);
+
+			document.body.onkeydown = (e) => {
+				if (e.key == 'Escape') {
+					bench.back();
+				}
 			}
 
 			/**
@@ -1164,53 +1541,8 @@
 				}, 1000);
 			}
 
-			function onclickCopyToClipboard(e) {
-				let from = e.currentTarget;
-
-				//	Looking for a disabled parent.
-				let pn = from.parentNode;
-				while (pn) {
-					if (pn.classList && pn.classList.contains('disabled')) {
-						return;
-					}
-					pn = pn.parentNode;
-				}
-
-				if (from.dataset.value) {
-					Clipboard.copy(from.dataset.value);
-					tmpStyle(from, 'copied', 200);
-					copiedFloater(e.pageX, e.pageY);
-					return;
-				}
-				
-				if (from.dataset.from) {
-					from = document.getElementById(from.dataset.from);
-				}
-				
-				if (from) {	
-					switch (from.tagName) {
-						case "INPUT":
-						case "TEXTAREA":
-							Clipboard.copy(from.value);
-							break;
-							
-						default:
-							Clipboard.copy(from.innerHTML);
-							break;
-					}
-
-					tmpStyle(from, 'copied', 200);
-					copiedFloater(e.pageX, e.pageY);
-				}
-			}
-
 			document.body.onload = () => {
-				// let dialogE = Component.New('share', {
-				// 	title: 'Share',
-				// 	value: `${window.location.pathname}#yolo2020`
-				// });
-				// document.body.appendChild(dialogE);
-
+				//TODO: fixme
 				let filter = document.getElementById("filter");
 				filter.oninput = () => {
 					bench.filter(filter.value);
@@ -1232,12 +1564,17 @@
 					}
 				}
 
-				//	Copy buttons.
-				document.querySelectorAll('.copy').forEach((v, k, p) => {v.onclick = onclickCopyToClipboard});
-
 				//	Autofocusing tools upon page load.
+				//	The hash can contain a tool data after a '@'.
 				if (window.location.hash) {
-					bench.focus(window.location.hash.substr(1));
+					let hashSegments = window.location.hash.substr(1).split('@');
+					let data;
+
+					if (hashSegments[1]) {
+						data = JSON.parse(atob(hashSegments[1]));
+					}
+
+					bench.equip(hashSegments[0], data);
 				}
 
 				bench.render();
@@ -1245,5 +1582,4 @@
 		</script>
 	</body>
 </html>
-
 

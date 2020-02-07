@@ -1,0 +1,44 @@
+<!-- The <reuse> component structure - a menu to transfer data pieces between tools. -->
+<div _comp="reuse" class="menu switch">
+	<span>{inst.title||"Reuse"}<i class="fas fa-recycle"></i></span>
+	<div xui-root></div>
+</div>
+
+<script>
+	XUI.register('reuse', (elements, inst, args, ctx) => {
+		//	Building the menu items.
+		//	Things like
+		//		<hasher input="json">Hash it</hasher>
+		//	become
+		//		<a data-to="hasher" data-input="json">Hash it</a>
+		for (let instChildE of elements.$inst.children) {
+			let aE = document.createElement('a');
+			aE.dataset.to = instChildE.nodeName.toLowerCase();
+
+			for (let instChildEAI = 0; instChildEAI < instChildE.attributes.length; instChildEAI++) {
+				let instChildEA = instChildE.attributes[instChildEAI];
+				aE.dataset[instChildEA.nodeName] = instChildEA.nodeValue
+			}
+			
+			aE.innerText = instChildE.innerText;
+
+			XUI.enrich(aE, inst, args, {}, ctx);
+
+			aE.onclick = (e) => {
+				let aSwitchData = {};
+				for (let eDN in e.target.dataset) {
+					aSwitchData[eDN] = e.target.dataset[eDN];
+
+					//	May be a reference by id
+					if (window[aSwitchData[eDN]]) {
+						aSwitchData[eDN] = window[aSwitchData[eDN]].value;
+					}
+				}
+
+				bench.switch(aE.dataset.to, aSwitchData);
+			}
+
+			elements.$root.appendChild(aE);
+		}
+	}, false);
+</script>

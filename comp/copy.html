@@ -1,0 +1,10 @@
+<!-- The <copy> component structure. -->
+<a _comp="copy" class="copy" data-from="{inst.from}">
+	<span>{inst.$||"Copy"}</span><i class="far fa-copy"></i>
+</a>
+
+<script>
+	XUI.register('copy', (elements, ints, args, ctx) => {
+		elements.$comp.onclick = args.onclick || onclickCopyToClipboard;
+	});
+</script>

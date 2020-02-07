@@ -6,8 +6,29 @@
 		<script src="./app.js"></script>
 	</head>
 	<body style="display:none;">
+		<div id="menu">
+			<div>
+				<toollink name="base64" tag="base64">Base64</toollink>
+				<toollink name="urldecode" tag="url trans encode decode">Transcode URL</toollink>
+				<toollink name="urlparse" tag="urlparse">Parse URL</toollink>
+			</div>
+			
+			<div>
+				<toollink name="json" tag="json format">Format JSON</toollink>
+				<toollink name="jsonyaml" tag="json yaml">JSON &#x2942; YAML</toollink>
+				<toollink name="xml" tag="xml xpath">XML &amp; Xpath</toollink>
+			</div>
+			
+			<div>
+				<toollink name="unixtime" tag="unittime timestamp">Unixtime</toollink>
+				<toollink name="hasher" tag="hash md5 sha des crc">Hashes &amp; ciphers</toollink>
+			</div>
+
+			<div class="clear"></div>
+		</div>
+
 		<div id="front-center">
-			<input type="text" name="" id="filter" autofocus autocomplete="off">
+			<input type="text" name="" id="filter" autofocus autocomplete="off" placeholder="What's up?">
 			<div class="footer">
 				<span class="c">© 2019 x1n13y84issmd42</span>
 				<span class="pipe"></span>
@@ -22,4 +43,90 @@
 		<script>
 			let config = new LSConfig();
 			let bench = new Workbench(config);
+
+			function focus(id) {
+				bench.focus(id);
+			}
+
+			function unfocus(id) {
+				bench.unfocus(id);
+				window.location.hash = '';
+				filter.focus();
+			}
+
+			function offset(e) {
+				let res = {
+					left: e.offsetLeft,
+					top: e.offsetTop,
+				};
+
+				let p = e.parentNode;
+
+				while(p) {
+					res.left += ~~p.offsetLeft;
+					res.top += ~~p.offsetTop;
+
+					p = p.parentNode;
+				}
+
+				return res;
+			}
+
+			function share() {
+				let tool = bench.currentlyEquipped();
+				console.log(`Sharing the #${tool.ID} tool!`);
+				tool.C.classList.add('bg');
+
+				let toolData = tool.export();
+				toolData = btoa(JSON.stringify(toolData));
+				let toolURL = `${window.location.href.split('#')[0]}#${tool.ID}@${toolData}`
+
+				document.body.appendChild(XUIC.dialog('share', {
+					onclose: () => {
+						tool.C.classList.remove('bg');
+					},
+					value: toolURL,
+					title: `Sharing some ${tool.ID} goodness`
+				}));
+			}
+
+			function onclickCopyToClipboard(e) {
+				let from = e.currentTarget;
+
+				//	Looking for a disabled parent.
+				let pn = from.parentNode;
+				while (pn) {
+					if (pn.classList && pn.classList.contains('disabled')) {
+						return;
+					}
+					pn = pn.parentNode;
+				}
+
+				if (from.dataset.value) {
+					Clipboard.copy(from.dataset.value);
+					tmpStyle(from, 'copied', 200);
+					copiedFloater(e.pageX, e.pageY);
+					return;
+				}
+				
+				if (from.dataset.from) {
+					from = document.getElementById(from.dataset.from);
+				}
+				
+				if (from) {	
+					switch (from.tagName) {
+						case "INPUT":
+						case "TEXTAREA":
+							Clipboard.copy(from.value);
+							break;
+							
+						default:
+							Clipboard.copy(from.innerHTML);
+							break;
+					}
+
+					tmpStyle(from, 'copied', 200);
+					copiedFloater(e.pageX, e.pageY);
+				}
+			}
 		</script>

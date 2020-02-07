@@ -1,0 +1,9 @@
+<!-- The <error> component structure - a general error reporting element under inputs. -->
+<p _comp="error" class="error">
+	<i class="fas fa-exclamation-circle"></i>
+	<span>{inst.$||args.error||"&nbsp;"}</span>
+</p>
+
+<script>
+	XUI.register("error");
+</script>

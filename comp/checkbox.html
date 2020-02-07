@@ -1,0 +1,11 @@
+<!-- The <checkbox> component structure. -->
+<label _comp="checkbox" for="{Σ(inst._id)}">
+	<input type="checkbox" id="{Σ(inst._id)}" xui-as="in">
+	<span>{inst.$||args.label}</span>
+</label>
+
+<script>
+	XUI.register('checkbox', (elements, inst, args, ctx) => {
+		(inst.checked != undefined) && (elements.in.checked = true);
+	});
+</script>

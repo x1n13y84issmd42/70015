@@ -31,315 +31,6 @@ let Clipboard = {
 	}
 }
 
-
-let CompUtils = {
-	/**
-	 * Creates a default consuctor function which allows to create a standard HTML tag, which will be the component's root element
-	 * (often the only one, though). The created element gets it's attributes copied from the source component element,
-	 * and data from the arguments object.
-	 * The additionally supplied constructor function is there to additionally configure the created element and create some extra elements.
-	 * @param {string} tag An HTML element name to create.
-	 * @param {string[]} classes A list of CSS classes to apply to the new element.
-	 * @param {Function} ctorFn A constructor function to fine tune the element's internals.
-	 * @param {boolean} container When set to true, then entire component subtree will be processed automatically.
-	 */
-	newConstructor: function(tag, classes, ctorFn, container, ignoredAttributes) {
-		return function(srcE, args, ctx) {
-			if (! srcE) {
-				srcE = document.createElement('div');
-			}
-
-			let E = CompUtils.create(tag, classes);
-			CompUtils.copyAttributes(E, srcE, ctx, ignoredAttributes);
-			CompUtils.applyArgs(E, args);
-
-			ctorFn && ctorFn(E, srcE, args, ctx);
-			
-			//	The default undefined value means true.
-			if (container !== false) {
-				for (let srcEChild of srcE.children) {
-					(ctx.get('reattachChildrenTo') || E).appendChild(CompUtils.transform(srcEChild, args, ctx.child(E)));
-				}
-			}
-			
-			return E;
-		};
-	},
-
-	/**
-	 * A generic function to create HTML DOM elements.
-	 * @param {string} tag An HTML element name to create.
-	 * @param {string[]} classes A list of class names to apply. 
-	 */
-	create: function(tag, classes) {
-		let E = document.createElement(tag);
-		
-		if (classes && classes.length) {
-			for (let c of classes) {
-				E.classList.add(c);
-			}
-		}
-
-		return E;
-	},
-
-	/**
-	 * Performs a shallow copy of the given srcE element. Used as a pass-through function for standard HTML elements.
-	 * The child elements of those still get processed and transformed as usual.
-	 * @param {HTMLElement} srcE An element to clone.
-	 * @param {Object} args Arguments.
-	 */
-	clone: function(srcE, args, ctx) {
-		let E = srcE.cloneNode();
-
-		if (srcE.children && srcE.children.length) {
-			for (let srcECN of srcE.children) {
-				E.appendChild(CompUtils.transform(srcECN, args, ctx));
-			}
-		} else {
-			E.innerText = srcE.innerText;
-			CompUtils.applyArgs(E, args);
-		}
-
-		return E;
-	},
-
-	/**
-	 * Either creates a new component from the given srcE node, or clones it.
-	 * @param {HTMLElement} srcE A source HTML element to create a component from.
-	 * @param {Object} args Arguments.
-	 * @param {CompContext} ctx A context.
-	 */
-	transform: function(srcE, args, ctx) {
-		let srcEName = srcE.nodeName.toLowerCase();
-
-		if (Comp[srcEName]) {
-			console.log(`Creating a '${srcEName}' component.`);
-			return Comp[srcEName](srcE, args, ctx);
-		} else {
-			console.warn(`Component '${srcEName}' not found.`);
-			return CompUtils.clone(srcE, args, ctx);
-		}
-	},
-
-	/**
-	 * Replaces occurences of variables ${} in a DOM object's attributes,
-	 * and replaces them with values from the corresponding fields in args. 
-	 * @param {HTMLElement} E A subject HTML DOM element.
-	 * @param {Object} args An arguments object.
-	 */
-	applyArgs: function(E, args) {
-		function applyArgsToString(s) {
-			if (args) {
-				for (let aN in args) {
-					s = s.replace('${' + aN + "}", args[aN]);
-				}
-			}
-			return s;
-		}
-
-		if (E.innerText) {
-			E.innerText = applyArgsToString(E.innerText, args);
-		}
-
-		if (E.value) {
-			E.value = applyArgsToString(E.value, args);
-		}
-
-		for (let EAttr of E.attributes) {
-			EAttr.nodeValue = applyArgsToString(EAttr.nodeValue, args);
-		}
-	},
-
-	/**
-	 * Copies various attributes from the source component element to the new DOM element, such as _id, CSS classes, data-* and others.
-	 * @param {HTMLElement} E An HTML element, corresponding to the source element of the component template (srcE).
-	 * @param {HTMLElement} srcE A source root element of a component template.
-	 * @param {CompContext} ctx A context.
-	 * @param {string[]} ignoredAttributes A list of tag attributes to not include in copy.
-	 */
-	copyAttributes: function(E, srcE, ctx, ignoredAttributes) {
-		ignoredAttributes = [].concat(ignoredAttributes, ['_id']);
-
-		if (srcE.attributes._id) {
-			E.id = ctx.id(srcE.attributes._id.nodeValue);
-		}
-
-		srcE.classList.forEach(c => E.classList.add(c));
-
-		for (let dsI in srcE.dataset) {
-			E.dataset[dsI] = srcE.dataset[dsI];
-		}
-
-		for (let aI = 0; aI < srcE.attributes.length; aI++) {
-			let attr = srcE.attributes[aI];
-			if (ignoredAttributes && ignoredAttributes.includes(attr.name)) {
-				//
-			} else {
-				E.setAttribute(attr.name, attr.value);
-			}
-		}
-	},
-
-	attributeValue: function(attrE, ctx) {
-		let v = attrE.nodeValue;
-		if (v[0] === '#') {
-			v = ctx.iid(v.substr(1));
-		}
-		return v;
-	},
-
-	id: function() {
-		return Array.from(arguments).map(v=>v.value||v).filter(v=>!!v).join('-');
-	}
-};
-
-/**
- * Implementation of components.
- * Basically, any custom <tag> in layout has a counterpart here in Comp with the same name,
- * which builds a piece of actual HTML DOM based on the information in the component markup.
- */
-let Comp = {
-	dialog: CompUtils.newConstructor('div', ['dialog', 'controls'], (dialogE, srcE, args) => {
-		if (srcE.attributes.title) {
-			let titleE = document.createElement('h1');
-			titleE.innerHTML = srcE.attributes.title.nodeValue;
-			CompUtils.applyArgs(titleE, args);
-			dialogE.appendChild(titleE);
-		}
-	}),
-	
-	section: CompUtils.newConstructor('section'),
-	
-	input: CompUtils.newConstructor('div', [], (wrapperE, srcE, args, ctx) => {
-		wrapperE.removeAttribute('id');;
-
-		if (! srcE.attributes._id) {
-			srcE.setAttribute('_id', 'in');
-		}
-		
-		let inputE = document.createElement('input');
-		inputE.type = 'text';
-
-		if (srcE.attributes.type) {
-			switch (srcE.attributes.type.nodeValue) {
-				case 'area':
-					inputE = document.createElement('textarea');
-				break;
-				
-				default:
-					inputE.type = 'radio';
-				break;
-			}
-		}
-
-		if (srcE.attributes.value) {
-			inputE.value = srcE.attributes.value.nodeValue;
-		}
-
-		CompUtils.copyAttributes(inputE, srcE, ctx);
-		CompUtils.applyArgs(inputE, args, ctx);
-		wrapperE.appendChild(inputE);
-		
-		if (srcE.attributes.label) {
-			let labelE = document.createElement('label');
-			labelE.innerHTML = srcE.attributes.label.nodeValue;
-			labelE.htmlFor = inputE.id;
-			CompUtils.applyArgs(labelE, args);
-			wrapperE.insertBefore(labelE, inputE);
-		}
-	}, false, ['type', 'rows', 'cols', 'spellcheck', 'disabled', 'autofocus', 'tabindex', 'label']),
-
-	radio: CompUtils.newConstructor('label', [], (labelE, srcE, args, ctx) => {
-		let radioE = document.createElement("input");
-		radioE.type = "radio";
-		srcE.attributes.name && (radioE.name = CompUtils.id(ctx.get('parentID'), srcE.attributes.name));
-		radioE.value = srcE.attributes.value.value;
-		labelE.appendChild(radioE);
-		labelE.appendChild(document.createTextNode(srcE.innerText));
-		radioE.id = labelE.htmlFor = CompUtils.id(ctx.get('parentID'), srcE.attributes.name, srcE.attributes._id);
-		labelE.removeAttribute('id');
-	}, false, ['name', 'value']),
-
-	checkbox: CompUtils.newConstructor('label', [], (labelE, srcE, args, ctx) => {
-		let checkE = document.createElement("input");
-		checkE.type = "checkbox";
-		srcE.attributes.name && (checkE.name = CompUtils.id(ctx.get('parentID'), srcE.attributes.name.value));
-		srcE.attributes.value && (checkE.value = srcE.attributes.value.value);
-		labelE.appendChild(checkE);
-		labelE.appendChild(document.createTextNode(srcE.innerText));
-		checkE.id = labelE.htmlFor = CompUtils.id(ctx.get('parentID'), srcE.attributes._id);
-		labelE.removeAttribute('id');
-	}, false, ['name', 'value']),
-
-	overcontrols: CompUtils.newConstructor('div', ['overcontrols']),
-
-	undercontrols: CompUtils.newConstructor('div', ['undercontrols'], (ucE, srcE, args, ctx) => {
-		if (srcE.attributes.error) {
-			ucE.appendChild(Comp.error(undefined, args, ctx));
-		}
-	}),
-	
-	error: CompUtils.newConstructor('p', ['error'], (errorE, srcE, args, ctx) => {
-		errorE.innerHTML = '<i class="fas fa-exclamation-circle"></i><span>&nbsp;</span>';
-	}),
-	
-	copy: CompUtils.newConstructor('a', ['copy'], (aE, srcE, args, ctx) => {
-		srcE.attributes.from && (aE.dataset.from = CompUtils.attributeValue(srcE.attributes.from, ctx));
-		aE.innerHTML = '<span>Copy</span><i class="far fa-copy"></i>';
-	}),
-	
-	reuse: CompUtils.newConstructor('div', ['menu', 'switch'], (menuE, srcE, args, ctx) => {
-		let span = document.createElement('span');
-		span.innerHTML = `${srcE.attributes.title || 'Reuse'}<i class="fas fa-recycle"></i>`;
-
-		let div = document.createElement('div');
-
-		for (let srcChildE of srcE.children) {
-			let aE = document.createElement('a');
-			aE.dataset.to = srcChildE.nodeName.toLowerCase();
-
-			
-			for (let srcChildEAI = 0; srcChildEAI < srcChildE.attributes.length; srcChildEAI++) {
-				let srcChildEA = srcChildE.attributes[srcChildEAI];
-				aE.dataset[srcChildEA.nodeName] = CompUtils.attributeValue(srcChildEA, ctx);
-			}
-			
-			aE.innerText = srcChildE.innerText;
-			
-			aE.onclick = (e) => {
-				let aSwitchData = {};
-				for (let eDN in e.target.dataset) {
-					aSwitchData[eDN] = e.target.dataset[eDN];
-
-					//	May be a reference by id
-					if (window[aSwitchData[eDN]]) {
-						aSwitchData[eDN] = window[aSwitchData[eDN]].value;
-					}
-				}
-
-				bench.switch(aE.dataset.to, aSwitchData);
-			}
-
-			div.appendChild(aE);
-		}
-
-		menuE.appendChild(span);
-		menuE.appendChild(div);
-	}, false),
-
-	tool: CompUtils.newConstructor('div', ['tool', 'unfocused'], (toolE, srcE, args, ctx) => {
-		let previewE = CompUtils.create('div', ['preview']);
-		previewE.innerHTML = `<h1>${srcE.attributes.name.nodeValue}</h1>`;
-		toolE.appendChild(previewE);
-		
-		let controlsE = CompUtils.create('div', ['controls', 'smaller']);
-		toolE.appendChild(controlsE);
-		ctx.set('reattachChildrenTo', controlsE);
-		ctx.set('toolID', toolE.id);
-	}),
-};
-
 /**
  * A composition context. Keeps track of some useful bits of data during construction of a Component.
  */
@@ -353,27 +44,25 @@ class CompContext {
 	 * @param {HTMLElement} E A parent element, corresponding to the child context being created.
 	 */
 	child(E) {
-		let data = {...this.data, reattachChildrenTo: null};
+		let data = {...this.data, root: null};
 		if (E.id) {
 			data.parentID = E.id;
+			data.stack = [...(this.data.stack || []), E.id];
 		}
 		return new CompContext(data);
 	}
 
 	/**
-	 * Creates a hierarchical ID by prepending the given id with the 'parentID' value when possible.
+	 * Creates a hierarchical ID by joining whatever is in the data.stack array.
 	 * @param {string} id An ID.
 	 */
 	id(id) {
-		if (this.data.parentID) {
-			return this.data.parentID + '-' + id;
-		}
-
-		return id;
+		// return [...(this.data.stack || []), id].join('-');
+		return [this.data.parentID, id].filter(v=>!!v).join('-');
 	}
 
 	/**
-	 * Input ID, i.e. ID of a section's main input field.
+	 * Input ID, i.e. ID of a section's main input field. Contains a tool ID, a section ID, and a special input "in" ID.
 	 * @param {string} id A section id.
 	 */
 	iid(id) {
@@ -397,22 +86,6 @@ class CompContext {
 		return this.data[k] = v;
 	}
 }
-
-let Component = {
-	/**
-	 * Creates a new component from the given ID of an HTML DOM node.
-	 * @param {string | HTMLElement} id Either a string ID or an HTML element.
-	 * @param {Object} args Arguments.
-	 */
-	New: function(id, args) {
-		let srcCompE = id;
-		if (typeof id === 'string') {
-			srcCompE = document.querySelector(`[_id=${id}]`);
-		}
-		return CompUtils.transform(srcCompE, args, new CompContext({parentID: undefined}));
-	},
-};
-
 
 
 class Config {
@@ -453,7 +126,6 @@ class LSConfig extends Config {
 		this.save();
 	}
 }
-
 
 
 class DOMOps {
@@ -525,11 +197,10 @@ class DOMOps {
 	}
 }
 
-
 /**
  * Gives general control over a UI section.
  * A UI section usually includes an input field and few associated extra controls, has some kind of state,
- * and this class provides an onterface to control it.
+ * and this class provides an interface to control it.
  */
 class Section extends DOMOps {
 	constructor(node) {
@@ -597,7 +268,6 @@ class Section extends DOMOps {
 	}
 }
 
-
 class Tool extends DOMOps {
 	constructor(id) {
 		let E = id;
@@ -607,43 +277,13 @@ class Tool extends DOMOps {
 		}
 
 		super(E);
-	
-		E.querySelector('.preview').onclick = () => {
-			focus(this.ID);
-		}
 
+		this.C = this.$('.controls')[0];
+	
 		this.configuration = {};
 	
-		let ctrls = E.querySelector(".controls");
-
-		//	Creating a "Close" link.
-		let eClose = document.createElement("a");
-		eClose.innerHTML = "<i>&#x1F860</i><span>CLOSE</span>";
-		eClose.classList.add("close");
-		eClose.onclick = (e) => {
-			unfocus(this.ID);
-			e.preventDefault();
-			e.cancelBubble=true;
-		};
-
-		ctrls.append(eClose);
-
 		//	Selecting all the checkboxes & radio buttons.
 		this.switches = this.$('input[type=radio],input[type=checkbox]');
-
-		//	Wiring the "Reuse" menu.
-		let eSwitches = this.$('.switch');
-		for (let eSw of eSwitches) {
-			let as = eSw.querySelectorAll('a');
-			for (let a of as) {
-				a.onclick = () => {
-					let data = {...a.dataset};
-					delete data.to;
-					data = Object.fromEntries(Object.entries(data).map(e=>[e[0],document.getElementById(e[1]).value]))
-					this.bench.switch(a.dataset.to, data)
-				};
-			}
-		}
 	}
 
 	config(k, v) {
@@ -671,37 +311,14 @@ class Tool extends DOMOps {
 		}
 	}
 
-	/**
-	 * Creates a component by copying a DOM subtree specified by it's ID attribute
-	 * and setting values into specific places.
-	 * @param {string} cid Component id. An element with that id will be copied and used as a component. 
-	 * The rest of arguments will be used to fill the component template tructure with content.
-	 */
-	Component(compID, args) {
-		let compE = this.$(`.components .${compID}`)[0];
-
-		if (! compE) {
-			compE = document.querySelector(`#components > .${compID}`)
-		}
-	
-		if (compE) {
-			compE = Component.New(compE, args);
-			compE.querySelectorAll('.copy').forEach((v, k, p) => {v.onclick = onclickCopyToClipboard});
-			return compE;
-		} else {
-			throw new Error(`Could not find a '${compID}' component.`);
-		}
-	}
-
 	importSchema() {
 		throw new Error('importSchema() is not implemented.')
 	}
 	
 	import(data) {
-		throw new Error('import() is not implemented.')
+		// throw new Error('import() is not implemented.')
 	}
 }
-
 
 
 /**
@@ -711,6 +328,8 @@ class Workbench {
 	constructor(config) {
 		this.config = config;
 		this.tools = {};
+		this.toolCtors = {};
+		this.equipped = [];
 		this.currentlyFocusedID = undefined;
 		this.toolsE = document.getElementById('tools');
 	}
@@ -720,6 +339,96 @@ class Workbench {
 		tool.setBench(this);
 		tool.reconfigure(this.config.get(tool.ID));
 		this.toolsE.appendChild(tool.E);
+	}
+	
+	get(id) {
+		return this.tools[id];
+	}
+	
+	register(id, ctor) {
+		this.toolCtors[id] = ctor;
+	}
+	
+	equip(id, data) {
+		let ctor = this.toolCtors[id];
+		if (ctor) {
+			data = {
+				...data,
+				onback: this.equipped.length && 'bench.back()',
+				onclose: 'bench.clear()',
+				onshare: 'window.share()'
+			};
+
+			let toolE = XUIC.tool(id, data);
+			this.toolsE.appendChild(toolE);
+			let tool = new ctor(toolE);
+			tool.import(data);
+			tool.setBench(this);
+			tool.reconfigure(this.config.get(tool.ID));
+			tool.E.classList.replace("unfocused", "focused");
+			tool.E.focus();
+
+			let af = tool.E.querySelector("[autofocus]");
+			if (af) {
+				af.focus();
+			}
+
+			window.location.hash = id;
+			this.equipped.push(tool);
+
+			return tool;
+		}
+	}
+
+	back() {
+		let tUnequipped = this.equipped.pop();
+
+		function remove() {
+			tUnequipped.E.parentNode.removeChild(tUnequipped.E);
+		}
+		
+		if (this.equipped.length) {
+			let tNext = this.equipped[this.equipped.length - 1];
+			window.location.hash = tNext.ID;
+			this.slide(tUnequipped, tNext, 'right', remove)
+		} else {
+			window.location.hash = '';
+			remove();
+		}
+	}
+	
+	clear() {
+		for (let t of this.equipped) {
+			t.E.parentNode.removeChild(t.E);
+		}
+
+		this.equipped = [];
+	}
+
+	currentlyEquipped() {
+		return this.equipped[this.equipped.length - 1];
+	}
+
+	/**
+	 * Plays a sliding animation for switching tools.
+	 * @param {Tool} t1 A tool to animate.
+	 * @param {Tool} t2 A tool to animate.
+	 * @param {string} dir "left" or "right"
+	 * @param {Function} cb A callback function to invoke on animation end.
+	 */
+	slide(t1, t2, dir, cb) {
+		t1.E.classList.add('switching');
+		t2.E.classList.add('switching', `slide-${dir}-init`);
+		t1.E.classList.add(`slide-${dir}-transit`);
+		t2.E.classList.add(`slide-${dir}-transit`);
+		
+		setTimeout((_t1, _t2) => {
+			_t1.E.classList.remove('switching', `slide-${dir}-transit`);
+			_t2.E.classList.remove('switching', `slide-${dir}-init`, `slide-${dir}-transit`);
+			cb && cb();
+		},
+		400,	//	This must be the same as in CSS.
+		t1, t2);
 	}
 	
 	focus(id) {
@@ -777,32 +486,280 @@ class Workbench {
 
 	switch(toID, data) {
 		console.log(`Switching to ${toID}.`, data);
-		if (!this.tools[toID]) {
-			throw new Error(`The tool #${toID} does not exist.`);
-		}
 
-		let t1 = (this.currentlyFocusedID !== undefined) && this.tools[this.currentlyFocusedID];
-		let t2 = this.tools[toID];
-		let cfid = this.currentlyFocusedID;
-		this.tools[toID].import(data);
-		this.focus(toID);
+		let t1 = this.equipped[this.equipped.length - 1];
+		let t2 = this.equip(toID, data);
 
 		if (t1 && t2) {
-			t1.E.classList.add('switching');
-			t2.E.classList.add('switching', 'slide-left-r');
-			t1.E.classList.add('slide-left-transit');
-			t2.E.classList.add('slide-left-transit');
-			
-			setTimeout((id, _t1, _t2) => {
-				_t1.E.classList.remove('switching', 'slide-left-transit');
-				_t2.E.classList.remove('switching', 'slide-left-r', 'slide-left-transit');
-				this.unfocus(id);
-			}, 400, cfid, t1, t2);
+			this.slide(t1, t2, "left");
 		} else {
 			throw new Error(`One of the tools was not found while switching.`);
 		}
 	}
 }
 
+
+/**
+ * An exercise in component UI frameworks. Inspired by React, based on XHTML.
+ */
+let XUI = {
+	/**
+	 * Registers a component and makes it available for use.
+	 * There is must be an element in the DOM with a _comp attribute value the same as the passed compValue,
+	 * which will be used as a component structure markup.
+	 * @param {string} compName A component name.
+	 * @param {Function} ctor A constructor function (compE, elements, inst, args)
+	 * @param {boolean} container Set to true if you want child nodes of an instance to be autoappended to the root.
+	 */
+	register: function(compName, ctor, container) {
+		compName = compName.toLowerCase();
+		container === undefined && (container = true);
+
+		XUIC[compName] = function(instE, args, ctx) {
+			if (arguments.length < 2) {
+				args = instE || {};
+				instE = document.createElement('div');
+			}
+
+			if (!ctx) {
+				ctx = new CompContext({});
+			}
+
+			if (typeof instE == 'string') {
+				instE = document.querySelector(`[_id=${instE}]`)
+			}
+
+			let elements = {};
+			let srcE = document.querySelector(`[_comp=${compName}]`);
+			let instAttrs = XUI.attributes(instE, args, ctx);
+
+			//	Building the component itself from the component source markup.
+			let compE = XUI.transform(srcE, instAttrs, args, elements, ctx);
+			XUI.enrich(compE, instAttrs, args, elements, ctx);
+
+			elements.$comp = compE;
+			elements.$inst = instE;
+
+			//	Constructor
+			ctor && ctor(elements, instAttrs, args, ctx);
+
+			//	Appending possible child nodes of the component instance.
+			if (container) {
+				for (let instEChild of instE.children) {
+					let compEChild = XUI.transform(instEChild, instAttrs, args, elements, ctx.child(compE));
+					compEChild && (ctx.get('root') || compE).appendChild(compEChild);
+				}
+			}
+
+			elements.$root || (elements.$root = compE);
+
+			return XUI.condition(compE, instAttrs, args);
+		};
+	},
+
+	/**
+	 * Either creates a new component from the given srcE node, or clones it.
+	 * @param {HTMLElement} srcE A source HTML element to create a component from.
+	 * @param {Object} args Arguments.
+	 * @param {CompContext} ctx A context.
+	 */
+	transform: function(srcE, instAttrs, args, elements, ctx) {
+		let srcEName = srcE.nodeName.toLowerCase();
+
+		if (XUIC[srcEName]) {
+			return XUIC[srcEName](srcE, args, ctx);
+		} else {
+			if (XUI.isHTML5Tag(srcE)) {
+				return XUI.clone(srcE, instAttrs, args, elements, ctx);
+			} else {
+				throw new Error(`The element <${srcEName}> is undefined and is not standard.`);
+			}
+		}
+	},
+
+	/**
+	 * Checks if a given element name is a standard HTML5 tag.
+	 * @param {HTMLElement} e A DOM node to check.
+	 */
+	isHTML5Tag: function(e) {
+		return (e.nodeType === Node.TEXT_NODE) || (e.nodeType === Node.COMMENT_NODE) || [
+			"a", "abbr", "acronym", "address", "applet", "area", "article", "aside", "audio",
+			"b", "base", "basefont", "bdi", "bdo", "big", "blockquote", "body", "br", "button",
+			"canvas", "caption", "center", "cite", "code", "col", "colgroup",
+			"data", "datalist", "dd", "del", "details", "dfn", "dialog", "dir", "div", "dl", "dt",
+			"em", "embed",
+			"fieldset", "figcaption", "figure", "font", "footer", "form", "frame", "frameset",
+			"h1", "h2", "h3", "h4", "h5", "h6", "head", "header", "hr", "html",
+			"i", "iframe", "img", "input", "ins",
+			"kbd",
+			"label", "legend", "li", "link",
+			"main", "map", "mark", "meta", "meter",
+			"nav", "noframes", "noscript",
+			"object", "ol", "optgroup", "option", "output",
+			"p", "param", "picture", "pre", "progress",
+			"q",
+			"rp", "rt", "ruby",
+			"s", "samp", "script", "section", "select", "small", "source", "span", "strike", "strong", "style", "sub", "summary", "sup", "svg",
+			"table", "tbody", "td", "template", "textarea", "tfoot", "th", "thead", "time", "title", "tr", "track", "tt",
+			"u", "ul",
+			"var", "video", "wbr"
+		].includes(e.nodeName.toLowerCase());
+	},
+
+	/**
+	 * Performs a deep copy & transformation of the given srcE element.
+	 * @param {HTMLElement} srcE An element to clone.
+	 * @param {Object} args Arguments.
+	 */
+	clone: function(srcE, instAttrs, args, elements, ctx) {
+		let compE = srcE.cloneNode();
+
+		if (srcE.childNodes && srcE.childNodes.length) {
+			for (let srcECN of srcE.childNodes) {
+				let compECN = XUI.transform(srcECN, instAttrs, args, elements, ctx);
+				compECN && compE.appendChild(compECN);
+			}
+		}
+
+		XUI.enrich(compE, instAttrs, args, elements, ctx);
+		
+		return XUI.condition(compE, instAttrs, args);
+	},
+	
+	/**
+	 * Enrichment is when we put various values from either the instance attributes or from the args object into the new component.
+	 * When a node or an attribute has a special value in braces {}, that value will be evaluated as a JavaScript code,
+	 * executed in a context where a couple of objects are available:
+	 * 		inst: Attributes from the component instance.
+	 * 		args: Values from the arguments object.
+	 * @param {HTMLElement} compE A newly created component element.
+	 * @param {Object} inst An object containing all the attributes from the component instance.
+	 * @param {Object} args Arguments.
+	 * @param {Object} elements An object to keep specific component nodes (those with 'xui-as' attribute) available in the ctor function later.
+	 * @param {CompContext} ctx A composition context.
+	 */
+	enrich: function(compE, inst, args, elements, ctx) {
+		switch (compE.nodeType) {
+			case Node.TEXT_NODE:
+				compE.nodeValue = XUI.eval(compE.nodeValue, inst, args, ctx);
+			break;
+
+			case Node.ELEMENT_NODE:
+				//	Replacing text content
+				if (compE.innerText && !compE.children.length) {
+					compE.innerText = XUI.eval(compE.innerText, inst, args, ctx);
+				}
+		
+				if (compE.value) {
+					compE.value = XUI.eval(compE.value, inst, args, ctx);
+				}
+		
+				//	Attributes
+				for (let EAttr of compE.attributes) {
+					EAttr.nodeValue = XUI.eval(EAttr.nodeValue, inst, args, ctx);
+				}
+
+				//TODO: enrich dataset
+
+				//	Saving the node for later if requested
+				if (compE.hasAttribute('xui-as')) {
+					elements[compE.getAttribute('xui-as')] = compE;
+					compE.removeAttribute('xui-as');
+				}
+				
+				//	Saving the node as root for the possible instance children.
+				if (compE.hasAttribute('xui-root')) {
+					ctx.set('root', compE);
+					elements.$root = compE;
+					compE.removeAttribute('xui-root');
+				}
+		
+				compE.removeAttribute('_comp');
+			break;
+		}
+	},
+
+	/**
+	 * Replaces occurences of {}-expressions (JS code) with their evaluated results.
+	 * @param {*} s An expression to evaluate.
+	 */
+	eval(s, inst, args, ctx) {
+		//	These are available in components to generate ids.
+		//	Other cool symbols to use: 𐐏 𐐍 𐐝 𐐦 𝛺 𝜴 𝝙 Δ 𝝣 𝝨 𝝮 Ω Σ 
+		let Σ = (v) => ctx.id(v);
+		let Δ = (v) => ctx.iid(v);
+		
+		if (! ctx) {
+			Σ = (v) => v;
+			Δ = (v) => v;
+		}
+
+		function repl() {
+			return s.replace(/\{(.*?)\}/gi, (a, g1) => eval(g1) || '');
+		}
+
+		//	Doing it in a loop for transitive evaluations, i.e. when a replacement value is a {}-expression itself.
+		let s1 = repl(s);
+		while (s1 != s) {
+			s = s1;
+			s1 = repl(s);
+		}
+
+		return s1;
+	},
+
+	/**
+	 * Evaluates the 'xui-if' attribute and discards the compE in case it's false.
+	 * @param {HTMLElement} compE A component DOM node.
+	 * @param {Object} inst Instance attributes.
+	 * @param {Object} args Arguments.
+	 */
+	condition: function(compE, inst, args) {
+		if (compE.nodeType === Node.ELEMENT_NODE && compE.hasAttribute('xui-if')) {
+			let cond = compE.getAttribute('xui-if');
+			compE.removeAttribute('xui-if');
+			if (!!eval(cond)) {
+				return compE;
+			}
+
+			return undefined;
+		}
+
+		return compE;
+	},
+
+	/**
+	 * Collects attributes from a DOM node into an objet.
+	 * Puts the element's innerText value under the '$' key.
+	 * @param {HTMLElement} E An HTML element to grab attributes from.
+	 * @param {Object} args Arguments.
+	 */
+	attributes: function(E, args, ctx) {
+		return {
+			...Object.fromEntries(Array.from(E.attributes).map(attr => [attr.name, XUI.eval(attr.value, {}, args, ctx)])),
+			$: E.innerText,
+		};
+	},
+
+	/**
+	 * Performs an inplace rendering of a DOM subtree. Replaces the given element with a newly created one.
+	 * @param {HTMLElement} E An element to render.
+	 * @param {Object} args Arguments.
+	 */
+	render: function(E, args) {
+		let pE = E.parentNode;
+		let nsE = E.nextSibling;
+		pE.removeChild(E);
+		pE.insertBefore(
+			XUI.transform(E, XUI.attributes(E, args), args || {}, {}, new CompContext({})),
+			nsE
+		);
+	}
+};
+
+/**
+ * Components live here.
+ */
+let XUIC = {};
 
 

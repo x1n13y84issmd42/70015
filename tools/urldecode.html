@@ -1,20 +1,20 @@
 <tool _id="urldecode" data-tag="url trans encode decode" name="Transcode URL">
-	<section _id="encoded">
-		<input type="text" autofocus tabindex="11" label="URL-encoded string">
+	<block _id="encoded">
+		<in type="text" autofocus tabindex="11" label="URL-encoded string"></in>
 		<undercontrols>
-			<copy from="#encoded"></copy>
+			<copy from="{Δ('encoded')}"></copy>
 		</undercontrols>
-	</section>
+	</block>
 
-	<div class="bothways">It works ⇃both↾ ways.</div>
+	<bothways></bothways>
 
-	<section _id="decoded" >
+	<block _id="decoded" >
 		<label for="urldecode-encinput"></label>		
-		<input type="text" label="ASCII string" tabindex="12" onFocus="this.tabIndex=10;" onBlur="this.tabIndex=12;">
+		<in type="text" label="ASCII string" tabindex="12" onFocus="this.tabIndex=10;" onBlur="this.tabIndex=12;"></in>
 		<undercontrols>
-			<copy from="#decoded"></copy>
+			<copy from="{Δ('decoded')}"></copy>
 		</undercontrols>
-	</section>
+	</block>
 </tool>
 
 <script>
@@ -36,11 +36,26 @@
 			encode() {
 				this.encoded.value = encodeURIComponent(this.decoded.value);
 			};
-			
+
+			export() {
+				return {
+					decoded: this.decoded.value,
+				};
+			}
+
+			import(data) {
+				if (data.decoded) {
+					this.decoded.value = data.decoded;
+					this.encode();
+				}
+
+				if (data.encoded) {
+					this.encoded.value = data.encoded;
+					this.decode();
+				}
+			}
 		}
 		
-		let comp = Component.New('urldecode');
-		window.tools.appendChild(comp);
-		bench.add(new TURLTranscoder(comp));
+		bench.register('urldecode', TURLTranscoder);
 	})()
 </script>

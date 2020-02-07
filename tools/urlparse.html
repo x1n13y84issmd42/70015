@@ -1,12 +1,12 @@
 <tool _id="urlparse" name="Parse URL" data-tag="urlparse">
-	<section _id="url">
-		<input type="text" label="URL">
+	<block _id="url">
+		<in type="text" label="URL"></in>
 		<undercontrols error="true"></undercontrols>
-	</section>
+	</block>
 
-	<section _id="fields">
+	<block _id="fields">
 		<div class="fields"></div>
-	</section>
+	</block>
 </tool>
 
 <script>
@@ -32,33 +32,33 @@
 						return;
 					}
 					
-					fields.appendChild(this.Component("kvsection", {label: "URL"}));
-					url.protocol && fields.appendChild(this.Component("kv", {k: "Protocol", v: url.protocol}));
-					url.hostname && fields.appendChild(this.Component("kv", {k: "Domain", v: url.hostname}));
-					url.username && fields.appendChild(this.Component("kv", {k: "Username", v: url.username}));
-					url.password && fields.appendChild(this.Component("kv", {k: "Password", v: url.password}));
+					fields.appendChild(XUIC.kvsection({label: "URL"}));
+					url.protocol && fields.appendChild(XUIC.kvpair({k: "Protocol", v: url.protocol}));
+					url.hostname && fields.appendChild(XUIC.kvpair({k: "Domain", v: url.hostname}));
+					url.username && fields.appendChild(XUIC.kvpair({k: "Username", v: url.username}));
+					url.password && fields.appendChild(XUIC.kvpair({k: "Password", v: url.password}));
 
 					if (url.path) {
-						fields.appendChild(this.Component("kv", {k: "Path", v: url.path}));
+						fields.appendChild(XUIC.kvpair({k: "Path", v: url.path}));
 					} else if (url.pathname) {
-						fields.appendChild(this.Component("kv", {k: "Path", v: url.pathname}));
+						fields.appendChild(XUIC.kvpair({k: "Path", v: url.pathname}));
 					}
 
-					url.port && fields.appendChild(this.Component("kv", {k: "Port", v: url.port}));
-					url.hash && fields.appendChild(this.Component("kv", {k: "Hash", v: url.hash}));
+					url.port && fields.appendChild(XUIC.kvpair({k: "Port", v: url.port}));
+					url.hash && fields.appendChild(XUIC.kvpair({k: "Hash", v: url.hash}));
 
 					if (url.search && url.searchParams) {
-						fields.appendChild(this.Component("kvsection", {label: "Query"}));
+						fields.appendChild(XUIC.kvsection({label: "Query"}));
 						let sp = this.improveSearchParams(url.searchParams);
 						for (let spn in sp) {
 							let spv = sp[spn];
 							if (spv instanceof Array) {
 								let t = true;
 								for (let spvv of spv) {
-									fields.appendChild(this.Component("kv", {k: t ? (t = false, spn) : "", v: spvv}));
+									fields.appendChild(XUIC.kvpair({k: t ? (t = false, spn) : "", v: spvv}));
 								}
 							} else {
-								fields.appendChild(this.Component("kv", {k: spn, v: spv}));
+								fields.appendChild(XUIC.kvpair({k: spn, v: spv}));
 							}
 						}
 					}
@@ -85,10 +85,21 @@
 
 				return res;
 			}
+
+			export() {
+				return {
+					URL: this.URL.value,
+				};
+			}
+
+			import(data) {
+				if (data.URL) {
+					this.URL.value = data.URL;
+					this.URL.oninput();
+				}
+			}
 		}
 
-		let comp = Component.New('urlparse');
-		window.tools.appendChild(comp);
-		bench.add(new TURLParser(comp));
+		bench.register('urlparse', TURLParser);
 	})()
 </script>

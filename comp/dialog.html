@@ -1,0 +1,26 @@
+<!-- The <dialog> component structure. -->
+<div _comp="dialog" xui-as="bg" class="dialog-bg" id="{inst._id}">
+	<div xui-root class="dialog controls">
+		<h1 xui-if="args.title||inst.title">{args.title||inst.title}</h1>
+	</div>
+</div>
+
+<script>
+	XUI.register('dialog', (elements, inst, args, ctx) => {
+		ctx.set("toolID", elements.$comp.id);
+
+		elements.bg.onclick = (e) => {
+			if (e.target === e.currentTarget) {
+				elements.bg.classList.add('out');
+				setTimeout(() => {
+					elements.bg.parentNode.removeChild(elements.bg);
+					args.onclose && args.onclose();
+				}, 300);
+			}
+		};
+
+		setTimeout(() => {
+			elements.bg.classList.add('in');
+		}, 0);
+	});
+</script>

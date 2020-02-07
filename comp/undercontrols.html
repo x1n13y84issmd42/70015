@@ -1,0 +1,10 @@
+<!-- The <undercontrols> component structure. -->
+<div _comp="undercontrols" class="undercontrols"></div>
+
+<script>
+	XUI.register("undercontrols", (elements, inst, args, ctx) => {
+		if (inst.error) {
+			elements.$comp.appendChild(XUIC.error())
+		}
+	});
+</script>

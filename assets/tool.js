@@ -7,43 +7,13 @@ class Tool extends DOMOps {
 		}
 
 		super(E);
-	
-		E.querySelector('.preview').onclick = () => {
-			focus(this.ID);
-		}
 
+		this.C = this.$('.controls')[0];
+	
 		this.configuration = {};
 	
-		let ctrls = E.querySelector(".controls");
-
-		//	Creating a "Close" link.
-		let eClose = document.createElement("a");
-		eClose.innerHTML = "<i>&#x1F860</i><span>CLOSE</span>";
-		eClose.classList.add("close");
-		eClose.onclick = (e) => {
-			unfocus(this.ID);
-			e.preventDefault();
-			e.cancelBubble=true;
-		};
-
-		ctrls.append(eClose);
-
 		//	Selecting all the checkboxes & radio buttons.
 		this.switches = this.$('input[type=radio],input[type=checkbox]');
-
-		//	Wiring the "Reuse" menu.
-		let eSwitches = this.$('.switch');
-		for (let eSw of eSwitches) {
-			let as = eSw.querySelectorAll('a');
-			for (let a of as) {
-				a.onclick = () => {
-					let data = {...a.dataset};
-					delete data.to;
-					data = Object.fromEntries(Object.entries(data).map(e=>[e[0],document.getElementById(e[1]).value]))
-					this.bench.switch(a.dataset.to, data)
-				};
-			}
-		}
 	}
 
 	config(k, v) {
@@ -71,33 +41,11 @@ class Tool extends DOMOps {
 		}
 	}
 
-	/**
-	 * Creates a component by copying a DOM subtree specified by it's ID attribute
-	 * and setting values into specific places.
-	 * @param {string} cid Component id. An element with that id will be copied and used as a component. 
-	 * The rest of arguments will be used to fill the component template tructure with content.
-	 */
-	Component(compID, args) {
-		let compE = this.$(`.components .${compID}`)[0];
-
-		if (! compE) {
-			compE = document.querySelector(`#components > .${compID}`)
-		}
-	
-		if (compE) {
-			compE = Component.New(compE, args);
-			compE.querySelectorAll('.copy').forEach((v, k, p) => {v.onclick = onclickCopyToClipboard});
-			return compE;
-		} else {
-			throw new Error(`Could not find a '${compID}' component.`);
-		}
-	}
-
 	importSchema() {
 		throw new Error('importSchema() is not implemented.')
 	}
 	
 	import(data) {
-		throw new Error('import() is not implemented.')
+		// throw new Error('import() is not implemented.')
 	}
 }

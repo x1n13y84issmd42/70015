@@ -1,25 +1,25 @@
-<tool _id="base64" data-tag="base64" name="Base64">
-	<section _id="base64">
-		<input type="area" rows="8" label="Base64-encoded string">
+<tool _id="base64" data-tag="base64" name="Base64" onclose="unfocus" onshare="share">
+	<block _id="base64">
+		<in type="area" rows="8" label="Base64-encoded string"></in>
 		<undercontrols>
 			<reuse>
-				<hasher input="#base64">Hash it</hasher>
+				<hasher input="{Δ('base64')}">Hash it</hasher>
 			</reuse>
-			<copy from="#base64"></copy>
+			<copy from="{Δ('base64')}"></copy>
 		</undercontrols>
-	</section>
+	</block>
 
-	<div class="bothways">It works ⇃both↾ ways.</div>
+	<bothways></bothways>
 
-	<section _id="ascii">
-		<input type="area" rows="8" label="ASCII string">
+	<block _id="ascii">
+		<in type="area" rows="8" label="ASCII string"></in>
 		<undercontrols>
 			<reuse>
-				<hasher input="#ascii">Hash it</hasher>
+				<hasher input="{Δ('ascii')}">Hash it</hasher>
 			</reuse>
-			<copy from="#ascii"></copy>
+			<copy from="{Δ('ascii')}"></copy>
 		</undercontrols>
-	</section>
+	</block>
 </tool>
 
 <script>
@@ -54,10 +54,14 @@
 					this.decode();
 				}
 			}
+
+			export() {
+				return {
+					ascii: this.inAscii.value
+				};
+			}
 		}
 
-		let comp = Component.New('base64');
-		window.tools.appendChild(comp);
-		bench.add(new TBase64(comp));
+		bench.register('base64', TBase64);
 	})()
 </script>

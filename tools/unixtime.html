@@ -1,10 +1,10 @@
 <tool _id="unixtime" data-tag="unixtime" name="Unixtime">
-	<section _id="ts">
-		<input type="text" autofocus label="Unixtime">
+	<block _id="ts">
+		<in type="text" autofocus label="Unixtime"></in>
 		<undercontrols error="true"></undercontrols>
-	</section>
+	</block>
 
-	<section _id="formatted">
+	<block _id="formatted">
 		<div class="left l35">
 			<div class="typographyDate copy">
 				<p class="l10">&nbsp;</p>
@@ -14,7 +14,7 @@
 		<div class="right r65">
 			<div class="dates"></div>
 		</div>
-	</section>
+	</block>
 </tool>
 
 <script>
@@ -37,9 +37,10 @@
 					d.setTime(this.inTS.value.trim() + "000")
 	
 					this.typographyDate(d);
-					this.dates.appendChild(this.Component("kvsection", {label: "Formatted"}))
-					this.dates.appendChild(this.Component("kv", {k: "ISO 8601", v: d.toISOString()}))
-					this.dates.appendChild(this.Component("kv", {k: "Date.toString()", v: d.toString()}))
+					this.dates.appendChild(XUIC.kvsection({label: "Formatted"}))
+					this.dates.appendChild(XUIC.kvpair({k: "ISO 8601", v: d.toISOString()}))
+					this.dates.appendChild(XUIC.kvpair({k: "Date.toString()", v: d.toString()}))
+
 					this.Section('ts').Error(undefined);
 					this.Section('formatted').Show();
 				} catch (err) {
@@ -95,16 +96,27 @@
 				tdE.appendChild(yearE);
 				tdE.appendChild(timeE);
 			}
+
+			export() {
+				return {
+					ts: this.inTS.value,
+				};
+			}
+
+			import(data) {
+				if (data.ts) {
+					this.inTS.value = data.ts;
+					this.convert();
+				}
+			}
 		}
 	
-		let comp = Component.New('unixtime');
-		window.tools.appendChild(comp);
-		bench.add(new TUnixtime(comp));
+		bench.register('unixtime', TUnixtime);
 	})()
 </script>
 
 <style>
-	#unixtime .dates .kvpair > .label {
+	#unixtime .dates .kvpair > .key {
 		padding-bottom: 2em;
 	}
 
