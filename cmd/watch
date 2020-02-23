@@ -20,8 +20,7 @@ function findLastMTime {
 	local MT=$LASTMOD
 	for MASK in ${WATCHME[@]}; do
 		local FOUNDFILES=$(find "$MASK" -type f)
-		read -r -d $'\n' -a FILES <<< $FOUNDFILES
-		for FILE in ${FILES[@]}; do
+		for FILE in ${FOUNDFILES[@]}; do
 			local FMT=$(mtime "$FILE")
 
 			if [[ $FMT > $LASTMOD ]]; then
