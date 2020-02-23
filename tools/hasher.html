@@ -1,6 +1,6 @@
 <tool _id="hasher" data-tag="hash md5 sha des" name="Hashes &amp; ciphers">
 	<in type="text" _id="input" autofocus tabindex="21" label="Input"></in>
-	<in type="text" class="hasherKeyInput" _id="key" autofocus tabindex="21" label="Encryption key" ></in>
+	<!-- <in type="text" class="hasherKeyInput" _id="key" autofocus tabindex="21" label="Encryption key" ></in> -->
 
 	<div class="results subsection"></div>
 </tool>
@@ -15,9 +15,7 @@
 				super(id, data);
 
 				this.input = this.$$('input');
-				this.keyInput = this.$$('key');
-
-				this.keyInput.oninput = this.input.oninput = () => this.hash();
+				this.input.oninput = () => this.hash();
 			}
 
 			hash() {
@@ -36,18 +34,11 @@
 				results.appendChild(XUIC.kvpair({k: "SHA3", v: '' + CryptoJS.SHA3(this.input.value)}));
 				results.appendChild(XUIC.kvpair({k: "SHA256", v: '' + CryptoJS.SHA256(this.input.value)}));
 				
-				results.appendChild(XUIC.kvsection({label: "Ciphers"}));
+				/* results.appendChild(XUIC.kvsection({label: "Ciphers"}));
 				let aes = CryptoJS.AES.encrypt(this.input.value, this.keyInput.value, {keySize: 128});
 				let des = CryptoJS.DES.encrypt(this.input.value, this.keyInput.value, {keySize: 128});
-				// console.log(aes);
-				// console.log(aes.key.toString());
-				// console.log(aes.iv.toString());
-				// console.log(aes.ciphertext.toString());
-				// console.log(aes.key);
-				// console.log(aes.iv);
-				// console.log(aes.ciphertext);
 				results.appendChild(XUIC.kvpair({k: "AES", v: aes.ciphertext.toString()}));
-				results.appendChild(XUIC.kvpair({k: "DES", v: des.ciphertext.toString()}));
+				results.appendChild(XUIC.kvpair({k: "DES", v: des.ciphertext.toString()})); */
 			};
 
 			import(data) {
