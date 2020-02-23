@@ -578,7 +578,6 @@ input[type=radio]:checked {
 }
 
 .switch:hover > div > a:hover {
-	/* background-image: url("./assets/stripes.png"); */
 	background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAAKElEQVQImWMsv/ufgYGh8x4DAwMDE5xVrsTAyLD7P4QFlYGwOu8xAAAwjgoUjnS3twAAAABJRU5ErkJggg==");
 }
 
