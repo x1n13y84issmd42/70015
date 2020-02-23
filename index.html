@@ -512,8 +512,8 @@
 <script>
 	(() => {
 		class THasher extends Tool {
-			constructor(id) {
-				super(id);
+			constructor(id, data) {
+				super(id, data);
 
 				this.input = this.$$('input');
 				this.keyInput = this.$$('key');
@@ -619,8 +619,8 @@
 <script>
 	(()=>{
 		class TJSON extends Tool {
-			constructor(id) {
-				super(id);
+			constructor(id, data) {
+				super(id, data);
 	
 				this.inJSON = this.Section('input').Input();
 				this.outPretty = this.Section('pretty').Input();
@@ -762,8 +762,8 @@
 <script>
 	(()=>{
 		class TJSONYAML extends Tool {
-			constructor(id) {
-				super(id);
+			constructor(id, data) {
+				super(id, data);
 	
 				this.json = this.Section('json').Input();
 				this.yaml = this.Section('yaml').Input();
@@ -861,8 +861,8 @@
 <script>
 	(()=>{
 		class TUnixtime extends Tool {
-			constructor(id) {
-				super(id);
+			constructor(id, data) {
+				super(id, data);
 	
 				this.inTS = this.Section('ts').Input();
 				this.dates = this.$('.dates')[0];
@@ -1080,8 +1080,8 @@
 <script>
 	(() => {
 		class TURLTranscoder extends Tool {
-			constructor(id) {
-				super(id)
+			constructor(id, data) {
+				super(id, data)
 				
 				this.encoded = this.Section('encoded').Input();
 				this.decoded = this.Section('decoded').Input();
@@ -1135,8 +1135,8 @@
 <script>
 	(() => {
 		class TURLParser extends Tool {
-			constructor(id) {
-				super(id);
+			constructor(id, data) {
+				super(id, data);
 				this.URL = this.Section("url").Input();
 
 				this.URL.oninput = () => {
@@ -1253,8 +1253,8 @@
 
 <script>
 	class TXML extends Tool {
-		constructor(id) {
-			super(id)
+		constructor(id, data) {
+			super(id, data)
 
 			this.xml = this.Section('xml').Input();
 			this.xpath = this.Section('xpath').Input();

@@ -20,8 +20,8 @@
 <script>
 	(() => {
 		class TURLTranscoder extends Tool {
-			constructor(id) {
-				super(id)
+			constructor(id, data) {
+				super(id, data)
 				
 				this.encoded = this.Section('encoded').Input();
 				this.decoded = this.Section('decoded').Input();

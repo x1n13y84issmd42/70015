@@ -33,8 +33,8 @@
 <script>
 	(()=>{
 		class TJSONYAML extends Tool {
-			constructor(id) {
-				super(id);
+			constructor(id, data) {
+				super(id, data);
 	
 				this.json = this.Section('json').Input();
 				this.yaml = this.Section('yaml').Input();

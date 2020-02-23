@@ -20,8 +20,8 @@
 <script>
 	(()=>{
 		class TUnixtime extends Tool {
-			constructor(id) {
-				super(id);
+			constructor(id, data) {
+				super(id, data);
 	
 				this.inTS = this.Section('ts').Input();
 				this.dates = this.$('.dates')[0];

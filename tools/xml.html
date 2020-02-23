@@ -23,8 +23,8 @@
 
 <script>
 	class TXML extends Tool {
-		constructor(id) {
-			super(id)
+		constructor(id, data) {
+			super(id, data)
 
 			this.xml = this.Section('xml').Input();
 			this.xpath = this.Section('xpath').Input();

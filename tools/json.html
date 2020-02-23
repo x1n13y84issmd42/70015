@@ -41,8 +41,8 @@
 <script>
 	(()=>{
 		class TJSON extends Tool {
-			constructor(id) {
-				super(id);
+			constructor(id, data) {
+				super(id, data);
 	
 				this.inJSON = this.Section('input').Input();
 				this.outPretty = this.Section('pretty').Input();

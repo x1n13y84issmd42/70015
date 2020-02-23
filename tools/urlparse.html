@@ -12,8 +12,8 @@
 <script>
 	(() => {
 		class TURLParser extends Tool {
-			constructor(id) {
-				super(id);
+			constructor(id, data) {
+				super(id, data);
 				this.URL = this.Section("url").Input();
 
 				this.URL.oninput = () => {
