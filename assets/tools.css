@@ -349,11 +349,11 @@
 	margin: 0 0 1pt 0;
 }
 
-.tool.filteredOut > .preview > h1:hover {
+.tool-preview.filteredOut > h1:hover {
 	font-size: 20pt;
 }
 
-.tool.filteredOut > .preview > h1 {
+.tool-preview.filteredOut > h1 {
 	opacity: 0.5;
 	font-size: 18pt;
 	-webkit-transition: all 300ms ease-in-out;

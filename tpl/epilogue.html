@@ -38,14 +38,14 @@
 
 			function copiedFloater(x, y) {
 				let fltr = document.createElement('div');
-				fltr.classList.add("floater");
-				fltr.style.left = (x - 45) + "px";
-				fltr.style.top = (y - 35) + "px";
+				fltr.classList.add('floater');
+				fltr.style.left = (x - 45) + 'px';
+				fltr.style.top = (y - 35) + 'px';
 				fltr.innerHTML = 'Copied.';
 				document.body.appendChild(fltr);
 
 				setTimeout(() => {
-					fltr.classList.add("vanishing");
+					fltr.classList.add('vanishing');
 				}, 0);
 
 				setTimeout(() => {
@@ -53,26 +53,49 @@
 				}, 1000);
 			}
 
+			function tagMatch(el, terms) {
+				return terms.reduce((res, term) => {
+					return res && el.dataset.tag.includes(term);
+				}, true);
+			}
+
 			document.body.onload = () => {
-				//TODO: fixme
-				let filter = document.getElementById("filter");
+				//	The home screen filtering.
+				let filter = document.getElementById('filter');
+				let toolLinks = document.querySelectorAll('.tool-preview');
 				filter.oninput = () => {
-					bench.filter(filter.value);
+					if (filter.value) {
+						let filterTerms = filter.value.split(/\s+/gi);
+						toolLinks.forEach((tlE) => {
+							if (tagMatch(tlE, filterTerms)) {
+								tlE.classList.add('matched');
+								tlE.classList.remove('filteredOut');
+							} else {
+								tlE.classList.remove('matched');
+								tlE.classList.add('filteredOut');
+							}
+						})
+					} else {
+						toolLinks.forEach((tlE) => {
+							tlE.classList.remove('matched');
+							tlE.classList.remove('filteredOut');
+						});
+					}
 				}
 				
 				filter.onkeydown = (e) => {
 					if (e.key == 'Enter') {
 						//	Focusing the only matched tool.
-						let matched = document.querySelectorAll(".matched");
+						let matched = document.querySelectorAll('.matched');
 						if (matched.length == 1) {
-							focus(matched[0].id);
+							bench.equip(matched[0].dataset.toolid);
 							e.preventDefault();
 							e.cancelBubble = true;
 						}
 					} else if (e.key == 'Escape') {
 						//	Clearing the filtering.
-						filter.value = "";
-						bench.filter("");
+						filter.value = '';
+						filter.dispatchEvent(new Event('input'));
 					}
 				}
 
