@@ -33,12 +33,11 @@ class Workbench {
 				...data,
 				onback: this.equipped.length && 'bench.back()',
 				onclose: 'bench.clear()',
-				onshare: 'window.share()'
+				onshare: 'window.share()',
 			};
 
-			let toolE = XUIC.tool(id, data);
-			this.toolsE.appendChild(toolE);
-			let tool = new ctor(toolE);
+			let tool = new ctor(id, data);
+			this.toolsE.appendChild(tool.E);
 			tool.import(data);
 			tool.setBench(this);
 			tool.reconfigure(this.config.get(tool.ID));

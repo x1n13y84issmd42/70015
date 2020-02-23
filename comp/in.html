@@ -11,7 +11,7 @@
 <script>
 	XUI.register('in', (e, inst, args, ctx) => {
 		if (inst['accept-files'] == '1') {
-			let ondrop = (evt) => {
+			let ondrop = eval(inst.ondrop) || ((evt) => {
 				let edtf = evt.dataTransfer.files || [];
 				for (let i = 0; i < edtf.length; i++) {
 					edtf[i].text().then((s) => {
@@ -19,12 +19,12 @@
 						e.input.dispatchEvent(new Event('input'));
 					});
 				}
-			};
+			});
 			
 			let hilight = (evt) => {
 				e.input.classList.add('dragover');
 			};
-			
+
 			let unhilight = (evt) => {
 				e.input.classList.remove('dragover');
 			};

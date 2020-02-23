@@ -20,7 +20,7 @@ class DOMOps {
 	 * @param {any} v A value to set.
 	 */
 	$$(id, v) {
-		let e = document.getElementById(`${this.ID}-${id}`);
+		let e = this.E.querySelector(`#${this.ID}-${id}`);
 
 		if (e && v) {
 			this.T(e, v);

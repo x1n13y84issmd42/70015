@@ -1,12 +1,7 @@
 class Tool extends DOMOps {
-	constructor(id) {
-		let E = id;
-
-		if (typeof id == 'string') {
-			E = document.getElementById(id);
-		}
-
-		super(E);
+	constructor(id, data) {
+		let tt = XUIC.tool(id, data);
+		super(tt);
 
 		this.C = this.$('.controls')[0];
 	

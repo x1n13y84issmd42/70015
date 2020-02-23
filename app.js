@@ -150,7 +150,7 @@ class DOMOps {
 	 * @param {any} v A value to set.
 	 */
 	$$(id, v) {
-		let e = document.getElementById(`${this.ID}-${id}`);
+		let e = this.E.querySelector(`#${this.ID}-${id}`);
 
 		if (e && v) {
 			this.T(e, v);
@@ -387,14 +387,9 @@ class Section extends DOMOps {
 }
 
 class Tool extends DOMOps {
-	constructor(id) {
-		let E = id;
-
-		if (typeof id == 'string') {
-			E = document.getElementById(id);
-		}
-
-		super(E);
+	constructor(id, data) {
+		let tt = XUIC.tool(id, data);
+		super(tt);
 
 		this.C = this.$('.controls')[0];
 	
@@ -474,12 +469,11 @@ class Workbench {
 				...data,
 				onback: this.equipped.length && 'bench.back()',
 				onclose: 'bench.clear()',
-				onshare: 'window.share()'
+				onshare: 'window.share()',
 			};
 
-			let toolE = XUIC.tool(id, data);
-			this.toolsE.appendChild(toolE);
-			let tool = new ctor(toolE);
+			let tool = new ctor(id, data);
+			this.toolsE.appendChild(tool.E);
 			tool.import(data);
 			tool.setBench(this);
 			tool.reconfigure(this.config.get(tool.ID));
@@ -799,9 +793,9 @@ let XUI = {
 
 	/**
 	 * Replaces occurences of {}-expressions (JS code) with their evaluated results.
-	 * @param {*} s An expression to evaluate.
+	 * @param {*} exp An expression to evaluate.
 	 */
-	eval(s, inst, args, ctx) {
+	eval(exp, inst, args, ctx) {
 		//	These are available in components to generate ids.
 		//	Other cool symbols to use: 𐐏 𐐍 𐐝 𐐦 𝛺 𝜴 𝝙 Δ 𝝣 𝝨 𝝮 Ω Σ 
 		let Σ = (v) => ctx.id(v);
@@ -812,15 +806,28 @@ let XUI = {
 			Δ = (v) => v;
 		}
 
-		function repl() {
-			return s.replace(/\{(.*?)\}/gi, (a, g1) => eval(g1) || '');
+		function repl(s) {
+			let wasFunction = false;
+
+			if (typeof s == 'string') {
+				s = s.replace(/\{(.*?)\}/gi, (a, g1) => {
+					let replacement = eval(g1) || '';
+					if (typeof replacement == 'function') {
+						wasFunction = replacement;
+					}
+					return replacement;
+				});
+			}
+
+			//	This allows correct closures in args.
+			return wasFunction || s;
 		}
 
 		//	Doing it in a loop for transitive evaluations, i.e. when a replacement value is a {}-expression itself.
-		let s1 = repl(s);
-		while (s1 != s) {
-			s = s1;
-			s1 = repl(s);
+		let s1 = repl(exp);
+		while (s1 != exp) {
+			exp = s1;
+			s1 = repl(exp);
 		}
 
 		return s1;

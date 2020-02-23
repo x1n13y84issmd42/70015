@@ -1,6 +1,6 @@
 <tool _id="base64" data-tag="base64" name="Base64" onclose="unfocus" onshare="share">
 	<block _id="base64">
-		<in type="area" rows="8" label="Base64-encoded string" accept-files="1"></in>
+		<in type="area" rows="8" label="Base64-encoded string" accept-files="1" ondrop="{args.onbase64drop}"></in>
 		<undercontrols>
 			<reuse>
 				<hasher input="{Δ('base64')}">Hash it</hasher>
@@ -12,7 +12,7 @@
 	<bothways></bothways>
 	
 	<block _id="ascii">
-		<in type="area" rows="8" label="ASCII string" accept-files="1"></in>
+		<in type="area" rows="8" label="ASCII string" accept-files="1" ondrop="{args.onasciidrop}"></in>
 		<undercontrols>
 			<reuse>
 				<hasher input="{Δ('ascii')}">Hash it</hasher>
@@ -25,8 +25,28 @@
 <script>
 	(() => {
 		class TBase64 extends Tool {
-			constructor(id) {
-				super(id);
+			inAscii;
+			inBase;
+
+			constructor(id, data) {
+				data = {
+					...data,
+
+					onasciidrop: (evt) => {
+						let edtf = evt.dataTransfer.files || [];
+						if (edtf.length) {
+							edtf[0].arrayBuffer().then((ab) => {
+								let ascii = String.fromCharCode.apply(null, new Uint8Array(ab));
+								let b64 = btoa(ascii)
+	
+								this.inAscii.value = ascii;
+								this.inBase64.value = b64;
+							});
+						}
+					},
+				}
+
+				super(id, data);
 
 				this.inBase64 = this.Section('base64').Input();
 				this.inAscii = this.Section('ascii').Input();
