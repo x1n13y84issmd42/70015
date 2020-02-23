@@ -478,16 +478,18 @@ class Workbench {
 			tool.setBench(this);
 			tool.reconfigure(this.config.get(tool.ID));
 			tool.E.classList.replace("unfocused", "focused");
-			tool.E.focus();
-
-			//TODO: fixme.
-			let af = tool.E.querySelector("[autofocus]");
-			if (af) {
-				af.focus();
-			}
-
+			
 			window.location.hash = id;
 			this.equipped.push(tool);
+			
+			//TODO: fixme. This is so wrong.
+			setTimeout(() => {
+				tool.E.focus();
+				let af = tool.E.querySelector("[autofocus]");
+				if (af) {
+					af.focus();
+				}
+            }, 0);
 
 			return tool;
 		}
@@ -508,6 +510,10 @@ class Workbench {
 			window.location.hash = '';
 			remove();
 		}
+
+		if (this.equipped.length == 0) {
+			filter.focus();
+		}
 	}
 	
 	clear() {
@@ -516,6 +522,8 @@ class Workbench {
 		}
 
 		this.equipped = [];
+
+		filter.focus();
 	}
 
 	currentlyEquipped() {
