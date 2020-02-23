@@ -5,9 +5,21 @@
 
 			XUI.render(window.menu);
 
+			const doubleEscTime = 200;
+			let lastTimeEscPressed = new Date().getTime();
+			
 			document.body.onkeydown = (e) => {
 				if (e.key == 'Escape') {
-					bench.back();
+					let now = new Date().getTime();
+					e.preventDefault();
+
+					if (now - lastTimeEscPressed <= doubleEscTime) {
+						bench.clear();
+					} else {
+						bench.back();
+					}
+
+					lastTimeEscPressed = now;
 				}
 			}
 

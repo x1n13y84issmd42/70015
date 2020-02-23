@@ -332,8 +332,8 @@
 	<div class="controls smaller" xui-root></div>
 
 	<div class="sidebar">
-		<a xui-if="args.onback" onclick="{args.onback}" href="javascript:void(0);" class="back"><i>&#x1F860;</i><span>BACK</span></a>
-		<a xui-if="args.onclose" onclick="{args.onclose}" href="javascript:void(0);" class="close"><i>&#x1f7a9;</i><span>CLOSE</span></a>
+		<a xui-if="args.onback" onclick="{args.onback}" href="javascript:void(0);" class="back"><i>&#x1F860;</i><span>BACK <em>(Esc)</em></span></a>
+		<a xui-if="args.onclose" onclick="{args.onclose}" href="javascript:void(0);" class="close"><i>&#x1f7a9;</i><span>CLOSE <em>(2&times;Esc)</em></span></a>
 		<a xui-if="args.onshare" onclick="{args.onshare}" href="javascript:void(0);" class="share"><i>#</i><span>SHARE</span></a>
 	</div>
 </div>
@@ -1505,9 +1505,21 @@
 
 			XUI.render(window.menu);
 
+			const doubleEscTime = 200;
+			let lastTimeEscPressed = new Date().getTime();
+			
 			document.body.onkeydown = (e) => {
 				if (e.key == 'Escape') {
-					bench.back();
+					let now = new Date().getTime();
+					e.preventDefault();
+
+					if (now - lastTimeEscPressed <= doubleEscTime) {
+						bench.clear();
+					} else {
+						bench.back();
+					}
+
+					lastTimeEscPressed = now;
 				}
 			}
 
