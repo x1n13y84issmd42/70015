@@ -142,6 +142,12 @@
 	border: 2px #00BBFF solid;
 }
 
+.controls textarea.dragover,
+.controls input[type=text].dragover {
+	background-color: #DDEEFF;
+	transition: background-color 200ms linear;
+}
+
 .controls textarea[disabled],
 .controls input[type=text][disabled] {
 	border: 1px #AAA solid;

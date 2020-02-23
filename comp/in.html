@@ -1,10 +1,47 @@
-<!-- The <in> component structure - a flexible input field. -->
+<!-- 
+	The <in> component structure - a flexible input field.
+	The accept-files attribute set to "1" allows files to be dragged and dropped into the field.
+-->
 <div _comp="in">
 	<label for="{Σ(inst._id||'in')}">{inst.label}</label>
-	<input xui-if="inst.type==='text'" type="text" id="{Σ(inst._id||'in')}" autofocus="" value="{inst.$||args.value}">
-	<textarea xui-if="inst.type==='area'" name="{inst.name}" id="{Σ(inst._id||'in')}" cols="{inst.cols||30}" rows="{inst.rows||10}">{inst.$}</textarea>
+	<input xui-if="inst.type==='text'" xui-as="input" type="text" id="{Σ(inst._id||'in')}" autofocus="" value="{inst.$||args.value}">
+	<textarea xui-if="inst.type==='area'" xui-as="input" name="{inst.name}" id="{Σ(inst._id||'in')}" cols="{inst.cols||30}" rows="{inst.rows||10}">{inst.$}</textarea>
 </div>
 
 <script>
-	XUI.register('in');
+	XUI.register('in', (e, inst, args, ctx) => {
+		if (inst['accept-files'] == '1') {
+			let ondrop = (evt) => {
+				let edtf = evt.dataTransfer.files || [];
+				for (let i = 0; i < edtf.length; i++) {
+					edtf[i].text().then((s) => {
+						e.input.value = s;
+						e.input.dispatchEvent(new Event('input'));
+					});
+				}
+			};
+			
+			let hilight = (evt) => {
+				e.input.classList.add('dragover');
+			};
+			
+			let unhilight = (evt) => {
+				e.input.classList.remove('dragover');
+			};
+			
+			//	Disabling the default behaviour for these.
+			['dragenter', 'dragover', 'dragleave', 'drop'].forEach(en => {
+				e.input.addEventListener(en, (evt) => {
+					evt.preventDefault();
+					evt.stopPropagation();
+				});
+			});
+
+			e.input.addEventListener('dragenter', hilight);
+			e.input.addEventListener('dragover', hilight);
+			e.input.addEventListener('drop', ondrop);
+			e.input.addEventListener('drop', unhilight);
+			e.input.addEventListener('dragleave', unhilight);
+		}
+	});
 </script>

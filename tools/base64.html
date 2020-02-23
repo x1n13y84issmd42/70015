@@ -1,6 +1,6 @@
 <tool _id="base64" data-tag="base64" name="Base64" onclose="unfocus" onshare="share">
 	<block _id="base64">
-		<in type="area" rows="8" label="Base64-encoded string"></in>
+		<in type="area" rows="8" label="Base64-encoded string" accept-files="1"></in>
 		<undercontrols>
 			<reuse>
 				<hasher input="{Δ('base64')}">Hash it</hasher>
@@ -10,9 +10,9 @@
 	</block>
 
 	<bothways></bothways>
-
+	
 	<block _id="ascii">
-		<in type="area" rows="8" label="ASCII string"></in>
+		<in type="area" rows="8" label="ASCII string" accept-files="1"></in>
 		<undercontrols>
 			<reuse>
 				<hasher input="{Δ('ascii')}">Hash it</hasher>
