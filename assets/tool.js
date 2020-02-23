@@ -44,7 +44,7 @@ class Tool extends DOMOps {
 	importSchema() {
 		throw new Error('importSchema() is not implemented.')
 	}
-	
+
 	import(data) {
 		// throw new Error('import() is not implemented.')
 	}
