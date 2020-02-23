@@ -4,8 +4,23 @@
 -->
 <div _comp="in">
 	<label for="{Σ(inst._id||'in')}">{inst.label}</label>
-	<input xui-if="inst.type==='text'" xui-as="input" type="text" id="{Σ(inst._id||'in')}" autofocus="" value="{inst.$||args.value}">
-	<textarea xui-if="inst.type==='area'" xui-as="input" name="{inst.name}" id="{Σ(inst._id||'in')}" cols="{inst.cols||30}" rows="{inst.rows||10}" autofocus="">{inst.$}</textarea>
+
+	<input
+		xui-if="inst.type==='text'"
+		xui-as="input"
+		type="text"
+		id="{Σ(inst._id||'in')}"
+		autofocus=""
+		value="{inst.$||args.value}">
+
+	<textarea
+		xui-if="inst.type==='area'"
+		xui-as="input"
+		name="{inst.name}"
+		id="{Σ(inst._id||'in')}"
+		cols="{inst.cols||30}"
+		rows="{inst.rows||10}"
+		autofocus="">{inst.$}</textarea>
 </div>
 
 <script>

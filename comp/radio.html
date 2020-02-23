@@ -1,6 +1,12 @@
 <!-- The <radio> component structure. -->
 <label _comp="radio" for="{Σ(inst._id)}">
-	<input type="radio" name="{Σ(inst.name)}" id="{Σ(inst._id)}" xui-as="in" value="{inst.value}">
+	<input
+		type="radio"
+		name="{Σ(inst.name)}"
+		id="{Σ(inst._id)}"
+		xui-as="in"
+		value="{inst.value}">
+
 	<span>{inst.$||args.label}</span>
 </label>
 
