@@ -135,10 +135,10 @@
 
 <div id="components">
 	<dialog data-purpose="social" _id="share" title="{inst.title||args.title}">
-		<section _id="link">
-			<input type="text" value="{inst.value||args.value}" />
+		<section id="link">
+			<input type="text" id="{Δ('link')}" value="{inst.value||args.value}" />
 			<undercontrols>
-				<copy from="#link" handler="onclickCopyToClipboard(e)"></copy>
+				<copy from="{Δ('link')}" handler="onclickCopyToClipboard(e)"></copy>
 			</undercontrols>
 		</section>
 	</dialog>
@@ -519,14 +519,14 @@
 				}
 				
 				if (data.base64) {
-					this.base64.value = data.base64;
+					this.inBase64.value = data.base64;
 					this.decode();
 				}
 			}
 
 			export() {
 				return {
-					ascii: this.inAscii.value
+					base64: this.inBase64.value
 				};
 			}
 		}

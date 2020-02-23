@@ -70,14 +70,14 @@
 				}
 				
 				if (data.base64) {
-					this.base64.value = data.base64;
+					this.inBase64.value = data.base64;
 					this.decode();
 				}
 			}
 
 			export() {
 				return {
-					ascii: this.inAscii.value
+					base64: this.inBase64.value
 				};
 			}
 		}
