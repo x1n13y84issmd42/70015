@@ -69,11 +69,15 @@
 			import(data) {
 				if (data.ascii) {
 					this.inAscii.value = data.ascii;
+					this.inBase64.dispatchEvent(new Event('change'));
+					this.inAscii.dispatchEvent(new Event('change'));
 					this.encode();
 				}
 				
 				if (data.base64) {
 					this.inBase64.value = data.base64;
+					this.inBase64.dispatchEvent(new Event('change'));
+					this.inAscii.dispatchEvent(new Event('change'));
 					this.decode();
 				}
 			}

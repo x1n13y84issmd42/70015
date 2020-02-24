@@ -3,7 +3,7 @@
 	The accept-files attribute set to "1" allows files to be dragged and dropped into an area field.
 -->
 <div _comp="in">
-	<label for="{Σ(inst._id||'in')}">{inst.label}</label>
+	<label xui-if="inst.label" for="{Σ(inst._id||'in')}">{inst.label}</label>
 	
 	<div xui-as="wrapper" class="in-wrapper">
 		<div xui-as="dropzone" class="dropzone">

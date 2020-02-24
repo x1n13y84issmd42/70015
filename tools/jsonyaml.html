@@ -1,14 +1,17 @@
 <tool _id="jsonyaml" data-tag="json yaml" name="JSON &#x2942; YAML">
 	<block _id="json">
-		<div class="overcontrols">
-			<label for="">Indent with</label>
+		<overcontrols label="JSON">
+			<p class="hint" style="margin-right:280px;">Try <a class="example" onclick="{args.onexample}" href="javascript:void(0)">Github API</a>.</p>
 
-			<radio name="indent" _id="tabs" value="	">tabs</radio>
-			<radio name="indent" _id="4spaces" value="    ">4 spaces</radio>
-			<radio name="indent" _id="2spaces" value="  ">2 spaces</radio>
-		</div>
+			<div class="right">
+				<label>Indent with</label>
+				<radio name="indent" _id="tabs" value="	">tabs</radio>
+				<radio name="indent" _id="4spaces" value="    ">4 spaces</radio>
+				<radio name="indent" _id="2spaces" value="  ">2 spaces</radio>
+			</div>
+		</overcontrols>
 		
-		<in type="area" rows="9" label="JSON"></in>
+		<in type="area" rows="9"></in>
 		
 		<undercontrols>
 			<reuse>
@@ -34,6 +37,14 @@
 	(()=>{
 		class TJSONYAML extends Tool {
 			constructor(id, data) {
+
+				data.onexample = () => {
+					GET('http://api.github.com/repos/x1n13y84issmd42/70015/branches', (resp) => {
+						this.json.value = resp;
+						this.json.dispatchEvent(new Event('input'));
+					});
+				};
+
 				super(id, data);
 	
 				this.json = this.Section('json').Input();

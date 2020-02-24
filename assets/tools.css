@@ -118,7 +118,8 @@
 	margin-right: 5px;
 }
 
-.controls label {
+.controls label,
+.controls .overcontrols > label.control {
 	font-size: 22pt;
 	font-family: Quicksand;
 	transition: color 200ms ease-in-out;
@@ -149,7 +150,7 @@
 	color: #00BBFF;
 	opacity: 0.5;
 	margin-bottom: 20px;
-	margin-top: 50px;
+	margin-top: 70px;
 	transition: transform 200ms linear, opacity 200ms linear;
 }
 
@@ -210,9 +211,19 @@
 }
 
 .tool .overcontrols {
+	/* float: right; */
+	width: auto;
+	/* padding-top: 10px; */
+}
+
+.controls .overcontrols .right {
 	float: right;
 	width: auto;
-	padding-top: 10px;
+}
+
+.overcontrols > * {
+    line-height: 27pt;
+    vertical-align: middle;
 }
 
 .tool .overcontrols a.copy {
@@ -246,7 +257,8 @@
 
 .tool .overcontrols .hint {
 	font-size: 16px;
-    color: #666;
+	color: #666;
+	display: inline-block;
 }
 
 .tool .overcontrols .hint > a.example{
@@ -255,7 +267,7 @@
 	border-bottom: 1px #00BBFF dashed;
 }
 
-.controls .overcontrols > label {
+.controls .overcontrols label {
 	font-size: 12pt;
 	font-family: Quicksand;
 	margin-right: 20px;
