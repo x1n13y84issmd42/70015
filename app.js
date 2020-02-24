@@ -548,6 +548,7 @@ class Workbench {
 		}
 
 		if (this.equipped.length == 0) {
+			window.location.hash = '';
 			filter.focus();
 		}
 	}
@@ -558,6 +559,7 @@ class Workbench {
 		}
 
 		this.equipped = [];
+		window.location.hash = '';
 
 		filter.focus();
 	}
