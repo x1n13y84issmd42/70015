@@ -1,6 +1,6 @@
 <tool _id="base64" data-tag="base64" name="Base64" onclose="unfocus" onshare="share">
 	<block _id="base64">
-		<in type="area" rows="8" label="Base64-encoded string" accept-files="1" ondrop="{args.onbase64drop}"></in>
+		<in type="area" rows="8" label="Base64-encoded string"></in>
 		<undercontrols>
 			<reuse>
 				<hasher input="{Δ('base64')}">Hash it</hasher>
@@ -12,7 +12,7 @@
 	<bothways></bothways>
 	
 	<block _id="ascii">
-		<in type="area" rows="8" label="ASCII string" accept-files="1" ondrop="{args.onasciidrop}"></in>
+		<in type="area" rows="8" label="ASCII string" accept-files="1" ondrop="{args.onasciidrop}" dropzone_text="Drop a file here to encode it."></in>
 		<undercontrols>
 			<reuse>
 				<hasher input="{Δ('ascii')}">Hash it</hasher>
@@ -41,6 +41,9 @@
 	
 								this.inAscii.value = ascii;
 								this.inBase64.value = b64;
+
+								this.inBase64.dispatchEvent(new Event('change'));
+								this.inAscii.dispatchEvent(new Event('change'));
 							});
 						}
 					},

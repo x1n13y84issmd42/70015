@@ -124,6 +124,58 @@
 	transition: color 200ms ease-in-out;
 }
 
+.controls .in-wrapper {
+	position: relative;
+}
+
+.controls .in-wrapper > .dropzone {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 100;
+	transition: opacity 200ms linear;
+}
+
+.controls .in-wrapper > .dropzone.hidden {
+	opacity: 0;
+}
+
+.controls .in-wrapper > .dropzone > i {
+	font-size: 48pt;
+    display: block;
+    text-align: center;
+	color: #00BBFF;
+	opacity: 0.5;
+	margin-bottom: 20px;
+	margin-top: 50px;
+	transition: transform 200ms linear, opacity 200ms linear;
+}
+
+.controls .in-wrapper > .dropzone > p {
+	text-align: center;
+    font-size: 16px;
+	color: #00BBFF;
+	opacity: 0.5;
+	transition: transform 200ms linear, opacity 200ms linear;
+}
+
+.controls .in-wrapper.dragover > .dropzone {
+	background-color: #DDEEFF;
+	transition: background-color 200ms linear;
+}
+
+.controls .in-wrapper.dragover > .dropzone > i {
+	transform: rotateZ(20deg) scale(1.2);
+	opacity: 1;
+}
+
+.controls .in-wrapper.dragover > .dropzone > p {
+	transform: scale(1.1);
+	opacity: 1;
+}
+
 .controls textarea {
 	padding-bottom: 35px;
 }
@@ -140,12 +192,9 @@
 	margin-bottom: 2em;
 	/* border: 2px #99DDFF solid; */
 	border: 2px #00BBFF solid;
-}
-
-.controls textarea.dragover,
-.controls input[type=text].dragover {
-	background-color: #DDEEFF;
-	transition: background-color 200ms linear;
+	background: none;
+	z-index: 101;
+	position: relative;
 }
 
 .controls textarea[disabled],
@@ -193,6 +242,11 @@
 	-webkit-transition: all 100ms ease-in-out;
 	-moz-transition: all 100ms ease-in-out;
 	-o-transition: all 100ms ease-in-out;
+}
+
+.tool .overcontrols .hint {
+    font-size: 16px;
+    color: #666;
 }
 
 .controls .overcontrols > label {

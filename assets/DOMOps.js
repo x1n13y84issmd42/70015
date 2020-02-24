@@ -66,3 +66,9 @@ class DOMOps {
 		}
 	}
 }
+
+let DOM = {
+	remove: (e) => {
+		e && e.parentNode && e.parentNode.removeChild(e);
+	},
+};

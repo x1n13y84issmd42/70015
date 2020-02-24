@@ -227,63 +227,89 @@
 
 <!-- 
 	The <in> component structure - a flexible input field.
-	The accept-files attribute set to "1" allows files to be dragged and dropped into the field.
+	The accept-files attribute set to "1" allows files to be dragged and dropped into an area field.
 -->
 <div _comp="in">
 	<label for="{Σ(inst._id||'in')}">{inst.label}</label>
+	
+	<div xui-as="wrapper" class="in-wrapper">
+		<div xui-as="dropzone" class="dropzone">
+			<i class="fas fa-file-download"></i>
+			<p>{inst.dropzone_text||args.dropzone_text}</p>
+		</div>
 
-	<input
-		xui-if="inst.type==='text'"
-		xui-as="input"
-		type="text"
-		id="{Σ(inst._id||'in')}"
-		autofocus=""
-		value="{inst.$||args.value}">
+		<input
+			xui-if="inst.type==='text'"
+			xui-as="input"
+			type="text"
+			id="{Σ(inst._id||'in')}"
+			autofocus=""
+			value="{inst.$||args.value}">
 
-	<textarea
-		xui-if="inst.type==='area'"
-		xui-as="input"
-		name="{inst.name}"
-		id="{Σ(inst._id||'in')}"
-		cols="{inst.cols||30}"
-		rows="{inst.rows||10}"
-		autofocus="">{inst.$}</textarea>
+		<textarea
+			xui-if="inst.type==='area'"
+			xui-as="input"
+			name="{inst.name}"
+			id="{Σ(inst._id||'in')}"
+			cols="{inst.cols||30}"
+			rows="{inst.rows||10}"
+			autofocus="">{inst.$}</textarea>
+	</div>
 </div>
 
 <script>
 	XUI.register('in', (e, inst, args, ctx) => {
 		if (inst['accept-files'] == '1') {
-			let ondrop = eval(inst.ondrop) || ((evt) => {
-				let edtf = evt.dataTransfer.files || [];
-				for (let i = 0; i < edtf.length; i++) {
-					edtf[i].text().then((s) => {
-						e.input.value = s;
-						e.input.dispatchEvent(new Event('input'));
-					});
-				}
-			});
-			
-			let hilight = (evt) => {
-				e.input.classList.add('dragover');
-			};
-
-			let unhilight = (evt) => {
-				e.input.classList.remove('dragover');
-			};
-			
-			//	Disabling the default behaviour for these.
-			['dragenter', 'dragover', 'dragleave', 'drop'].forEach(en => {
-				e.input.addEventListener(en, (evt) => {
-					evt.preventDefault();
-					evt.stopPropagation();
+			if (inst.type == 'area') {
+				//	Using either a supplied handler or a default one.
+				let ondrop = eval(inst.ondrop) || ((evt) => {
+					let edtf = evt.dataTransfer.files || [];
+					for (let i = 0; i < edtf.length; i++) {
+						edtf[i].text().then((s) => {
+							e.input.value = s;
+							e.input.dispatchEvent(new Event('input'));
+						});
+					}
 				});
-			});
-
-			e.input.addEventListener('dragenter', hilight);
-			e.input.addEventListener('dragover', hilight);
-			e.input.addEventListener('drop', ondrop);
-			e.input.addEventListener('drop', unhilight);
-			e.input.addEventListener('dragleave', unhilight);
+				
+				let hilight = (evt) => {
+					e.wrapper.classList.add('dragover');
+				};
+	
+				let unhilight = (evt) => {
+					e.wrapper.classList.remove('dragover');
+				};
+				
+				//	Disabling the default behaviour for these.
+				['dragenter', 'dragover', 'dragleave', 'drop'].forEach(en => {
+					e.input.addEventListener(en, (evt) => {
+						evt.preventDefault();
+						evt.stopPropagation();
+					});
+				});
+	
+				e.input.addEventListener('dragenter', hilight);
+				e.input.addEventListener('dragover', hilight);
+				e.input.addEventListener('drop', ondrop);
+				e.input.addEventListener('drop', unhilight);
+				e.input.addEventListener('dragleave', unhilight);
+				
+				//	Toggle the dropzone icon visibility during text input.
+				let toggleDropzone = () => {
+					if (e.input.value.length) {
+						e.dropzone.classList.add("hidden");
+					} else {
+						e.dropzone.classList.remove("hidden");
+					}
+				};
+				
+				e.input.addEventListener('change', toggleDropzone);
+				e.input.addEventListener('input', toggleDropzone);
+			} else {
+				console.error("Only area inputs can accept files.");
+			}
+		} else {
+			DOM.remove(e.dropzone);
 		}
 	});
 </script>
@@ -449,7 +475,7 @@
 
 <tool _id="base64" data-tag="base64" name="Base64" onclose="unfocus" onshare="share">
 	<block _id="base64">
-		<in type="area" rows="8" label="Base64-encoded string" accept-files="1" ondrop="{args.onbase64drop}"></in>
+		<in type="area" rows="8" label="Base64-encoded string"></in>
 		<undercontrols>
 			<reuse>
 				<hasher input="{Δ('base64')}">Hash it</hasher>
@@ -461,7 +487,7 @@
 	<bothways></bothways>
 	
 	<block _id="ascii">
-		<in type="area" rows="8" label="ASCII string" accept-files="1" ondrop="{args.onasciidrop}"></in>
+		<in type="area" rows="8" label="ASCII string" accept-files="1" ondrop="{args.onasciidrop}" dropzone_text="Drop a file here to encode it."></in>
 		<undercontrols>
 			<reuse>
 				<hasher input="{Δ('ascii')}">Hash it</hasher>
@@ -490,6 +516,9 @@
 	
 								this.inAscii.value = ascii;
 								this.inBase64.value = b64;
+
+								this.inBase64.dispatchEvent(new Event('change'));
+								this.inAscii.dispatchEvent(new Event('change'));
 							});
 						}
 					},

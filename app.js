@@ -197,6 +197,13 @@ class DOMOps {
 	}
 }
 
+let DOM = {
+	remove: (e) => {
+		e && e.parentNode && e.parentNode.removeChild(e);
+	},
+};
+
+
 /**
  * Keystroke is a sequence of keys which triggers some function.
  */
