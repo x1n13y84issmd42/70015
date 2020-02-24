@@ -45,34 +45,6 @@
 			let config = new LSConfig();
 			let bench = new Workbench(config);
 
-			function focus(id) {
-				bench.focus(id);
-			}
-
-			function unfocus(id) {
-				bench.unfocus(id);
-				window.location.hash = '';
-				filter.focus();
-			}
-
-			function offset(e) {
-				let res = {
-					left: e.offsetLeft,
-					top: e.offsetTop,
-				};
-
-				let p = e.parentNode;
-
-				while(p) {
-					res.left += ~~p.offsetLeft;
-					res.top += ~~p.offsetTop;
-
-					p = p.parentNode;
-				}
-
-				return res;
-			}
-
 			function share() {
 				let tool = bench.currentlyEquipped();
 				console.log(`Sharing the #${tool.ID} tool!`);
@@ -91,6 +63,23 @@
 				}));
 			}
 
+			function copiedFloater(x, y) {
+				let fltr = document.createElement('div');
+				fltr.classList.add('floater');
+				fltr.style.left = (x - 45) + 'px';
+				fltr.style.top = (y - 35) + 'px';
+				fltr.innerHTML = 'Copied.';
+				document.body.appendChild(fltr);
+
+				setTimeout(() => {
+					fltr.classList.add('vanishing');
+				}, 0);
+
+				setTimeout(() => {
+					document.body.removeChild(fltr);
+				}, 1000);
+			}
+
 			function onclickCopyToClipboard(e) {
 				let from = e.currentTarget;
 
@@ -105,7 +94,7 @@
 
 				if (from.dataset.value) {
 					Clipboard.copy(from.dataset.value);
-					tmpStyle(from, 'copied', 200);
+					DOM.tmpStyle(from, 'copied', 200);
 					copiedFloater(e.pageX, e.pageY);
 					return;
 				}
@@ -126,7 +115,7 @@
 							break;
 					}
 
-					tmpStyle(from, 'copied', 200);
+					DOM.tmpStyle(from, 'copied', 200);
 					copiedFloater(e.pageX, e.pageY);
 				}
 			}
@@ -614,7 +603,7 @@
 				}
 
 				if (data.key) {
-					this.keyInput.value = data.key;
+					// this.keyInput.value = data.key;
 				}
 
 				this.hash();
@@ -623,7 +612,7 @@
 			export() {
 				return {
 					input: this.input.value,
-					key: this.keyInput.value,
+					// key: this.keyInput.value,
 				}
 			}
 		}
@@ -903,13 +892,13 @@
 	</block>
 
 	<block _id="formatted">
-		<div class="left l35">
+		<div class="left l40">
 			<div class="typographyDate copy">
 				<p class="l10">&nbsp;</p>
 			</div>
 		</div>
 		
-		<div class="right r65">
+		<div class="right r60">
 			<div class="dates"></div>
 		</div>
 	</block>
@@ -1619,6 +1608,7 @@
 
 			XUI.render(window.menu);
 
+			//	Double Esc clear the workbench.
 			const doubleEscTime = 200;
 			let lastTimeEscPressed = new Date().getTime();
 			
@@ -1637,51 +1627,20 @@
 				}
 			}
 
-			/**
-			 * Temporarily applies a class to an element. The class is removed after the specified amount of time passes.
-			 * @param {HTMLElement} e An element to style.
-			 * @param {string} className A class name to apply temporarily.
-			 * @param {number} time A time period the class should be removed after.
-			 */
-			function tmpStyle(e, className, time) {
-				e.classList.add(className);
-				setTimeout(() => {
-					e.classList.remove(className);
-				}, time);
-			}
-
-			function copiedFloater(x, y) {
-				let fltr = document.createElement('div');
-				fltr.classList.add('floater');
-				fltr.style.left = (x - 45) + 'px';
-				fltr.style.top = (y - 35) + 'px';
-				fltr.innerHTML = 'Copied.';
-				document.body.appendChild(fltr);
-
-				setTimeout(() => {
-					fltr.classList.add('vanishing');
-				}, 0);
-
-				setTimeout(() => {
-					document.body.removeChild(fltr);
-				}, 1000);
-			}
-
-			function tagMatch(el, terms) {
-				return terms.reduce((res, term) => {
-					return res && el.dataset.tag.includes(term);
-				}, true);
-			}
-
 			document.body.onload = () => {
 				//	The home screen filtering.
 				let filter = document.getElementById('filter');
 				let toolLinks = document.querySelectorAll('.tool-preview');
+
 				filter.oninput = () => {
 					if (filter.value) {
 						let filterTerms = filter.value.split(/\s+/gi);
 						toolLinks.forEach((tlE) => {
-							if (tagMatch(tlE, filterTerms)) {
+							//	Checking if the link's 'tag' contains s filter term.
+							let matched = filterTerms.reduce((res, term) => {
+								return res && tlE.dataset.tag.includes(term);
+							}, true);
+							if (matched) {
 								tlE.classList.add('matched');
 								tlE.classList.remove('filteredOut');
 							} else {
@@ -1707,7 +1666,7 @@
 							e.cancelBubble = true;
 						}
 					} else if (e.key == 'Escape') {
-						//	Clearing the filtering.
+						//	Clearing the filter.
 						filter.value = '';
 						filter.dispatchEvent(new Event('input'));
 					}

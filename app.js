@@ -201,6 +201,19 @@ let DOM = {
 	remove: (e) => {
 		e && e.parentNode && e.parentNode.removeChild(e);
 	},
+
+	/**
+	 * Temporarily applies a class to an element. The class is removed after the specified amount of time passes.
+	 * @param {HTMLElement} e An element to style.
+	 * @param {string} className A class name to apply temporarily.
+	 * @param {number} time A time period the class should be removed after.
+	 */
+	tmpStyle: (e, className, time) => {
+		e.classList.add(className);
+		setTimeout(() => {
+			e.classList.remove(className);
+		}, time);
+	}
 };
 
 

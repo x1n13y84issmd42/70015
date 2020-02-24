@@ -44,34 +44,6 @@
 			let config = new LSConfig();
 			let bench = new Workbench(config);
 
-			function focus(id) {
-				bench.focus(id);
-			}
-
-			function unfocus(id) {
-				bench.unfocus(id);
-				window.location.hash = '';
-				filter.focus();
-			}
-
-			function offset(e) {
-				let res = {
-					left: e.offsetLeft,
-					top: e.offsetTop,
-				};
-
-				let p = e.parentNode;
-
-				while(p) {
-					res.left += ~~p.offsetLeft;
-					res.top += ~~p.offsetTop;
-
-					p = p.parentNode;
-				}
-
-				return res;
-			}
-
 			function share() {
 				let tool = bench.currentlyEquipped();
 				console.log(`Sharing the #${tool.ID} tool!`);
@@ -90,6 +62,23 @@
 				}));
 			}
 
+			function copiedFloater(x, y) {
+				let fltr = document.createElement('div');
+				fltr.classList.add('floater');
+				fltr.style.left = (x - 45) + 'px';
+				fltr.style.top = (y - 35) + 'px';
+				fltr.innerHTML = 'Copied.';
+				document.body.appendChild(fltr);
+
+				setTimeout(() => {
+					fltr.classList.add('vanishing');
+				}, 0);
+
+				setTimeout(() => {
+					document.body.removeChild(fltr);
+				}, 1000);
+			}
+
 			function onclickCopyToClipboard(e) {
 				let from = e.currentTarget;
 
@@ -104,7 +93,7 @@
 
 				if (from.dataset.value) {
 					Clipboard.copy(from.dataset.value);
-					tmpStyle(from, 'copied', 200);
+					DOM.tmpStyle(from, 'copied', 200);
 					copiedFloater(e.pageX, e.pageY);
 					return;
 				}
@@ -125,7 +114,7 @@
 							break;
 					}
 
-					tmpStyle(from, 'copied', 200);
+					DOM.tmpStyle(from, 'copied', 200);
 					copiedFloater(e.pageX, e.pageY);
 				}
 			}

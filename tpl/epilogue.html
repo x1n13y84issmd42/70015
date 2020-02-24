@@ -5,6 +5,7 @@
 
 			XUI.render(window.menu);
 
+			//	Double Esc clear the workbench.
 			const doubleEscTime = 200;
 			let lastTimeEscPressed = new Date().getTime();
 			
@@ -23,51 +24,20 @@
 				}
 			}
 
-			/**
-			 * Temporarily applies a class to an element. The class is removed after the specified amount of time passes.
-			 * @param {HTMLElement} e An element to style.
-			 * @param {string} className A class name to apply temporarily.
-			 * @param {number} time A time period the class should be removed after.
-			 */
-			function tmpStyle(e, className, time) {
-				e.classList.add(className);
-				setTimeout(() => {
-					e.classList.remove(className);
-				}, time);
-			}
-
-			function copiedFloater(x, y) {
-				let fltr = document.createElement('div');
-				fltr.classList.add('floater');
-				fltr.style.left = (x - 45) + 'px';
-				fltr.style.top = (y - 35) + 'px';
-				fltr.innerHTML = 'Copied.';
-				document.body.appendChild(fltr);
-
-				setTimeout(() => {
-					fltr.classList.add('vanishing');
-				}, 0);
-
-				setTimeout(() => {
-					document.body.removeChild(fltr);
-				}, 1000);
-			}
-
-			function tagMatch(el, terms) {
-				return terms.reduce((res, term) => {
-					return res && el.dataset.tag.includes(term);
-				}, true);
-			}
-
 			document.body.onload = () => {
 				//	The home screen filtering.
 				let filter = document.getElementById('filter');
 				let toolLinks = document.querySelectorAll('.tool-preview');
+
 				filter.oninput = () => {
 					if (filter.value) {
 						let filterTerms = filter.value.split(/\s+/gi);
 						toolLinks.forEach((tlE) => {
-							if (tagMatch(tlE, filterTerms)) {
+							//	Checking if the link's 'tag' contains s filter term.
+							let matched = filterTerms.reduce((res, term) => {
+								return res && tlE.dataset.tag.includes(term);
+							}, true);
+							if (matched) {
 								tlE.classList.add('matched');
 								tlE.classList.remove('filteredOut');
 							} else {
@@ -93,7 +63,7 @@
 							e.cancelBubble = true;
 						}
 					} else if (e.key == 'Escape') {
-						//	Clearing the filtering.
+						//	Clearing the filter.
 						filter.value = '';
 						filter.dispatchEvent(new Event('input'));
 					}
