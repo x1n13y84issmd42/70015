@@ -51,7 +51,7 @@
 			constructor(id, data) {
 
 				data.onexample = () => {
-					GET('http://api.github.com/repos/x1n13y84issmd42/70015/branches', (resp) => {
+					GET('https://api.github.com/repos/x1n13y84issmd42/70015/branches', (resp) => {
 						this.inJSON.value = resp;
 						this.inJSON.dispatchEvent(new Event('input'));
 					});

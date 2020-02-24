@@ -681,7 +681,7 @@
 			constructor(id, data) {
 
 				data.onexample = () => {
-					GET('http://api.github.com/repos/x1n13y84issmd42/70015/branches', (resp) => {
+					GET('https://api.github.com/repos/x1n13y84issmd42/70015/branches', (resp) => {
 						this.inJSON.value = resp;
 						this.inJSON.dispatchEvent(new Event('input'));
 					});
@@ -835,7 +835,7 @@
 			constructor(id, data) {
 
 				data.onexample = () => {
-					GET('http://api.github.com/repos/x1n13y84issmd42/70015/branches', (resp) => {
+					GET('https://api.github.com/repos/x1n13y84issmd42/70015/branches', (resp) => {
 						this.json.value = resp;
 						this.json.dispatchEvent(new Event('input'));
 					});
@@ -1316,7 +1316,10 @@
 
 <tool _id="xml" data-tag="xml xpath" name="XML &amp; Xpath">
 	<block _id="xml">
-		<in type="area" autofocus spellcheck="false" rows="5" label="XML input"></in>
+		<overcontrols label="XML input">
+			<!-- <p class="hint" style="margin-right:580px;">Try <a class="example" onclick="{args.onexample}" href="javascript:void(0)">Yahoo RSS</a>.</p> -->
+		</overcontrols>
+		<in type="area" autofocus spellcheck="false" rows="5"></in>
 		<undercontrols error="true">
 			<reuse>
 				<base64 ascii="{Δ('xml')}">Base64-encode it</base64>
@@ -1340,7 +1343,14 @@
 <script>
 	class TXML extends Tool {
 		constructor(id, data) {
-			super(id, data)
+			data.onexample = () => {
+				GET('https://news.yahoo.com/rss/', (resp) => {
+					this.xml.value = resp;
+					this.xml.dispatchEvent(new Event('input'));
+				});
+			};
+
+			super(id, data);
 
 			this.xml = this.Section('xml').Input();
 			this.xpath = this.Section('xpath').Input();

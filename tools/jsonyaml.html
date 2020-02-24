@@ -39,7 +39,7 @@
 			constructor(id, data) {
 
 				data.onexample = () => {
-					GET('http://api.github.com/repos/x1n13y84issmd42/70015/branches', (resp) => {
+					GET('https://api.github.com/repos/x1n13y84issmd42/70015/branches', (resp) => {
 						this.json.value = resp;
 						this.json.dispatchEvent(new Event('input'));
 					});
