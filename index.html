@@ -887,6 +887,9 @@
 
 <tool _id="unixtime" data-tag="unixtime" name="Unixtime">
 	<block _id="ts">
+		<overcontrols>
+		<p class="hint">Try <a href="javascript:void(0)" class="example" onclick="{args.ontimeexample}">current time</a>.</p>
+		</overcontrols>
 		<in type="text" autofocus label="Unixtime"></in>
 		<undercontrols error="true"></undercontrols>
 	</block>
@@ -908,6 +911,11 @@
 	(()=>{
 		class TUnixtime extends Tool {
 			constructor(id, data) {
+				data.ontimeexample = () => {
+					this.inTS.value = Math.round((new Date().getTime())/1000);
+					this.inTS.dispatchEvent(new Event('input'));
+				};
+
 				super(id, data);
 	
 				this.inTS = this.Section('ts').Input();

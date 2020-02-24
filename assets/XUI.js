@@ -155,7 +155,17 @@ let XUI = {
 		
 				//	Attributes
 				for (let EAttr of compE.attributes) {
-					EAttr.nodeValue = XUI.eval(EAttr.nodeValue, inst, args, ctx);
+					//	Checking if attributes are event handlers and the value is a native function,
+					//	and doing the right thing for those.
+					let replacement = XUI.eval(EAttr.nodeValue, inst, args, ctx);
+					if (typeof replacement == 'function') {
+						let match = EAttr.nodeName.match(/^on(.*)/i);
+						if (match) {
+							compE.addEventListener(match[1], replacement);
+						}
+					} else {
+						EAttr.nodeValue = replacement;
+					}
 				}
 
 				//TODO: enrich dataset

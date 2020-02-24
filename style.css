@@ -394,8 +394,14 @@ input[type=radio]:checked {
 }
 
 .tool .overcontrols .hint {
-    font-size: 16px;
+	font-size: 16px;
     color: #666;
+}
+
+.tool .overcontrols .hint > a.example{
+	text-decoration: none;
+	color: #00BBFF;
+	border-bottom: 1px #00BBFF dashed;
 }
 
 .controls .overcontrols > label {
