@@ -291,9 +291,22 @@ class KeyStrokeHandler {
 	}
 }
 
+class NaiveInputHandler {
+	handlers = [];
+
+	handle(cb) {
+		this.handlers.push(cb);
+	}
+
+	handleEvent(evt) {
+		this.handlers.forEach((h) => h(evt));
+	}
+}
+
 /**
  * The main keyboard input handler. Stores input handlers in a stack,
- * only the last pushed item handles input.
+ * only the last pushed item handles input. This is used by modal dialogs
+ * to override input handling for the underlying UI.
  */
 class Input {
 	handlers = [];
@@ -308,7 +321,7 @@ class Input {
 
 	handleEvent(e) {
 		if (this.handlers.length) {
-			this.handlers[this.handlers.length].handleEvent(e);
+			this.handlers[this.handlers.length - 1].handleEvent(e);
 		}
 	}
 }

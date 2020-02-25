@@ -9,15 +9,31 @@
 	XUI.register('dialog', (elements, inst, args, ctx) => {
 		ctx.set("toolID", elements.$comp.id);
 
+		let close = () => {
+			elements.bg.classList.add('out');
+			args.onclose && args.onclose();
+
+			setTimeout(() => {
+				elements.bg.parentNode.removeChild(elements.bg);
+			}, 300);
+
+			input.pop();
+		};
+
 		elements.bg.onclick = (e) => {
 			if (e.target === e.currentTarget) {
-				elements.bg.classList.add('out');
-				setTimeout(() => {
-					elements.bg.parentNode.removeChild(elements.bg);
-					args.onclose && args.onclose();
-				}, 300);
+				close();
 			}
 		};
+
+		let ih = new NaiveInputHandler();
+		ih.handle((e) => {
+			if (e.key == 'Escape') {
+				close();
+			}
+		});
+
+		input.push(ih);
 
 		setTimeout(() => {
 			elements.bg.classList.add('in');

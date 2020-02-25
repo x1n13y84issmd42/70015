@@ -5,23 +5,31 @@
 
 			XUI.render(window.menu);
 
-			//	Double Esc clear the workbench.
+			let mainInputHandler = new NaiveInputHandler();
+
+			//	Double Esc clears the workbench.
 			const doubleEscTime = 200;
 			let lastTimeEscPressed = new Date().getTime();
-			
-			document.body.onkeydown = (e) => {
+
+			mainInputHandler.handle((e) => {
 				if (e.key == 'Escape') {
 					let now = new Date().getTime();
 					e.preventDefault();
-
+	
 					if (now - lastTimeEscPressed <= doubleEscTime) {
 						bench.clear();
 					} else {
 						bench.back();
 					}
-
+	
 					lastTimeEscPressed = now;
 				}
+			});
+
+			input.push(mainInputHandler);
+			
+			document.body.onkeydown = (e) => {
+				input.handleEvent(e);
 			}
 
 			document.body.onload = () => {

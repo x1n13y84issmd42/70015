@@ -43,10 +43,13 @@
 		<script>
 			let config = new LSConfig();
 			let bench = new Workbench(config);
+			let input = new Input();
 
+			/**
+			 * Displays the sharing dialog.
+			 **/
 			function share() {
 				let tool = bench.currentlyEquipped();
-				console.log(`Sharing the #${tool.ID} tool!`);
 				tool.C.classList.add('bg');
 
 				let toolData = tool.export();
@@ -58,7 +61,7 @@
 						tool.C.classList.remove('bg');
 					},
 					value: toolURL,
-					title: `Sharing some ${tool.ID} goodness`
+					title: `Share the ${tool.ID} goodness`
 				}));
 			}
 
