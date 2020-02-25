@@ -25,243 +25,246 @@
 </tool>
 
 <script>
-	class TXML extends Tool {
-		constructor(id, data) {
-			data.onexample = () => {
-				GET('https://news.yahoo.com/rss/', (resp) => {
-					this.xml.value = resp;
-					this.xml.dispatchEvent(new Event('input'));
-				});
-			};
-
-			super(id, data);
-
-			this.xml = this.Section('xml').Input();
-			this.xpath = this.Section('xpath').Input();
-			this.xmlNice = this.Section('nice').$$('root');
-
-			this.xml.oninput = () => this.update();
-			this.xpath.oninput = () => this.update();
-		}
-
-		parseXML(s) {
-			let parser = new DOMParser();
-			let xml = parser.parseFromString(s, "text/xml");
-
-			this.checkXMLParserErrors(xml);
-
-			return xml;
-		}
-
-		//	DOMParser.parseFromString() won't throw or report errors in any other way.
-		//	Instead it creates a document with a markup in it, where an information about error is stored.
-		//	Wat.
-		checkXMLParserErrors(xml) {
-			let parserError = xml.getElementsByTagName("parsererror")[0];
-
-			if (parserError) {
-				let errors = parserError.getElementsByTagName("div");
-				if (errors.length) {
-					throw Array.from(errors).map(en => en.innerText).join('<br/>');
+	(() => {
+		class TXML extends Tool {
+			constructor(id, data) {
+				data.onexample = () => {
+					GET('https://news.yahoo.com/rss/', (resp) => {
+						this.xml.value = resp;
+						this.xml.dispatchEvent(new Event('input'));
+					});
+				};
+	
+				super(id, data);
+	
+				this.xml = this.Section('xml').Input();
+				this.xpath = this.Section('xpath').Input();
+				this.xmlNice = this.Section('nice').$$('root');
+	
+				this.xml.oninput = () => this.update();
+				this.xpath.oninput = () => this.update();
+			}
+	
+			parseXML(s) {
+				let parser = new DOMParser();
+				let xml = parser.parseFromString(s, "text/xml");
+	
+				this.checkXMLParserErrors(xml);
+	
+				return xml;
+			}
+	
+			//	DOMParser.parseFromString() won't throw or report errors in any other way.
+			//	Instead it creates a document with a markup in it, where an information about error is stored.
+			//	Wat.
+			checkXMLParserErrors(xml) {
+				let parserError = xml.getElementsByTagName("parsererror")[0];
+	
+				if (parserError) {
+					let errors = parserError.getElementsByTagName("div");
+					if (errors.length) {
+						throw Array.from(errors).map(en => en.innerText).join('<br/>');
+					}
 				}
 			}
-		}
-
-		update() {
-			let xml;
-			let found = [];
-
-			try {
-				xml = this.parseXML(this.xml.value);
-				this.Section('xml').Error();
-				this.Section('xpath').Enable();
-				this.Section('nice').Show();
-			} catch(err) {
-				this.Section('xml').Error(err);
-				this.Section('xpath').Disable();
-				this.Section('nice').Hide();
-			}
-			
-			try {
-				found = this.queryXPath(xml, this.xpath.value);
-				this.Section('xpath').Error();
-				this.Section('nice').Show();
-			} catch(err) {
-				this.Section('xpath').Error(err.message);
-				this.Section('nice').Hide();
-			}
-
-			this.removeChildren(this.xmlNice);
-			this.renderXML(xml, this.xmlNice, found);
-		}
-
-		queryXPath(doc, xpath) {
-			var found = [];
-
-			if (doc && xpath) {
-				var xpe = new XPathEvaluator();
-				var result = xpe.evaluate(xpath, doc);
-				var res;
-				while (res = result.iterateNext()) {
-					found.push(res);
+	
+			update() {
+				let xml;
+				let found = [];
+	
+				try {
+					xml = this.parseXML(this.xml.value);
+					this.Section('xml').Error();
+					this.Section('xpath').Enable();
+					this.Section('nice').Show();
+				} catch(err) {
+					this.Section('xml').Error(err);
+					this.Section('xpath').Disable();
+					this.Section('nice').Hide();
 				}
 				
-				console.log("Found XML nodes: ", found);
-			}
-
-			return found;
-		}
-
-		nodeStr(node) {
-			let str = node.nodeName;
-			let attributes = '';
-			let position = 0;
-
-			if (node.attributes) {
-				let attrs = [];
-				for (let aI = 0; aI < node.attributes.length; aI++) {
-					let a = node.attributes[aI];
-					attrs.push(`${a.name}=${a.nodeValue}`);
+				try {
+					found = this.queryXPath(xml, this.xpath.value);
+					this.Section('xpath').Error();
+					this.Section('nice').Show();
+				} catch(err) {
+					this.Section('xpath').Error(err.message);
+					this.Section('nice').Hide();
 				}
-
-				attributes = `(${attrs.join(',')})`;
+	
+				this.removeChildren(this.xmlNice);
+				this.renderXML(xml, this.xmlNice, found);
 			}
-
-			let n = node;
-			while (n.previousSibling) {
-				n = n.previousSibling;
-				position++;
-			}
-
-			return `${str}#${position}${attributes}`;
-		}
-
-		isFound(node, foundNodes) {
-			let nodePath = this.getNodePath(node);
-
-			for (let fn of foundNodes) {
-				let fnPath = this.getNodePath(fn);
-
-				if (nodePath === fnPath) {
-					return true;
+	
+			queryXPath(doc, xpath) {
+				var found = [];
+	
+				if (doc && xpath) {
+					var xpe = new XPathEvaluator();
+					var result = xpe.evaluate(xpath, doc);
+					var res;
+					while (res = result.iterateNext()) {
+						found.push(res);
+					}
+					
+					console.log("Found XML nodes: ", found);
 				}
+	
+				return found;
 			}
-
-			return false;
-		}
-
-		getNodePath(xmlNode) {
-			let p = [];
-			let n = xmlNode;
-			while (n) {
-				p.push(this.nodeStr(n));
-				n = n.parentNode || n.ownerElement;
+	
+			nodeStr(node) {
+				let str = node.nodeName;
+				let attributes = '';
+				let position = 0;
+	
+				if (node.attributes) {
+					let attrs = [];
+					for (let aI = 0; aI < node.attributes.length; aI++) {
+						let a = node.attributes[aI];
+						attrs.push(`${a.name}=${a.nodeValue}`);
+					}
+	
+					attributes = `(${attrs.join(',')})`;
+				}
+	
+				let n = node;
+				while (n.previousSibling) {
+					n = n.previousSibling;
+					position++;
+				}
+	
+				return `${str}#${position}${attributes}`;
 			}
-			return p.join(',');
-		}
-
-		createXMLNode(classes, value) {
-			let n = document.createElement('div');
-			classes && (n.className = classes.join(' '));
-			value && (n.innerHTML = value);
-			return n;
-		}
-
-		renderXML(xml, E, foundXML) {
-			if (! xml) {
-				return
+	
+			isFound(node, foundNodes) {
+				let nodePath = this.getNodePath(node);
+	
+				for (let fn of foundNodes) {
+					let fnPath = this.getNodePath(fn);
+	
+					if (nodePath === fnPath) {
+						return true;
+					}
+				}
+	
+				return false;
 			}
-
-			let xmlE = document.createElement('div');
-			xmlE.classList.add("xml-node");
-
-			switch (xml.nodeType) {
-				case Node.ELEMENT_NODE:
-					let xattrs = [];
-
-					let xt = this.createXMLNode(['tag']);
-					let xto = this.createXMLNode(['opening']);
-					let xtn = this.createXMLNode(['name'], xml.nodeName);
-
-					xt.appendChild(xto);
-					xt.appendChild(xtn);
-
-					for (let attrI = 0; attrI < xml.attributes.length; attrI++) {
-						let attr = xml.attributes[attrI];
-
-						let xattrName = this.createXMLNode(['name'], attr.name);
-						let xattrEq = this.createXMLNode(['eq']);
-						let xattrValue = this.createXMLNode(['value'], `"${attr.nodeValue}"`);
-						let xattr = this.createXMLNode(['attr']);
-						xattr.appendChild(xattrName);
-						xattr.appendChild(xattrEq);
-						xattr.appendChild(xattrValue);
-
-						if (this.isFound(attr, foundXML)) {
-							// console.log("Found an attribute!", attr);
-							xattr.classList.add('found');
+	
+			getNodePath(xmlNode) {
+				let p = [];
+				let n = xmlNode;
+				while (n) {
+					p.push(this.nodeStr(n));
+					n = n.parentNode || n.ownerElement;
+				}
+				return p.join(',');
+			}
+	
+			createXMLNode(classes, value) {
+				let n = document.createElement('div');
+				classes && (n.className = classes.join(' '));
+				value && (n.innerHTML = value);
+				return n;
+			}
+	
+			renderXML(xml, E, foundXML) {
+				if (! xml) {
+					return
+				}
+	
+				let xmlE = document.createElement('div');
+				xmlE.classList.add("xml-node");
+	
+				switch (xml.nodeType) {
+					case Node.ELEMENT_NODE:
+						let xattrs = [];
+	
+						let xt = this.createXMLNode(['tag']);
+						let xto = this.createXMLNode(['opening']);
+						let xtn = this.createXMLNode(['name'], xml.nodeName);
+	
+						xt.appendChild(xto);
+						xt.appendChild(xtn);
+	
+						for (let attrI = 0; attrI < xml.attributes.length; attrI++) {
+							let attr = xml.attributes[attrI];
+	
+							let xattrName = this.createXMLNode(['name'], attr.name);
+							let xattrEq = this.createXMLNode(['eq']);
+							let xattrValue = this.createXMLNode(['value'], `"${attr.nodeValue}"`);
+							let xattr = this.createXMLNode(['attr']);
+							xattr.appendChild(xattrName);
+							xattr.appendChild(xattrEq);
+							xattr.appendChild(xattrValue);
+	
+							if (this.isFound(attr, foundXML)) {
+								// console.log("Found an attribute!", attr);
+								xattr.classList.add('found');
+							}
+	
+							xt.appendChild(xattr);
 						}
-
-						xt.appendChild(xattr);
-					}
-
-					if (xml.childNodes.length) {
-						xt.appendChild(this.createXMLNode(['closing']))
-					} else {
-						xt.appendChild(this.createXMLNode(['closing-short']))
-					}
-
-					xmlE.appendChild(xt);
-					xmlE.dataset.xmlName = xml.nodeName;
-				break;
-
-				case Node.TEXT_NODE:
-					xmlE.classList.add('text');
-					xmlE.innerHTML = xml.nodeValue;
-				break;
+	
+						if (xml.childNodes.length) {
+							xt.appendChild(this.createXMLNode(['closing']))
+						} else {
+							xt.appendChild(this.createXMLNode(['closing-short']))
+						}
+	
+						xmlE.appendChild(xt);
+						xmlE.dataset.xmlName = xml.nodeName;
+					break;
+	
+					case Node.TEXT_NODE:
+						xmlE.classList.add('text');
+						xmlE.innerHTML = xml.nodeValue;
+					break;
+					
+					case Node.CDATA_SECTION_NODE:
+					break;
+				}
+	
+				if (this.isFound(xml, foundXML)) {
+					// console.log("Found the node!", xml)
+					xmlE.classList.add('found');
+				}
 				
-				case Node.CDATA_SECTION_NODE:
-				break;
-			}
-
-			if (this.isFound(xml, foundXML)) {
-				// console.log("Found the node!", xml)
-				xmlE.classList.add('found');
-			}
-			
-			E.appendChild(xmlE);
-			
-			for (let xmlCN of xml.childNodes) {
-				this.renderXML(xmlCN, xmlE, foundXML);
-			}
-			
-			if (xml.nodeType === 1 && xml.childNodes.length) {
+				E.appendChild(xmlE);
 				
-				let xt = this.createXMLNode(['tag']);
-				xt.appendChild(this.createXMLNode(['opening-closing']));
-				xt.appendChild(this.createXMLNode(['name'], xml.nodeName));
-				xt.appendChild(this.createXMLNode(['closing']));
-				xmlE.appendChild(xt)
+				for (let xmlCN of xml.childNodes) {
+					this.renderXML(xmlCN, xmlE, foundXML);
+				}
+				
+				if (xml.nodeType === 1 && xml.childNodes.length) {
+					
+					let xt = this.createXMLNode(['tag']);
+					xt.appendChild(this.createXMLNode(['opening-closing']));
+					xt.appendChild(this.createXMLNode(['name'], xml.nodeName));
+					xt.appendChild(this.createXMLNode(['closing']));
+					xmlE.appendChild(xt)
+				}
+			}
+	
+			export() {
+				return {
+					xml: this.xml.value,
+					xpath: this.xpath.value,
+				};
+			}
+	
+			import(data) {
+				if (data.xml) {
+					this.xml.value = data.xml;
+					this.xpath.value = data.xpath;
+					this.update();
+				}
 			}
 		}
 
-		export() {
-			return {
-				xml: this.xml.value,
-				xpath: this.xpath.value,
-			};
-		}
+		bench.register('xml', TXML);
+	})();
 
-		import(data) {
-			if (data.xml) {
-				this.xml.value = data.xml;
-				this.xpath.value = data.xpath;
-				this.update();
-			}
-		}
-	}
-
-	bench.register('xml', TXML);
 </script>
 
 <style>

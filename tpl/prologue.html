@@ -65,6 +65,10 @@
 				}));
 			}
 
+			/**
+			 * Displays a floating thing that says "Copied!".
+			 * Happens when you click something copy-able.
+			 **/
 			function copiedFloater(x, y) {
 				let fltr = document.createElement('div');
 				fltr.classList.add('floater');
@@ -82,6 +86,9 @@
 				}, 1000);
 			}
 
+			/**
+			 * A generic handler for all the things you can click to copy.
+			 **/
 			function onclickCopyToClipboard(e) {
 				let from = e.currentTarget;
 

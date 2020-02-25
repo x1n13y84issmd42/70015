@@ -20,12 +20,14 @@
 			input.pop();
 		};
 
+		//	It closes on click on the background overlay.
 		elements.bg.onclick = (e) => {
 			if (e.target === e.currentTarget) {
 				close();
 			}
 		};
 
+		//	It closes on Esc as well.
 		let ih = new NaiveInputHandler();
 		ih.handle((e) => {
 			if (e.key == 'Escape') {
