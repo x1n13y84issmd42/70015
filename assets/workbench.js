@@ -42,10 +42,12 @@ class Workbench {
 			tool.setBench(this);
 			tool.reconfigure(this.config.get(tool.ID));
 			tool.E.classList.replace("unfocused", "focused");
+			tool.E.classList.add('appearing-init');
 			
 			window.location.hash = id;
 			this.equipped.push(tool);
 			
+			//	Focusing the autofocus elements.
 			//TODO: fixme. This is so wrong.
 			setTimeout(() => {
 				tool.E.focus();
@@ -53,8 +55,16 @@ class Workbench {
 				if (af) {
 					af.focus();
 				}
-            }, 0);
-
+			}, 0);
+			
+			//	Animating the tool as it's appearing.
+			let tt = 100, t = -tt;
+			for (let cn of tool.C.childNodes) {
+				setTimeout((n) => {
+					n.classList.add('appearing');
+				}, t += tt, cn)
+			}
+			
 			return tool;
 		}
 	}

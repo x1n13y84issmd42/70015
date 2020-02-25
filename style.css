@@ -723,6 +723,7 @@ input[type=radio]:checked {
 	margin-top: -3em;
 }
 
+/* These are used when switching tools via the "Reuse" menu. */
 .tool.switching.slide-left-init {
 	left: 100%;
 }
@@ -740,4 +741,18 @@ input[type=radio]:checked {
 	margin-left: 100%;
 	transition: margin-left 400ms ease-in-out;
 }
+
+/* These animate tools when they are brought up */
+.appearing-init .controls > * {
+	opacity: 0;
+	transform: scale(0.75);
+	/* transition: opacity 300ms linear, transform 300ms cubic-bezier(0.42, 0, 0.46, 1.41); */
+	transition: opacity 200ms linear, transform 200ms cubic-bezier(0.42, 0, 0.22, 0.99);
+}
+
+.controls .appearing {
+	opacity: 1;
+	transform: scale(1);
+}
+
 
