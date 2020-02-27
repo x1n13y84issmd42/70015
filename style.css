@@ -249,7 +249,7 @@ input[type=radio] {
 	border-radius: 100em;
 }
 
-input[type=checkbox]:active,
+/* input[type=checkbox]:active, */
 input[type=checkbox]:checked {
 	box-shadow: inset 1px 1px 0px 1px rgb(255,255,255), inset -1px -1px 0px 1px rgb(255,255,255);
 	background: #00BBFF;
