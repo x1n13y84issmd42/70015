@@ -564,12 +564,6 @@ input[type=radio]:checked {
 	transition: margin-top 200ms linear;
 }
 
-.switch:hover {
-	/* background: #00bbff; */
-	/* color: white; */
-	/* transition: background, color 200ms linear; */
-}
-
 .switch:hover > div > a {
     margin-top: 0;
 	transition: margin-top 200ms linear;
