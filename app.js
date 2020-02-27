@@ -370,6 +370,7 @@ class Section extends DOMOps {
 	
 	Enable() {
 		this.E.classList.remove('disabled');
+		this.E.querySelectorAll('input').forEach(e => e.disabled = false);
 		return this;
 	}
 	
@@ -379,6 +380,7 @@ class Section extends DOMOps {
 	 */
 	Disable() {
 		this.E.classList.add('disabled');
+		this.E.querySelectorAll('input').forEach(e => e.disabled = true);
 		return this;
 	}
 
