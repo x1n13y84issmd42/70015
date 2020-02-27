@@ -358,7 +358,7 @@
 
 <!-- The <overcontrols> component structure. -->
 <div _comp="overcontrols" class="overcontrols">
-	<label xui-if="inst.label" for="{Σ(inst._id||'in')}" class="control">{inst.label}</label>
+	<label xui-if="inst.label" for="{Σ(inst._id||'in')}" class="title">{inst.label}</label>
 </div>
 
 <script>
@@ -1762,6 +1762,7 @@
 					}
 				}
 
+
 				//	Autofocusing tools upon page load.
 				//	The hash can contain a tool data after a '@'.
 				if (window.location.hash) {
@@ -1776,6 +1777,7 @@
 				}
 
 				bench.render();
+				filter.focus();
 			}
 		</script>
 	</body>

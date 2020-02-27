@@ -26,8 +26,9 @@
 /* #region Filter */
 #filter {
 	width: 100%;
-	font-size: 28pt;
+	font-size: 22pt;
 	font-family: Quicksand;
+	border: 1px #00BBFF solid;
 }
 
 #filter::placeholder {
@@ -324,11 +325,11 @@ input[type=radio]:checked {
 	min-width: 100%;
 	max-width: 100%;
     display: block;
-    font-size: 16pt;
+    font-size: 14pt;
     padding: 12px;
 	letter-spacing: 1pt;
 	margin-bottom: 2em;
-	border: 2px #00BBFF solid;
+	border: 1px #00BBFF solid;
 	background: none;
 	z-index: 101;
 	position: relative;
@@ -348,9 +349,9 @@ input[type=radio]:checked {
 /* #endregion */
 
 /* #region Overcontrols */
-.controls label,
-.controls .overcontrols > label.control {
-	font-size: 22pt;
+.controls label.title,
+.controls .overcontrols > label.title {
+	font-size: 18pt;
 	font-family: Quicksand;
 	transition: color 200ms ease-in-out;
 }
@@ -681,26 +682,16 @@ input[type=radio]:checked {
 	display: none;
 }
 
-.tool-preview.filteredOut > h1:hover {
-	font-size: 20pt;
-}
-
 .tool-preview.filteredOut > h1 {
 	opacity: 0.5;
-	font-size: 18pt;
-	-webkit-transition: all 300ms ease-in-out;
-	-moz-transition: all 300ms ease-in-out;
-	-o-transition: all 300ms ease-in-out;
+	font-size: 16pt;
 	transition: all 300ms ease-in-out;
-	z-index: -1;
-	position: relative;
-	cursor: pointer;
 }
 
 .tool-preview > h1 {
 	color: black;
 	text-decoration: none;
-	font-size: 22pt;
+	font-size: 20pt;
 	font-weight: normal;
 	font-family: 'Cinzel', serif;
 	transition: all 300ms ease-in-out;
