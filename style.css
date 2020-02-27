@@ -356,7 +356,7 @@ input[type=radio]:checked {
 }
 
 .controls .overcontrols {
-	width: auto;
+    width: auto;
 }
 
 .controls .overcontrols .right {
@@ -547,6 +547,10 @@ input[type=radio]:checked {
 /* #endregion */
 
 /* #region The Reuse menu */
+.switch * {
+    cursor: pointer;
+}
+
 .switch > div {
 	overflow: hidden;
 	margin-top: 0;
@@ -554,7 +558,6 @@ input[type=radio]:checked {
 }
 
 .switch > div > a {
-	cursor: pointer;
 	color: white;
 	margin-top: -3em;
 	transition: margin-top 200ms linear;
@@ -564,15 +567,10 @@ input[type=radio]:checked {
 	/* background: #00bbff; */
 	/* color: white; */
 	/* transition: background, color 200ms linear; */
-	cursor: inherit;
-}
-
-.switch:hover > div {
-	cursor: inherit;
 }
 
 .switch:hover > div > a {
-	margin-top: 0;
+    margin-top: 0;
 	transition: margin-top 200ms linear;
 }
 
@@ -666,23 +664,8 @@ input[type=radio]:checked {
 /* #endregion */
 
 
-.focused {
+.tool {
 	z-index: 9999;
-}
-
-.tool.unfocused > .preview {
-	opacity: 1;
-}
-
-.tool.unfocused > .controls {
-	opacity: 0;
-	background-color: white;
-	display: none;
-
-	transition: opacity 200ms ease-in-out, background-color 200ms ease-in-out;
-}
-
-.tool.focused {
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -690,19 +673,12 @@ input[type=radio]:checked {
 	min-height: 100%;
 	background-color: white;
 	overflow: auto;
-}
-
-.tool.focused > .preview {
-	opacity: 0;
+	display: block;
+	margin: 0 0 1pt 0;
 }
 
 .tool > .components {
 	display: none;
-}
-
-.tool {
-	display: block;
-	margin: 0 0 1pt 0;
 }
 
 .tool-preview.filteredOut > h1:hover {

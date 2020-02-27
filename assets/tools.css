@@ -1,20 +1,5 @@
-.focused {
+.tool {
 	z-index: 9999;
-}
-
-.tool.unfocused > .preview {
-	opacity: 1;
-}
-
-.tool.unfocused > .controls {
-	opacity: 0;
-	background-color: white;
-	display: none;
-
-	transition: opacity 200ms ease-in-out, background-color 200ms ease-in-out;
-}
-
-.tool.focused {
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -22,19 +7,12 @@
 	min-height: 100%;
 	background-color: white;
 	overflow: auto;
-}
-
-.tool.focused > .preview {
-	opacity: 0;
+	display: block;
+	margin: 0 0 1pt 0;
 }
 
 .tool > .components {
 	display: none;
-}
-
-.tool {
-	display: block;
-	margin: 0 0 1pt 0;
 }
 
 .tool-preview.filteredOut > h1:hover {

@@ -41,7 +41,6 @@ class Workbench {
 			tool.import(data);
 			tool.setBench(this);
 			tool.reconfigure(this.config.get(tool.ID));
-			tool.E.classList.replace("unfocused", "focused");
 			tool.E.classList.add('appearing-init');
 			
 			window.location.hash = id;
@@ -64,6 +63,16 @@ class Workbench {
 					n.classList.add('appearing');
 				}, t += tt, cn)
 			}
+			
+			t += (200 - tt);	//	200ms is animation length in CSS
+			
+			//	Removing the classes after animation is over (they break z-index by having scale() somehow).
+			setTimeout((_tool) => {
+				_tool.E.classList.remove('appearing-init');
+				for (let cn of _tool.C.childNodes) {
+					cn.classList.remove('appearing');
+				}
+			}, t, tool)
 			
 			return tool;
 		}

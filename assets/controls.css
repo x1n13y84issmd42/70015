@@ -194,7 +194,7 @@ input[type=radio]:checked {
 }
 
 .controls .overcontrols {
-	width: auto;
+    width: auto;
 }
 
 .controls .overcontrols .right {
@@ -385,6 +385,10 @@ input[type=radio]:checked {
 /* #endregion */
 
 /* #region The Reuse menu */
+.switch * {
+    cursor: pointer;
+}
+
 .switch > div {
 	overflow: hidden;
 	margin-top: 0;
@@ -392,7 +396,6 @@ input[type=radio]:checked {
 }
 
 .switch > div > a {
-	cursor: pointer;
 	color: white;
 	margin-top: -3em;
 	transition: margin-top 200ms linear;
@@ -402,15 +405,10 @@ input[type=radio]:checked {
 	/* background: #00bbff; */
 	/* color: white; */
 	/* transition: background, color 200ms linear; */
-	cursor: inherit;
-}
-
-.switch:hover > div {
-	cursor: inherit;
 }
 
 .switch:hover > div > a {
-	margin-top: 0;
+    margin-top: 0;
 	transition: margin-top 200ms linear;
 }
 
