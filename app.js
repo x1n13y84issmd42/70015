@@ -371,6 +371,7 @@ class Section extends DOMOps {
 	Enable() {
 		this.E.classList.remove('disabled');
 		this.E.querySelectorAll('input').forEach(e => e.disabled = false);
+		this.E.querySelectorAll('textarea').forEach(e => e.disabled = false);
 		return this;
 	}
 	
@@ -381,6 +382,7 @@ class Section extends DOMOps {
 	Disable() {
 		this.E.classList.add('disabled');
 		this.E.querySelectorAll('input').forEach(e => e.disabled = true);
+		this.E.querySelectorAll('textarea').forEach(e => e.disabled = true);
 		return this;
 	}
 
@@ -393,10 +395,10 @@ class Section extends DOMOps {
 		for (let errE of errEs) {
 			if (err) {
 				errE.classList.add('shown');
-				errE.firstChild.nextSibling.innerHTML = err;
+				errE.firstElementChild.nextElementSibling.innerHTML = err;
 			} else {
 				errE.classList.remove('shown');
-				errE.firstChild.nextSibling.innerHTML = '&nbsp;';
+				errE.firstElementChild.nextElementSibling.innerHTML = '&nbsp;';
 			}
 		}
 		
