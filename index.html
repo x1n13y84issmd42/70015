@@ -9,9 +9,9 @@
 	</head>
 
 	<body style="display:none;">
-		<div id="nomobile">
+		<div id="nomobile" style="display:none;">
 			<p>Mobile version is not available at the moment.</p>
-			<p>Please come back with a desktop browser.</p>
+			<p>Please return with a desktop browser.</p>
 		</div>
 
 		<div id="menu">
@@ -56,8 +56,6 @@
 			if (isMobile) {
 				console.log('Looks mobile.');
 				window['nomobile'].style.display = 'block';
-			} else {
-				console.log('Seems to be desktop.');
 			}
 		</script>
 
