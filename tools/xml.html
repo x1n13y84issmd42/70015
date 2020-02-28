@@ -40,6 +40,7 @@
 				this.xml = this.Section('xml').Input();
 				this.xpath = this.Section('xpath').Input();
 				this.xmlNice = this.Section('nice').$$('root');
+				this.Section('nice').Hide();
 	
 				this.xml.oninput = () => this.update();
 				this.xpath.oninput = () => this.update();

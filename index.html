@@ -248,7 +248,7 @@
 	The accept-files attribute set to "1" allows files to be dragged and dropped into an area field.
 -->
 <div _comp="in">
-	<label xui-if="inst.label" for="{Σ(inst._id||'in')}">{inst.label}</label>
+	<label xui-if="inst.label" for="{Σ(inst._id||'in')}" class="title">{inst.label}</label>
 	
 	<div xui-as="wrapper" class="in-wrapper">
 		<div xui-as="dropzone" class="dropzone">
@@ -614,8 +614,6 @@
 				this.removeChildren(results);
 
 				results.appendChild(XUIC.kvsection({label: "Checksums"}));
-				results.appendChild(XUIC.kvpair({k: "CRC16", v: crc16(this.input.value)}));
-				results.appendChild(XUIC.kvpair({k: "CRC32", v: crc32(this.input.value)}));
 				results.appendChild(XUIC.kvpair({k: "CRC16", v: crc16(this.input.value)}));
 				results.appendChild(XUIC.kvpair({k: "CRC32", v: crc32(this.input.value)}));
 				
@@ -1385,6 +1383,7 @@
 				this.xml = this.Section('xml').Input();
 				this.xpath = this.Section('xpath').Input();
 				this.xmlNice = this.Section('nice').$$('root');
+				this.Section('nice').Hide();
 	
 				this.xml.oninput = () => this.update();
 				this.xpath.oninput = () => this.update();
