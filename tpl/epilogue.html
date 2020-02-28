@@ -11,21 +11,30 @@
 			const doubleEscTime = 200;
 			let lastTimeEscPressed = new Date().getTime();
 
+			//	An Esc key handler to close tools.
 			mainInputHandler.handle((e) => {
 				if (e.key == 'Escape') {
-					let now = new Date().getTime();
 					e.preventDefault();
-	
+					let now = new Date().getTime();
+					
 					if (now - lastTimeEscPressed <= doubleEscTime) {
 						bench.clear();
 					} else {
 						bench.back();
 					}
-	
+					
 					lastTimeEscPressed = now;
 				}
 			});
+			
+			//	A # key handler to open the sharing dialog.
+			mainInputHandler.handle((e) => {
+				if (e.key == '#' && e.shiftKey && e.ctrlKey) {
+					share();
+				}
+			});
 
+			//	Strapping the input.
 			input.push(mainInputHandler);
 			
 			document.body.onkeydown = (e) => {

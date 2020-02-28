@@ -8,6 +8,15 @@ Allows you to reuse the data across tools and make sort of "pipelines" of variou
 ### Sharing
 Allows you to share a link which opens a tool with data already loaded. Since sharing is done by base64-encoding data from a tool, it is limited by a URL length, which differs across browsers & servers.
 
+### Hotkeys
+All the control on the tips of your fingers.
+
+|Key|Operation|
+|-|-|
+|Esc|Closes the currently open tool and brings the previous one in stack.|
+|Esc Esc|Closes all the tools in the stack.|
+|Ctr+Shift+#|Opens the sharing dialog.|
+
 # Tools
 
 ## Base64 Transcoder [[link]](https://x1n13y84issmd42.github.io/70015/#base64)
@@ -33,9 +42,3 @@ Converts Unix time stamps to human-readable formats.
 
 ## Hasher [[link]](https://x1n13y84issmd42.github.io/70015/#hasher)
 Computes few kinds of checksums & cryptographic message digests.
-
-# Hotkeys
-|Key|Operation|
-|-|-|
-|Esc|Closes the currently open tool and brings the previous one in stack.|
-|Esc Esc|Closes all the tools in the stack.|
