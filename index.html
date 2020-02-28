@@ -956,7 +956,7 @@
 
 	<block _id="formatted">
 		<div class="left l40">
-			<div class="typographyDate copy">
+			<div class="typographyDate">
 				<p class="l10">&nbsp;</p>
 			</div>
 		</div>
@@ -982,6 +982,8 @@
 				this.dates = this.$('.dates')[0];
 	
 				this.inTS.oninput = () => this.convert();
+
+				this.$('.typographyDate')[0].onclick = onclickCopyToClipboard;
 			}
 	
 			convert() {
