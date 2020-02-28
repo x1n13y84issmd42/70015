@@ -561,6 +561,8 @@ class Workbench {
 				}
 			}, t, tool);
 
+			document.title = `70015 / ${id}`;
+
 			gtag('event', `tool_${id}`);
 			
 			return tool;
@@ -586,6 +588,7 @@ class Workbench {
 		if (this.equipped.length == 0) {
 			window.location.hash = '';
 			filter.focus();
+			document.title = '70015';
 		}
 	}
 	
@@ -596,8 +599,9 @@ class Workbench {
 
 		this.equipped = [];
 		window.location.hash = '';
-
 		filter.focus();
+		document.title = '70015';
+
 	}
 
 	currentlyEquipped() {
