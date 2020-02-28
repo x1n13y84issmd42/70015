@@ -559,7 +559,9 @@ class Workbench {
 				for (let cn of _tool.C.childNodes) {
 					cn.classList.remove('appearing');
 				}
-			}, t, tool)
+			}, t, tool);
+
+			gtag('event', `tool_${id}`);
 			
 			return tool;
 		}
