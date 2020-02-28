@@ -6,7 +6,7 @@ A set of small utility functions often useful in development, with focus on clea
 Allows you to reuse the data across tools and make sort of "pipelines" of various tools.
 
 ### Sharing
-Allows you to share a link which opens a tool with data already loaded. Since sharing is done by base64-encoding data from a tool, it is limited by a URL length, which differs across browsers & servers.
+Allows you to share a link to a tool with data already loaded.
 
 ### Hotkeys
 All the control on the tips of your fingers.
