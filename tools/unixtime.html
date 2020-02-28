@@ -45,9 +45,11 @@
 					d.setTime(this.inTS.value.trim() + "000")
 	
 					this.typographyDate(d);
-					this.dates.appendChild(XUIC.kvsection({label: "Formatted"}))
+					// this.dates.appendChild(XUIC.kvsection({label: "Formatted"}))
 					this.dates.appendChild(XUIC.kvpair({k: "ISO 8601", v: d.toISOString()}))
 					this.dates.appendChild(XUIC.kvpair({k: "Date.toString()", v: d.toString()}))
+					this.dates.appendChild(XUIC.kvpair({k: "DMY", v: this.formatDMY(d)}))
+					this.dates.appendChild(XUIC.kvpair({k: "MDY", v: this.formatMDY(d)}))
 
 					this.Section('ts').Error(undefined);
 					this.Section('formatted').Show();
@@ -55,6 +57,31 @@
 					this.Section('ts').Error(err.message);
 					this.Section('formatted').Hide();
 				}
+			}
+
+			preformatDate(d) {
+				let zeropad = (v) => {
+					return v < 10 ? `0${v}` : v;
+				};
+
+				return {
+					day: zeropad(d.getDate()),
+					month: zeropad(d.getMonth() + 1),
+					year: zeropad(d.getFullYear()),
+					hours: zeropad(d.getHours()),
+					minutes: zeropad(d.getMinutes()),
+					seconds: zeropad(d.getSeconds()),
+				};
+			}
+
+			formatDMY(d) {
+				let dd = this.preformatDate(d);
+				return `${dd.day}/${dd.month}/${dd.year} ${dd.hours}:${dd.minutes}:${dd.seconds}`
+			}
+			
+			formatMDY(d) {
+				let dd = this.preformatDate(d);
+				return `${dd.month}/${dd.day}/${dd.year} ${dd.hours}:${dd.minutes}:${dd.seconds}`
 			}
 	
 			typographyDate(d) {
@@ -124,8 +151,8 @@
 </script>
 
 <style>
-	#unixtime .dates .kvpair > .key {
-		padding-bottom: 2em;
+	#unixtime .dates .kvpair > .value {
+		padding-bottom: 1em;
 	}
 
 	.timezones > p {
