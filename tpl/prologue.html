@@ -57,13 +57,19 @@
 				toolData = btoa(JSON.stringify(toolData));
 				let toolURL = `${window.location.href.split('#')[0]}#${tool.ID}@${toolData}`
 
-				document.body.appendChild(XUIC.dialog('share', {
+				let dlg = XUIC.dialog('share', {
 					onclose: () => {
 						tool.C.classList.remove('bg');
 					},
 					value: toolURL,
 					title: `Share the ${tool.ID} goodness`
-				}));
+				});
+
+				let dlgInput = dlg.querySelector('input');
+				dlgInput.setSelectionRange(0, toolURL.length);
+				
+				document.body.appendChild(dlg);
+				dlgInput.focus();
 			}
 
 			/**
