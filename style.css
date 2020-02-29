@@ -648,21 +648,6 @@ input[type=radio]:checked {
 	word-break: break-all;
 	display: inline-block;
 }
-
-.kvpair .value {
-	cursor: pointer;
-	transition: all 100ms ease-in-out;
-}
-
-.kvpair .value:hover {
-	color: #00BBFF;
-	transform: scale(1.05);
-	transition: all 100ms ease-in-out;
-}
-
-.kvpair .value.copied {
-	animation: scale-up-center 0.2s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
-}
 /* #endregion */
 
 /* #region Various */

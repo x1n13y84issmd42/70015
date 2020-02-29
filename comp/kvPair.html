@@ -1,7 +1,7 @@
 <!-- The <kvpair> component structure - a key-value pair, values get copied to clipboard when clicked. -->
 <div _comp="kvpair" class="kvpair kv">
 	<span class="key">{inst.key||inst.k||args.k}</span>
-	<span class="value" xui-as="v">{inst.value||inst.v||args.v||inst.$}</span>
+	<span class="value copyme" xui-as="v">{inst.value||inst.v||args.v||inst.$}</span>
 </div>
 
 <script>
