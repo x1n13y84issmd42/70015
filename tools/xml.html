@@ -218,8 +218,9 @@
 					break;
 	
 					case Node.TEXT_NODE:
-						xmlE.classList.add('text');
+						xmlE.classList.add('text', 'copyme');
 						xmlE.innerHTML = xml.nodeValue;
+						xmlE.onclick = onclickCopyToClipboard;
 					break;
 					
 					case Node.CDATA_SECTION_NODE:

@@ -676,6 +676,22 @@ input[type=radio]:checked {
 	font-size: 16px;
 	color: #666;
 }
+
+.copyme {
+	cursor: pointer;
+	transition: all 100ms ease-in-out;
+}
+
+.copyme:hover {
+	color: #00BBFF;
+	transform: scale(1.05);
+	transition: all 100ms ease-in-out;
+}
+
+.copyme.copied {
+	animation: scale-up-center 0.2s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+}
+
 /* #endregion */
 
 
