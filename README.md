@@ -54,7 +54,9 @@ To deploy the app locally, run:
 npm i
 cmd/watch
 ```
+The watch script won't catch deleted files and needs to be restarted after deletion.
 
+The `cmd/dist` script wipes the `node_modules` folder except the files referenced from the `script` tags in HTML. So after you've installed a new NPM module, run it only after you have the needed files are included in markup, otherwise they're gone.
 
 # Contributing
 Contributions are very welcome, please submit your issues & fire your PRs.
