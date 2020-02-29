@@ -1,6 +1,8 @@
 # 70015
 A set of small utility functions often useful in development, with focus on clean interface and smooth user experience. We, developers, love & deserve good UX too.
 
+![](.github/70015.gif)
+
 # Features
 ### Data reuse
 Allows you to reuse the data across tools and make sort of "pipelines" of various tools.
@@ -45,3 +47,14 @@ Converts Unix time stamps to human-readable formats.
 
 ### Hasher [[link]](https://x1n13y84issmd42.github.io/70015/#hasher)
 Computes few kinds of checksums & cryptographic message digests.
+
+# Development
+To deploy the app locally, run:
+```
+npm i
+cmd/watch
+```
+
+
+# Contributing
+Contributions are very welcome, please submit your issues & fire your PRs.
