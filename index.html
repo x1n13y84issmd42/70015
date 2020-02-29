@@ -1416,7 +1416,7 @@
 	</block>
 	
 	<block _id="nice" class="hidden">
-		<label>XML structure</label>
+		<label class="title">XML structure</label>
 		<div id="xml-nice-root"></div>
 	</block>
 </tool>
@@ -1484,10 +1484,10 @@
 				try {
 					found = this.queryXPath(xml, this.xpath.value);
 					this.Section('xpath').Error();
-					this.Section('nice').Show();
+					// this.Section('nice').Show();
 				} catch(err) {
 					this.Section('xpath').Error(err.message);
-					this.Section('nice').Hide();
+					// this.Section('nice').Hide();
 				}
 	
 				this.removeChildren(this.xmlNice);
